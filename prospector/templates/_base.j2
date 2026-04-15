@@ -1,0 +1,55 @@
+{# Bloques comunes reutilizables por todas las plantillas #}
+
+{%- macro identity_block() -%}
+IDENTIDAD VISUAL:
+  - Color primario: {{ palette.primary }} (extraído del logo/foto del negocio)
+  - Color secundario: {{ palette.secondary }}
+  - Color acento: {{ palette.accent }}
+  - Color neutro: {{ palette.neutral }}
+  - Tipografía títulos: {{ profile.heading_font }}
+  - Tipografía cuerpo: {{ profile.body_font }}
+  - Vibe tipográfica: {{ profile.font_vibe }}
+  - Estética general: {{ profile.visual_vibe }}
+{%- endmacro -%}
+
+{%- macro business_block() -%}
+DATOS DEL NEGOCIO:
+  - Nombre: {{ business.name }}
+  - Dirección: {{ business.address }}
+  {% if business.phone %}- Teléfono: {{ business.phone }}
+  {% endif -%}
+  {% if business.rating %}- Valoración: {{ business.rating }}/5 ({{ business.review_count }} reseñas en Google)
+  {% endif -%}
+  {% if business.opening_hours %}- Horario:
+  {% for day in business.opening_hours %}    · {{ day }}
+  {% endfor -%}
+  {% endif -%}
+{%- endmacro -%}
+
+{%- macro insights_block() -%}
+{% if insights.selling_points %}LO QUE MÁS VALORAN SUS CLIENTES:
+{% for sp in insights.selling_points %}  - {{ sp }}
+{% endfor %}{% endif -%}
+{% if insights.keywords %}
+PALABRAS CLAVE QUE REPITEN LOS CLIENTES: {{ insights.keywords | join(', ') }}
+{% endif -%}
+{% if insights.tone %}
+TONO DEL NEGOCIO: {{ insights.tone }}
+{% endif -%}
+{% if insights.vibe %}
+VIBE: {{ insights.vibe }}
+{% endif -%}
+{% if insights.target_audience %}
+PÚBLICO OBJETIVO: {{ insights.target_audience }}
+{% endif -%}
+{%- endmacro -%}
+
+{%- macro tech_block() -%}
+REQUISITOS TÉCNICOS:
+  - Web responsive (mobile-first)
+  - Performance alta (Lighthouse 90+)
+  - SEO básico: title, meta description, schema.org LocalBusiness
+  - Botón flotante de WhatsApp visible en móvil
+  - Google Maps embebido en sección de contacto
+  - Idioma: español (España)
+{%- endmacro -%}

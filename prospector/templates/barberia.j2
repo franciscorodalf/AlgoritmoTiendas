@@ -1,0 +1,26 @@
+{% from '_base.j2' import identity_block, business_block, insights_block, tech_block with context %}
+Crea una web con carácter para "{{ business.name }}", una barbería en
+{{ business.address }}. Estética masculina, cuidada, con peso visual.
+
+{{ identity_block() }}
+
+{{ business_block() }}
+
+{{ insights_block() }}
+
+SECCIONES:
+  1. Hero oscuro con foto del local o de un corte en acción
+  2. Servicios con precios (corte, barba, afeitado clásico, paquetes)
+  3. Galería de trabajos (antes/después funciona muy bien)
+  4. El barbero / el equipo (fotos + breve bio)
+  5. Reseñas de Google
+  6. Reserva: WhatsApp directo + integración con sistema de citas simple
+  7. Ubicación con mapa
+
+DETALLES:
+  - Fotografía en blanco y negro o con mucho contraste
+  - Tipografía bold, generosos espacios, sin miedo al negro
+  - Botón de WhatsApp siempre visible para reservar
+  - Iconografía masculina discreta (tijeras, navaja) sin caer en cliché
+
+{{ tech_block() }}

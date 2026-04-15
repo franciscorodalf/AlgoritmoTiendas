@@ -1,0 +1,29 @@
+{% from '_base.j2' import identity_block, business_block, insights_block, tech_block with context %}
+Crea una web cálida y apetitosa para "{{ business.name }}", un restaurante
+ubicado en {{ business.address }}. La web debe transmitir el sabor del sitio
+antes de que el cliente entre por la puerta.
+
+{{ identity_block() }}
+
+{{ business_block() }}
+
+{{ insights_block() }}
+
+SECCIONES (en este orden):
+  1. Hero a pantalla completa con foto apetitosa de un plato estrella
+     y reserva inmediata por WhatsApp
+  2. Nuestra historia (tono cercano, raíces, tradición)
+  3. Carta destacada (platos principales con fotos grandes y precio)
+  4. Galería del local y ambiente
+  5. Reseñas de Google destacadas
+  6. Reserva: WhatsApp directo, teléfono, formulario corto
+  7. Cómo llegar: mapa + dirección + horario visible
+
+DETALLES IMPORTANTES:
+  - Usa fotografía de comida generosa y a pantalla completa
+  - Menú descargable en PDF si se ofrece
+  - Integración directa con WhatsApp Business para reservas
+  - Highlight de alergenos e información dietética si procede
+  - Instagram feed embebido si tienen cuenta activa
+
+{{ tech_block() }}

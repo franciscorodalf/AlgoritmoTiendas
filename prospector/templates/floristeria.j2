@@ -1,0 +1,32 @@
+{% from '_base.j2' import identity_block, business_block, insights_block, tech_block with context %}
+Crea una web delicada y botánica para "{{ business.name }}", una floristería
+en {{ business.address }}. La web debe oler a flor recién cortada: natural,
+luminosa, con la flor siempre como protagonista.
+
+{{ identity_block() }}
+
+{{ business_block() }}
+
+{{ insights_block() }}
+
+SECCIONES:
+  1. Hero con foto macro de un ramo signature y CTA "Encarga tu ramo por WhatsApp"
+  2. Ramos y arreglos destacados (bodas, cumpleaños, condolencias, eventos)
+  3. Flor del mes / temporada (con historia breve de cada flor)
+  4. Servicios especiales:
+     · Envío a domicilio en Tenerife
+     · Decoración de eventos y bodas
+     · Suscripción semanal (si la ofrecen)
+  5. Galería de trabajos realizados (rejilla tipo Instagram)
+  6. Reseñas de clientes
+  7. Encargos urgentes por WhatsApp + formulario detallado
+  8. Ubicación, horario y envíos
+
+DETALLES:
+  - Fotografía macro, luz natural, nada de stock artificial
+  - Tonos verdes, pasteles, crema — mucho espacio en blanco
+  - Tipografía serif delicada combinada con sans limpia
+  - Iconografía floral sutil como decoración
+  - Opción de filtrar ramos por ocasión y por presupuesto
+
+{{ tech_block() }}

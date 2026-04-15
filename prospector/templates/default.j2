@@ -1,0 +1,19 @@
+{% from '_base.j2' import identity_block, business_block, insights_block, tech_block with context %}
+Crea una web moderna, profesional y visualmente atractiva para "{{ business.name }}",
+un negocio local ubicado en {{ business.address }}.
+
+{{ identity_block() }}
+
+{{ business_block() }}
+
+{{ insights_block() }}
+
+SECCIONES (en este orden):
+  1. Hero con nombre, claim potente y CTA "Contactar"
+  2. Sobre nosotros (2-3 párrafos con el tono del negocio)
+  3. Servicios o productos principales
+  4. Galería de fotos
+  5. Testimonios de clientes (reseñas de Google)
+  6. Contacto: dirección, teléfono, horario, mapa, formulario
+
+{{ tech_block() }}

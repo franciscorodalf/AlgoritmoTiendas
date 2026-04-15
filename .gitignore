@@ -1,0 +1,33 @@
+# Entorno y secretos
+.env
+.env.local
+.venv/
+venv/
+env/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Output generado
+prospector/output/*
+!prospector/output/.gitkeep
+
+# Cachés de imágenes descargadas
+prospector/cache/
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Sistema
+.DS_Store
+Thumbs.db

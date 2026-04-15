@@ -1,0 +1,26 @@
+{% from '_base.j2' import identity_block, business_block, insights_block, tech_block with context %}
+Crea una web acogedora y artesanal para "{{ business.name }}", una cafetería
+en {{ business.address }}. Transmite aroma a café recién hecho y ambiente
+de barrio donde uno quiere quedarse.
+
+{{ identity_block() }}
+
+{{ business_block() }}
+
+{{ insights_block() }}
+
+SECCIONES:
+  1. Hero con foto cálida del local o de un café/bollería
+  2. Lo que ofrecemos (cafés, desayunos, brunchs, meriendas...)
+  3. Productos de temporada (si los hay)
+  4. Ambiente: galería generosa del interior
+  5. Opiniones de clientes
+  6. Horario + mapa + cómo llegar
+  7. Sigue-nos en Instagram
+
+DETALLES:
+  - Fotografía natural, luz cálida, nada de stock frío
+  - CTA para "Pide por WhatsApp" o "Reserva mesa"
+  - Resalta productos artesanos/de cosecha propia si los tienen
+
+{{ tech_block() }}

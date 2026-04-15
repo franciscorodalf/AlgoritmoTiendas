@@ -1,0 +1,36 @@
+{% from '_base.j2' import identity_block, business_block, insights_block, tech_block with context %}
+Crea una web premium y luminosa para "{{ business.name }}", un centro de
+estética en {{ business.address }}. La web debe transmitir calma, cuidado
+profesional y bienestar, sin caer en lo recargado.
+
+{{ identity_block() }}
+
+{{ business_block() }}
+
+{{ insights_block() }}
+
+SECCIONES:
+  1. Hero minimalista con foto de cabina o detalle de tratamiento + CTA "Pide cita"
+  2. Tratamientos por categoría:
+     · Faciales (limpieza, hidratación, antiedad, peelings)
+     · Corporales (drenaje, reductores, masajes)
+     · Depilación (láser, cera, fotodepilación)
+     · Aparatología (indiba, radiofrecuencia, presoterapia...)
+     · Manicura y pedicura si procede
+  3. Precios transparentes o bonos
+  4. Equipo profesional (foto + titulación de cada esteticista)
+  5. Instalaciones: fotos de cabinas limpias y cuidadas
+  6. Antes/después de tratamientos (con consentimiento)
+  7. Reseñas de clientas
+  8. Reserva online + WhatsApp
+  9. Ubicación y horario
+
+DETALLES:
+  - Paleta nude, beige, rosa pálido y blanco roto
+  - Fotografía luminosa, piel real sin retoque agresivo
+  - Tipografía serif elegante para cabeceras, sans limpia para cuerpo
+  - Evita el lenguaje médico agresivo: tono cercano pero profesional
+  - Destaca protocolos de higiene y marcas usadas (Germaine de Capuccini, Skeyndor, etc.)
+  - Formulario de cita con selección de tratamiento y fecha preferida
+
+{{ tech_block() }}

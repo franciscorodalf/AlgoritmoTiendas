@@ -1,0 +1,28 @@
+{% from '_base.j2' import identity_block, business_block, insights_block, tech_block with context %}
+Crea una web profesional y que transmita confianza para "{{ business.name }}",
+un centro de salud en {{ business.address }}. Estética clean, asilada pero
+cercana, priorizando accesibilidad.
+
+{{ identity_block() }}
+
+{{ business_block() }}
+
+{{ insights_block() }}
+
+SECCIONES:
+  1. Hero sobrio con claim claro y CTA "Pedir cita"
+  2. Tratamientos / especialidades (tarjetas claras con descripción breve)
+  3. El equipo médico (foto + titulación de cada profesional)
+  4. Tecnología / instalaciones (si destacan en algo)
+  5. Opiniones verificadas de pacientes
+  6. Preguntas frecuentes
+  7. Pedir cita: formulario + teléfono + WhatsApp
+  8. Ubicación, horarios, urgencias
+
+DETALLES:
+  - Accesibilidad AA (contraste alto, tamaño de fuente amplio)
+  - Nada de lenguaje comercial agresivo, tono humano y claro
+  - Destacar colegiación y certificaciones del centro
+  - Iconografía minimalista, nada de stock de médicos con bata
+
+{{ tech_block() }}

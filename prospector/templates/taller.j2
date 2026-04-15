@@ -1,0 +1,27 @@
+{% from '_base.j2' import identity_block, business_block, insights_block, tech_block with context %}
+Crea una web robusta y directa para "{{ business.name }}", un taller
+mecánico en {{ business.address }}. Estética industrial, honesta, sin
+florituras. El cliente busca fiabilidad y un precio claro.
+
+{{ identity_block() }}
+
+{{ business_block() }}
+
+{{ insights_block() }}
+
+SECCIONES:
+  1. Hero con CTA "Pide presupuesto por WhatsApp"
+  2. Servicios (mecánica general, ITV, neumáticos, electricidad, aire acondicionado, etc.)
+  3. Marcas con las que trabajamos (logos)
+  4. Por qué elegirnos (años de experiencia, garantía, etc.)
+  5. Reseñas reales de clientes
+  6. Presupuesto rápido por WhatsApp
+  7. Ubicación + horario
+
+DETALLES:
+  - Fotografía del taller real, no stock
+  - Iconografía industrial (llaves, engranajes) usada con mesura
+  - CTA "Presupuesto sin compromiso" muy visible
+  - Teléfono directo en el header en móvil
+
+{{ tech_block() }}

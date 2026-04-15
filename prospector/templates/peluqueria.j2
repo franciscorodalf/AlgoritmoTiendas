@@ -1,0 +1,26 @@
+{% from '_base.j2' import identity_block, business_block, insights_block, tech_block with context %}
+Crea una web elegante y luminosa para "{{ business.name }}", un salón de
+peluquería en {{ business.address }}. Estética cuidada, femenina, sofisticada.
+
+{{ identity_block() }}
+
+{{ business_block() }}
+
+{{ insights_block() }}
+
+SECCIONES:
+  1. Hero con foto editorial del salón o un look signature
+  2. Servicios (corte, color, tratamientos, novias...) con precios orientativos
+  3. Galería de trabajos realizados (rejilla tipo Instagram)
+  4. Sobre el equipo (foto + especialidad de cada estilista)
+  5. Reseñas destacadas
+  6. Reserva online + WhatsApp
+  7. Ubicación y horario
+
+DETALLES:
+  - Fotografía luminosa, mucho espacio en blanco
+  - Paleta suave que complemente la del logo
+  - Formulario de reserva con selección de servicio y estilista
+  - Espacio para hablar de productos usados (L'Oréal, Kérastase, etc.) si procede
+
+{{ tech_block() }}

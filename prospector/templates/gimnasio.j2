@@ -1,0 +1,28 @@
+{% from '_base.j2' import identity_block, business_block, insights_block, tech_block with context %}
+Crea una web enérgica y motivadora para "{{ business.name }}", un centro
+deportivo en {{ business.address }}. Estética potente, atlética, con
+contrastes marcados.
+
+{{ identity_block() }}
+
+{{ business_block() }}
+
+{{ insights_block() }}
+
+SECCIONES:
+  1. Hero a pantalla completa con vídeo/foto potente y CTA "Prueba una clase gratis"
+  2. Clases y actividades (parrilla semanal)
+  3. Instalaciones (fotos grandes)
+  4. Entrenadores (foto + especialidad)
+  5. Tarifas (claras y simples, sin letra pequeña)
+  6. Testimonios transformación antes/después si proceden
+  7. Contacto: WhatsApp + formulario para prueba gratuita
+  8. Ubicación + horario de apertura
+
+DETALLES:
+  - Fotografía con energía, gente en movimiento, nada estático
+  - Tipografía condensada bold
+  - Paleta oscura con acentos vibrantes
+  - CTA "Primera clase gratis" siempre visible
+
+{{ tech_block() }}

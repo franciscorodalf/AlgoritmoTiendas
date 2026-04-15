@@ -1,0 +1,27 @@
+{% from '_base.j2' import identity_block, business_block, insights_block, tech_block with context %}
+Crea una web fresca y editorial para "{{ business.name }}", una tienda de
+ropa en {{ business.address }}. Estética tipo revista de moda, dinámica,
+con espacio para que las imágenes respiren.
+
+{{ identity_block() }}
+
+{{ business_block() }}
+
+{{ insights_block() }}
+
+SECCIONES:
+  1. Hero con foto editorial de la nueva temporada
+  2. Colecciones destacadas (rejilla generosa)
+  3. Marcas que trabajamos
+  4. Lookbook del mes
+  5. Instagram feed embebido
+  6. Encuéntranos: ubicación, horario, probadores, devoluciones
+  7. Newsletter (opcional)
+
+DETALLES:
+  - Fotografía grande y editorial, mucha respiración
+  - Animaciones sutiles al hacer scroll
+  - Si venden online, enlazar a catálogo; si no, CTA a Instagram/WhatsApp
+  - Tipografía editorial, nada de estilo "tienda de barrio"
+
+{{ tech_block() }}
