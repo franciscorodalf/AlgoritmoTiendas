@@ -66,8 +66,10 @@ def process_business(
     # 1. Paleta a partir de la primera foto disponible
     palette = _get_palette(biz, extractor)
 
-    # 2. Perfil visual (tipografía + vibe) por sector
-    profile = get_profile(biz.categories_all or biz.category)
+    # 2. Perfil visual (tipografía + vibe) por sector.
+    #    Pasamos el nombre para que override categorías ambiguas
+    #    (ej. "Bobe Barber Shop" tagged como hair_care → fuerza barbería).
+    profile = get_profile(biz.categories_all or biz.category, name=biz.name)
 
     # 3. Insights de reseñas via Ollama (local)
     insights = analyzer.analyze(
@@ -238,7 +240,7 @@ def _print_summary(businesses: list[Business]) -> None:
 def _write_skeleton(biz: Business, builder: PromptBuilder) -> None:
     """Versión mínima sin LLM (fallback con --skip-ollama)."""
     from modules.review_analyzer import ReviewInsights
-    profile = get_profile(biz.categories_all or biz.category)
+    profile = get_profile(biz.categories_all or biz.category, name=biz.name)
     palette = Palette(
         primary="#2C3E50", secondary="#C0A062",
         accent="#E8C547", neutral="#F5F0EB",

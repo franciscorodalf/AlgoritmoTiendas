@@ -99,23 +99,35 @@ def test_palette():
 
 
 def test_typography_rules():
+    # Casos por categoría Google (sin nombre)
     cases = [
-        (["barber_shop"], "barberia"),
-        (["restaurant", "food"], "restaurante"),
-        (["hair_care"], "peluqueria"),
-        (["dentist"], "clinica"),
-        (["car_repair"], "taller"),
-        (["clothing_store"], "tienda_ropa"),
-        (["gym"], "gimnasio"),
-        (["cafe"], "cafeteria"),
-        (["florist"], "floristeria"),
-        (["beauty_salon"], "estetica"),
-        (["spa"], "estetica"),
-        (["some_unknown_type"], "default"),
+        (["barber_shop"], "", "barberia"),
+        (["restaurant", "food"], "", "restaurante"),
+        (["hair_care"], "", "peluqueria"),
+        (["dentist"], "", "clinica"),
+        (["car_repair"], "", "taller"),
+        (["clothing_store"], "", "tienda_ropa"),
+        (["gym"], "", "gimnasio"),
+        (["cafe"], "", "cafeteria"),
+        (["florist"], "", "floristeria"),
+        (["beauty_salon"], "", "estetica"),
+        (["spa"], "", "estetica"),
+        (["some_unknown_type"], "", "default"),
+        # El nombre tiene prioridad: arregla categorías ambiguas
+        (["hair_care"], "Bobe Barber Shop", "barberia"),
+        (["establishment"], "Barbería El Rincón", "barberia"),
+        (["establishment"], "Floristería Las Rosas", "floristeria"),
+        (["establishment"], "Clínica Dental Sur", "clinica"),
+        (["establishment"], "Taller Hnos. García", "taller"),
+        (["establishment"], "Pizzería Don Luigi", "restaurante"),
+        (["establishment"], "Cafetería La Esquina", "cafeteria"),
+        (["beauty_salon"], "Centro de Estética Laura", "estetica"),
+        (["establishment"], "CrossFit Tenerife", "gimnasio"),
     ]
-    for cats, expected in cases:
-        profile = get_profile(cats)
-        assert profile.sector == expected, f"{cats} → {profile.sector} (esperaba {expected})"
+    for cats, name, expected in cases:
+        profile = get_profile(cats, name=name)
+        assert profile.sector == expected, \
+            f"{cats} + '{name}' → {profile.sector} (esperaba {expected})"
     print(f"  ✓ Typography rules: {len(cases)} casos OK")
     print(f"  ✓ Sectores definidos: {list_sectors()}")
 

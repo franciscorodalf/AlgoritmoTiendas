@@ -165,8 +165,57 @@ _CATEGORY_MAP: dict[str, str] = {
 }
 
 
-def resolve_sector(categories: list[str] | str) -> str:
-    """Devuelve la clave interna de sector a partir de los tipos de Google."""
+# --- Detección por nombre (fallback y override de categorías ambiguas) -----
+#
+# Google Places a veces devuelve categorías demasiado genéricas
+# (ej. "establishment", "point_of_interest") o confunde barberías con
+# peluquerías. Si el nombre del negocio contiene alguna keyword muy
+# específica, la usamos para corregir la clasificación.
+#
+# El orden importa: de más específico a menos específico.
+
+_NAME_KEYWORDS: dict[str, list[str]] = {
+    "barberia": ["barber", "barbería", "barberia"],
+    "floristeria": ["floristería", "floristeria", "florería", "floreria", "florist"],
+    "estetica": ["estética", "estetica", " spa", "wellness", "centro de belleza"],
+    "clinica": ["clínica", "clinica", "dental", "dentista", "fisio", "veterinari", "médic"],
+    "taller": ["taller", "mecánic", "mecanic", "neumátic", "chapa y pintura", "itv"],
+    "gimnasio": [" gym", "gimnasio", "fitness", "crossfit", "box de "],
+    "cafeteria": ["cafetería", "cafeteria", "café ", "coffee", "heladería",
+                  "heladeria", "panadería", "panaderia", "pastelería", "pasteleria"],
+    "restaurante": ["restaurante", "restaurant", "asador", "bistró", "bistro",
+                    "taberna", "grill", "pizzería", "pizzeria", "marisquería"],
+    "tienda_ropa": ["boutique", "moda", "fashion", "zapatería", "zapateria"],
+    "peluqueria": ["peluquería", "peluqueria", "salón de belleza",
+                   "salon de belleza", "hair salon"],
+}
+
+
+def _match_by_name(name: str) -> str | None:
+    """Devuelve el primer sector cuyo keyword aparece en el nombre, o None."""
+    if not name:
+        return None
+    name_low = name.lower()
+    for sector, keywords in _NAME_KEYWORDS.items():
+        if any(kw in name_low for kw in keywords):
+            return sector
+    return None
+
+
+def resolve_sector(categories: list[str] | str, name: str = "") -> str:
+    """
+    Devuelve la clave interna de sector.
+
+    Estrategia:
+      1. Si el nombre del negocio contiene una keyword fuerte → gana.
+         (arregla barberías mal tipadas como hair_care, etc.)
+      2. Si no, usamos el mapa de categorías de Google.
+      3. Si nada matchea → "default".
+    """
+    by_name = _match_by_name(name)
+    if by_name:
+        return by_name
+
     if isinstance(categories, str):
         categories = [categories]
     for cat in categories:
@@ -176,9 +225,9 @@ def resolve_sector(categories: list[str] | str) -> str:
     return "default"
 
 
-def get_profile(categories: list[str] | str) -> VisualProfile:
+def get_profile(categories: list[str] | str, name: str = "") -> VisualProfile:
     """Devuelve el VisualProfile completo para un negocio."""
-    sector = resolve_sector(categories)
+    sector = resolve_sector(categories, name)
     return _PROFILES.get(sector, _PROFILES["default"])
 
 
