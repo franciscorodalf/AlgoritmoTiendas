@@ -1,20 +1,20 @@
 """
 webapp.py
 ---------
-Servidor Flask: API REST + sirve el frontend de Prospector Tenerife.
+Servidor Flask: API REST + frontend de Prospector Tenerife.
 
 Endpoints
 ─────────
-GET  /                           → frontend (static/index.html)
-GET  /api/health                 → estado de Ollama + API key + estadísticas
-GET  /api/prompts                → lista de prompts ya generados
-GET  /api/prompts/<name>         → contenido de un prompt
-GET  /api/registry               → negocios ya procesados (dedup)
-POST /api/generate               → búsqueda por texto { query, max, region, skip_ollama }
-POST /api/discover               → búsqueda por zona  { lat, lng, radius_m, max, skip_ollama }
-GET  /api/jobs/<id>              → estado de un job en background
-
-Arranca con: python start.py   (o vía start.bat)
+GET    /                           → frontend
+GET    /api/health                 → estado completo (Ollama, API key, stats)
+GET    /api/prompts                → lista de prompts
+GET    /api/prompts/<name>         → contenido de un prompt
+PUT    /api/prompts/<name>         → guardar edición
+DELETE /api/prompts/<name>         → eliminar prompt
+GET    /api/registry               → negocios ya procesados
+POST   /api/generate               → búsqueda por texto
+POST   /api/discover               → búsqueda por zona (lat/lng/radius)
+GET    /api/jobs/<id>              → estado de un job
 """
 
 from __future__ import annotations
@@ -36,22 +36,18 @@ from modules.google_extractor import GoogleExtractor
 from modules.review_analyzer import ReviewAnalyzer
 from modules.prompt_builder import PromptBuilder
 from modules import registry
+from modules import web_verifier
 from main import process_business, _slugify, _write_skeleton, OUTPUT_DIR
 
-BASE = Path(__file__).resolve().parent
+BASE   = Path(__file__).resolve().parent
 STATIC = BASE / "static"
 
 app = Flask(__name__, static_folder=str(STATIC), static_url_path="/static")
 
-# Jobs en memoria (sencillo, single-process)
 _jobs: dict[str, dict] = {}
 _lock = threading.Lock()
 
-# Tenerife: bounding box para validar coordenadas
-_TENERIFE_BOUNDS = {
-    "lat_min": 27.97, "lat_max": 28.60,
-    "lng_min": -16.95, "lng_max": -16.08,
-}
+_TENERIFE_BOUNDS = dict(lat_min=27.97, lat_max=28.60, lng_min=-16.95, lng_max=-16.08)
 
 
 def _in_tenerife(lat: float, lng: float) -> bool:
@@ -69,7 +65,7 @@ def index():
 
 
 # ---------------------------------------------------------------------------
-# Prompts ya generados
+# Prompts
 # ---------------------------------------------------------------------------
 
 @app.route("/api/prompts")
@@ -85,16 +81,16 @@ def list_prompts():
     for f in files:
         entry = next((v for v in reg.values() if v.get("output_file") == f.name), None)
         result.append({
-            "name": f.name,
-            "size": f.stat().st_size,
-            "modified": f.stat().st_mtime,
-            "business_name": entry["name"] if entry else f.name.replace(".txt", "").replace("_", " ").title(),
-            "processed_at": entry["processed_at"] if entry else None,
+            "name":          f.name,
+            "size":          f.stat().st_size,
+            "modified":      f.stat().st_mtime,
+            "business_name": entry["name"] if entry else f.name.replace(".txt","").replace("_"," ").title(),
+            "processed_at":  entry["processed_at"] if entry else None,
         })
     return jsonify(result)
 
 
-@app.route("/api/prompts/<path:name>")
+@app.route("/api/prompts/<path:name>", methods=["GET"])
 def read_prompt(name: str):
     target = OUTPUT_DIR / name
     if not target.exists() or not target.is_file():
@@ -102,16 +98,33 @@ def read_prompt(name: str):
     return jsonify({"name": name, "content": target.read_text(encoding="utf-8")})
 
 
+@app.route("/api/prompts/<path:name>", methods=["PUT"])
+def update_prompt(name: str):
+    target = OUTPUT_DIR / name
+    if not target.exists() or not target.is_file():
+        return jsonify({"error": "not found"}), 404
+    payload = request.get_json(force=True) or {}
+    content = payload.get("content", "")
+    target.write_text(content, encoding="utf-8")
+    return jsonify({"ok": True})
+
+
+@app.route("/api/prompts/<path:name>", methods=["DELETE"])
+def delete_prompt(name: str):
+    target = OUTPUT_DIR / name
+    if not target.exists() or not target.is_file():
+        return jsonify({"error": "not found"}), 404
+    target.unlink()
+    return jsonify({"ok": True})
+
+
 # ---------------------------------------------------------------------------
-# Registry (deduplicación)
+# Registry
 # ---------------------------------------------------------------------------
 
 @app.route("/api/registry")
 def get_registry():
-    return jsonify({
-        "count": registry.count(),
-        "entries": registry.all_entries(),
-    })
+    return jsonify({"count": registry.count(), "entries": registry.all_entries()})
 
 
 # ---------------------------------------------------------------------------
@@ -120,21 +133,23 @@ def get_registry():
 
 @app.route("/api/health")
 def health():
-    has_key = bool(os.getenv("GOOGLE_PLACES_API_KEY"))
+    has_key  = bool(os.getenv("GOOGLE_PLACES_API_KEY"))
     analyzer = ReviewAnalyzer()
-    ollama_ok = analyzer.ping()
+    ollama   = analyzer.ping()
+    n_prompts = len([f for f in OUTPUT_DIR.glob("*.txt") if not f.name.startswith("_")]) \
+                if OUTPUT_DIR.exists() else 0
     return jsonify({
-        "google_api_key": has_key,
-        "ollama": ollama_ok,
-        "ollama_host": analyzer.host,
-        "output_dir": str(OUTPUT_DIR),
-        "prompts_count": len(list(OUTPUT_DIR.glob("*.txt"))) if OUTPUT_DIR.exists() else 0,
-        "registry_count": registry.count(),
+        "google_api_key":   has_key,
+        "ollama":           ollama,
+        "ollama_host":      analyzer.host,
+        "web_verifier":     web_verifier.available(),
+        "prompts_count":    n_prompts,
+        "registry_count":   registry.count(),
     })
 
 
 # ---------------------------------------------------------------------------
-# Core pipeline (compartido por generate y discover)
+# Core pipeline
 # ---------------------------------------------------------------------------
 
 def _run_pipeline(job_id: str, businesses: list, payload: dict) -> None:
@@ -149,15 +164,10 @@ def _run_pipeline(job_id: str, businesses: list, payload: dict) -> None:
         with _lock:
             _jobs[job_id]["status"] = "running"
 
-        skip_ollama = bool(payload.get("skip_ollama", False))
-        analyzer = ReviewAnalyzer()
-        builder = PromptBuilder()
-        OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+        skip_ollama  = bool(payload.get("skip_ollama", False))
+        skip_verify  = bool(payload.get("skip_verify", False))
 
-        if not skip_ollama and not analyzer.ping():
-            raise RuntimeError(f"Ollama no responde en {analyzer.host}")
-
-        # --- Filtrar ya procesados ---
+        # 1. Deduplicar con registro
         known = registry.known_ids()
         fresh = [b for b in businesses if b.place_id not in known]
         dupes = len(businesses) - len(fresh)
@@ -170,9 +180,32 @@ def _run_pipeline(job_id: str, businesses: list, payload: dict) -> None:
                 _jobs[job_id]["generated"] = []
             return
 
-        emit(f"✓ {len(fresh)} negocios nuevos a procesar")
+        emit(f"🔎 {len(fresh)} candidatos nuevos")
 
-        extractor = GoogleExtractor()
+        # 2. Verificación secundaria (DuckDuckGo) para descartar falsos positivos
+        if not skip_verify:
+            emit("🌐 Verificando en la web (filtrando falsos positivos)…")
+            fresh = web_verifier.filter_no_website(fresh, log_fn=emit)
+            emit(f"✓ {len(fresh)} confirmados sin web propia")
+        else:
+            emit("⚡ Verificación web omitida (skip_verify)")
+
+        if not fresh:
+            emit("✓ Ninguno pasó la verificación — todos tienen web")
+            with _lock:
+                _jobs[job_id]["status"] = "done"
+                _jobs[job_id]["generated"] = []
+            return
+
+        # 3. Pipeline IA
+        analyzer = ReviewAnalyzer()
+        builder  = PromptBuilder()
+        OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+
+        if not skip_ollama and not analyzer.ping():
+            raise RuntimeError(f"Ollama no responde en {analyzer.host}")
+
+        extractor  = GoogleExtractor()
         generated: list[str] = []
 
         for i, biz in enumerate(fresh, 1):
@@ -215,20 +248,18 @@ def _run_generate(job_id: str, payload: dict) -> None:
             _jobs[job_id]["log"] = list(log)
 
     try:
-        query = payload["query"].strip()
-        max_results = int(payload.get("max", 5))
-        region = payload.get("region") or None
-        include_with_website = bool(payload.get("include_with_website", False))
+        query              = payload["query"].strip()
+        max_results        = int(payload.get("max", 5))
+        region             = payload.get("region") or None
+        include_with_web   = bool(payload.get("include_with_website", False))
 
         emit(f"▶ Buscando: {query}")
-        extractor = GoogleExtractor()
-        businesses = extractor.search_many(
-            [query],
-            region=region,
-            max_results=max_results,
-            only_without_website=not include_with_website,
+        extractor   = GoogleExtractor()
+        businesses  = extractor.search_many(
+            [query], region=region, max_results=max_results,
+            only_without_website=not include_with_web,
         )
-        emit(f"✓ {len(businesses)} candidatos en Google")
+        emit(f"✓ {len(businesses)} candidatos en Google Places")
         _run_pipeline(job_id, businesses, payload)
 
     except Exception as exc:
@@ -244,15 +275,13 @@ def generate():
     payload = request.get_json(force=True) or {}
     if not payload.get("query"):
         return jsonify({"error": "query requerida"}), 400
-
     job_id = _new_job()
-    t = threading.Thread(target=_run_generate, args=(job_id, payload), daemon=True)
-    t.start()
+    threading.Thread(target=_run_generate, args=(job_id, payload), daemon=True).start()
     return jsonify({"job_id": job_id})
 
 
 # ---------------------------------------------------------------------------
-# /api/discover — búsqueda por zona (Leaflet map)
+# /api/discover — búsqueda por zona
 # ---------------------------------------------------------------------------
 
 def _run_discover(job_id: str, payload: dict) -> None:
@@ -264,28 +293,25 @@ def _run_discover(job_id: str, payload: dict) -> None:
             _jobs[job_id]["log"] = list(log)
 
     try:
-        lat = float(payload["lat"])
-        lng = float(payload["lng"])
-        radius_m = int(payload.get("radius_m", 2000))
-        max_results = int(payload.get("max", 20))
-        include_with_website = bool(payload.get("include_with_website", False))
+        lat            = float(payload["lat"])
+        lng            = float(payload["lng"])
+        radius_m       = int(payload.get("radius_m", 2000))
+        max_results    = int(payload.get("max", 20))
+        include_with_web = bool(payload.get("include_with_website", False))
 
         if not _in_tenerife(lat, lng):
-            raise ValueError(
-                f"Las coordenadas ({lat:.4f}, {lng:.4f}) están fuera de Tenerife. "
-                "Solo operamos en la isla."
-            )
+            raise ValueError(f"Coordenadas ({lat:.4f}, {lng:.4f}) fuera de Tenerife.")
 
-        emit(f"▶ Explorando zona: ({lat:.5f}, {lng:.5f}), radio {radius_m}m")
-        extractor = GoogleExtractor()
-        known = registry.known_ids()
+        emit(f"▶ Explorando zona ({lat:.5f}, {lng:.5f}), radio {radius_m} m")
+        extractor  = GoogleExtractor()
+        known      = registry.known_ids()
         businesses = extractor.search_nearby(
             lat, lng, radius_m,
-            only_without_website=not include_with_website,
+            only_without_website=not include_with_web,
             max_results=max_results,
             skip_ids=known,
         )
-        emit(f"✓ {len(businesses)} negocios sin web encontrados")
+        emit(f"✓ {len(businesses)} candidatos en Google Places")
         _run_pipeline(job_id, businesses, payload)
 
     except Exception as exc:
@@ -301,10 +327,8 @@ def discover():
     payload = request.get_json(force=True) or {}
     if "lat" not in payload or "lng" not in payload:
         return jsonify({"error": "Se requieren lat y lng"}), 400
-
     job_id = _new_job()
-    t = threading.Thread(target=_run_discover, args=(job_id, payload), daemon=True)
-    t.start()
+    threading.Thread(target=_run_discover, args=(job_id, payload), daemon=True).start()
     return jsonify({"job_id": job_id})
 
 
