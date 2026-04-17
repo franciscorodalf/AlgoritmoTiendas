@@ -153,6 +153,75 @@ class GoogleExtractor:
                 out.append(biz)
         return out
 
+    def search_nearby(
+        self,
+        lat: float,
+        lng: float,
+        radius_m: int = 2000,
+        *,
+        only_without_website: bool = True,
+        max_results: int = 30,
+        throttle: float = 0.15,
+        skip_ids: set[str] | None = None,
+    ) -> list[Business]:
+        """
+        Busca TODOS los negocios en un área circular (sin filtro de tipo).
+        Útil para explorar una zona completa y encontrar cualquier local sin web.
+
+        Parameters
+        ----------
+        lat, lng   : centro del área (WGS-84)
+        radius_m   : radio en metros (máx. 50 000 m según Google)
+        skip_ids   : place_ids a ignorar (ya procesados previamente)
+        """
+        skip = skip_ids or set()
+        place_ids = self._nearby_all_pages(lat, lng, radius_m, max_results)
+
+        businesses: list[Business] = []
+        for pid in place_ids:
+            if pid in skip:
+                continue
+            try:
+                biz = self._fetch_details(pid)
+            except Exception as exc:
+                print(f"[google_extractor] error en {pid}: {exc}")
+                continue
+            if only_without_website and biz.website:
+                continue
+            businesses.append(biz)
+            time.sleep(throttle)
+
+        return businesses
+
+    def _nearby_all_pages(
+        self, lat: float, lng: float, radius_m: int, max_results: int
+    ) -> list[str]:
+        """Pagina places_nearby hasta max_results o 3 páginas (60 resultados)."""
+        ids: list[str] = []
+        page_token = None
+        pages = 0
+        while True:
+            kwargs: dict = {
+                "location": (lat, lng),
+                "radius": radius_m,
+                "language": self.language,
+            }
+            if page_token:
+                kwargs["page_token"] = page_token
+            resp = self.client.places_nearby(**kwargs)
+            for r in resp.get("results", []):
+                pid = r.get("place_id")
+                if pid and pid not in ids:
+                    ids.append(pid)
+                if len(ids) >= max_results:
+                    return ids
+            page_token = resp.get("next_page_token")
+            pages += 1
+            if not page_token or pages >= 3:
+                break
+            time.sleep(2)
+        return ids
+
     # ---------------- helpers internos ----------------
 
     def _compose_query(self, query: str, region: str | None) -> str:

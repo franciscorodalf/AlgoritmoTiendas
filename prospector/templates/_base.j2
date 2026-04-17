@@ -24,6 +24,8 @@ DATOS DEL NEGOCIO:
   {% for day in business.opening_hours %}    · {{ day }}
   {% endfor -%}
   {% endif -%}
+  {% if business.maps_url %}- Google Maps: {{ business.maps_url }}
+  {% endif -%}
 {%- endmacro -%}
 
 {%- macro insights_block() -%}

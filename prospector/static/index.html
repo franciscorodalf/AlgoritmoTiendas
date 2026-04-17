@@ -1,0 +1,607 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Prospector · Tenerife</title>
+
+<!-- Leaflet -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<style>
+/* ── Variables ─────────────────────────────────────────────────────────── */
+:root {
+  --bg:        #0c0e14;
+  --surface:   #141720;
+  --surface2:  #1b1f2e;
+  --surface3:  #222740;
+  --border:    #252a3a;
+  --text:      #e4e8f0;
+  --muted:     #6b7590;
+  --gold:      #d4a44c;
+  --gold-2:    #f0c060;
+  --blue:      #5b8def;
+  --green:     #3ecf8e;
+  --red:       #f06060;
+  --yellow:    #f5c842;
+  --radius:    8px;
+  --sidebar:   360px;
+}
+
+/* ── Reset ──────────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; overflow: hidden; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+       font-size: 13px; background: var(--bg); color: var(--text); }
+
+/* ── Header ─────────────────────────────────────────────────────────────── */
+#header {
+  height: 52px; display: flex; align-items: center; justify-content: space-between;
+  padding: 0 20px; background: var(--surface); border-bottom: 1px solid var(--border);
+  flex-shrink: 0; z-index: 10;
+}
+#header .logo { font-size: 15px; font-weight: 700; letter-spacing: .4px; }
+#header .logo span { color: var(--gold); }
+.health-row { display: flex; gap: 14px; align-items: center; }
+.hchip { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--muted); }
+.hchip .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--muted); }
+.hchip .dot.ok  { background: var(--green); }
+.hchip .dot.err { background: var(--red); }
+.hchip b { color: var(--text); font-weight: 500; }
+
+/* ── Layout ─────────────────────────────────────────────────────────────── */
+#app {
+  display: grid;
+  grid-template-columns: var(--sidebar) 1fr 1fr;
+  height: calc(100vh - 52px);
+}
+.col { overflow: hidden; display: flex; flex-direction: column;
+       border-right: 1px solid var(--border); }
+.col:last-child { border-right: none; }
+.col-head { padding: 14px 16px 10px; border-bottom: 1px solid var(--border);
+            flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; }
+.col-head h2 { font-size: 10px; text-transform: uppercase; letter-spacing: 1.2px; color: var(--muted); }
+.col-body { overflow-y: auto; flex: 1; }
+
+/* ── Tabs ────────────────────────────────────────────────────────────────── */
+.tabs { display: flex; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+.tab  { flex: 1; padding: 10px; font-size: 12px; font-weight: 600; cursor: pointer;
+        text-align: center; color: var(--muted); border-bottom: 2px solid transparent;
+        transition: color .15s, border-color .15s; }
+.tab:hover { color: var(--text); }
+.tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+/* ── Forms ───────────────────────────────────────────────────────────────── */
+.form-section { padding: 14px 16px; }
+label.lbl { display: block; font-size: 11px; color: var(--muted); margin: 10px 0 4px; }
+input[type=text], input[type=number], select {
+  width: 100%; padding: 8px 10px; font: inherit; font-size: 13px;
+  background: var(--surface2); color: var(--text);
+  border: 1px solid var(--border); border-radius: var(--radius);
+  outline: none; transition: border-color .15s;
+}
+input:focus, select:focus { border-color: var(--gold); }
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.chk  { display: flex; align-items: center; gap: 8px; margin-top: 8px;
+        font-size: 12px; color: var(--text); cursor: pointer; }
+.chk input { accent-color: var(--gold); width: 14px; height: 14px; cursor: pointer; }
+
+/* ── Buttons ─────────────────────────────────────────────────────────────── */
+.btn {
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  padding: 10px 14px; border: none; border-radius: var(--radius); cursor: pointer;
+  font: inherit; font-size: 13px; font-weight: 600; transition: opacity .15s, transform .1s;
+}
+.btn:active { transform: scale(.98); }
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+.btn-gold  { background: var(--gold); color: #000; width: 100%; margin-top: 12px; }
+.btn-blue  { background: var(--blue); color: #fff; width: 100%; margin-top: 12px; }
+.btn-ghost { background: var(--surface3); color: var(--text); }
+
+/* ── Map ─────────────────────────────────────────────────────────────────── */
+#map-wrap { padding: 0 16px 12px; }
+#map      { height: 220px; border-radius: var(--radius);
+            border: 1px solid var(--border); overflow: hidden; }
+#map-info { font-size: 11px; color: var(--muted); margin-top: 6px; min-height: 16px; text-align: center; }
+.radius-row { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
+.radius-row input[type=range] {
+  flex: 1; accent-color: var(--blue);
+  background: transparent; cursor: pointer;
+}
+.radius-row span { font-size: 11px; color: var(--text); min-width: 60px; text-align: right; }
+
+/* ── Log ─────────────────────────────────────────────────────────────────── */
+#log-wrap  { border-top: 1px solid var(--border); flex-shrink: 0; max-height: 200px;
+             overflow-y: auto; }
+#log-head  { padding: 8px 16px; display: flex; align-items: center; justify-content: space-between;
+             position: sticky; top: 0; background: var(--surface); z-index:2;
+             border-bottom: 1px solid var(--border); }
+#log-head span { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); }
+#log-lines { padding: 8px 16px; font-family: Consolas, monospace; font-size: 11px;
+             line-height: 1.6; color: #8a9ab8; }
+#log-lines .ok  { color: var(--green); }
+#log-lines .err { color: var(--red); }
+#log-lines .info{ color: var(--gold); }
+#log-status { width: 7px; height: 7px; border-radius: 50%; background: var(--muted); }
+#log-status.running { background: var(--yellow); animation: pulse 1s infinite; }
+#log-status.done    { background: var(--green); }
+#log-status.error   { background: var(--red); }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+/* ── Prompts list ────────────────────────────────────────────────────────── */
+#prompts-list { list-style: none; }
+#prompts-list li {
+  padding: 12px 16px; border-bottom: 1px solid var(--border);
+  cursor: pointer; transition: background .1s;
+  display: grid; grid-template-rows: auto auto; gap: 4px;
+}
+#prompts-list li:hover  { background: var(--surface2); }
+#prompts-list li.active { background: var(--surface3); border-left: 3px solid var(--gold); }
+.pl-name  { font-weight: 600; font-size: 13px; white-space: nowrap;
+            overflow: hidden; text-overflow: ellipsis; }
+.pl-meta  { display: flex; gap: 8px; align-items: center; }
+.pl-date  { font-size: 10px; color: var(--muted); }
+.badge    { font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 4px;
+            text-transform: uppercase; letter-spacing: .5px; }
+.badge-kb { background: var(--surface3); color: var(--muted); }
+
+/* sector badges */
+.s-barberia    { background: #2a1a0a; color: #d4a44c; }
+.s-peluqueria  { background: #2a0a1a; color: #e87ab0; }
+.s-restaurante { background: #0a2015; color: #3ecf8e; }
+.s-cafeteria   { background: #2a1a00; color: #f0c060; }
+.s-clinica     { background: #0a1a2a; color: #5b8def; }
+.s-taller      { background: #1a0a0a; color: #f06060; }
+.s-tienda      { background: #1a0a2a; color: #b57bee; }
+.s-gimnasio    { background: #0a1a0a; color: #50e878; }
+.s-floristeria { background: #0a200a; color: #78e870; }
+.s-estetica    { background: #200a15; color: #f09070; }
+.s-default     { background: var(--surface3); color: var(--muted); }
+
+.empty-state { padding: 40px 20px; text-align: center; color: var(--muted);
+               font-style: italic; line-height: 1.7; }
+
+/* ── Viewer ──────────────────────────────────────────────────────────────── */
+#viewer-head { padding: 10px 16px; display: flex; align-items: center;
+               justify-content: space-between; gap: 10px; }
+#viewer-title { font-size: 12px; color: var(--text); font-weight: 600;
+                overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.copy-btn {
+  flex-shrink: 0; padding: 5px 12px; background: var(--surface3);
+  color: var(--text); border: 1px solid var(--border); border-radius: 5px;
+  font-size: 11px; cursor: pointer; font-weight: 600;
+}
+.copy-btn:hover { border-color: var(--gold); color: var(--gold); }
+#viewer-body  { height: 100%; overflow-y: auto; }
+#viewer-pre   { padding: 16px; white-space: pre-wrap; word-break: break-word;
+                font-family: Consolas, "JetBrains Mono", monospace;
+                font-size: 12px; line-height: 1.65; color: #b0bcd4; }
+.viewer-empty { display: flex; flex-direction: column; align-items: center;
+                justify-content: center; height: 100%; color: var(--muted);
+                font-size: 13px; gap: 10px; }
+.viewer-empty .icon { font-size: 36px; opacity: .3; }
+
+/* ── Stats bar ───────────────────────────────────────────────────────────── */
+.stats { display: flex; gap: 16px; }
+.stat  { font-size: 11px; color: var(--muted); }
+.stat b{ color: var(--text); }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════ HEADER ═══════════════════ -->
+<div id="header">
+  <div class="logo">Prospector <span>Tenerife</span></div>
+  <div class="health-row" id="health">
+    <div class="hchip"><div class="dot" id="dot-goog"></div><span>Google API</span></div>
+    <div class="hchip"><div class="dot" id="dot-ollama"></div><span>Ollama</span></div>
+    <div class="stats" id="stats"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════ APP ═══════════════════ -->
+<div id="app">
+
+  <!-- ──────── COL 1: SEARCH ──────── -->
+  <div class="col">
+    <!-- Tabs -->
+    <div class="tabs">
+      <div class="tab active" id="tab-text" onclick="switchTab('text')">🔍 Por texto</div>
+      <div class="tab"        id="tab-map"  onclick="switchTab('map')">🗺️ Por zona</div>
+    </div>
+
+    <!-- Tab: Por texto -->
+    <div id="pane-text" class="col-body">
+      <div class="form-section">
+        <label class="lbl">Búsqueda (sector, zona o nombre)</label>
+        <input id="q" type="text" placeholder="ej: barberías en La Laguna"/>
+
+        <label class="lbl">Región (opcional)</label>
+        <input id="region" type="text" placeholder="Tenerife, España"/>
+
+        <label class="lbl">Máx. resultados</label>
+        <input id="max-txt" type="number" value="5" min="1" max="30"/>
+
+        <label class="chk"><input id="incl-txt" type="checkbox"/> Incluir negocios ya con web</label>
+        <label class="chk"><input id="skip-txt" type="checkbox"/> Omitir Ollama (sin insights, más rápido)</label>
+
+        <button class="btn btn-gold" id="go-txt" onclick="doTextSearch()">
+          ▶ Generar prompts
+        </button>
+      </div>
+    </div>
+
+    <!-- Tab: Por zona (mapa) -->
+    <div id="pane-map" class="col-body" style="display:none">
+      <div class="form-section" style="padding-bottom:0">
+        <label class="lbl">Haz clic en el mapa para seleccionar el centro del área</label>
+      </div>
+
+      <div id="map-wrap">
+        <div id="map"></div>
+        <div id="map-info">Sin punto seleccionado</div>
+
+        <div class="radius-row">
+          <span style="color:var(--muted);font-size:11px">Radio:</span>
+          <input type="range" id="radius-slider" min="250" max="5000" step="250" value="1500"
+                 oninput="updateRadius(this.value)"/>
+          <span id="radius-label">1 500 m</span>
+        </div>
+
+        <label class="lbl" style="margin-top:10px">Máx. resultados en la zona</label>
+        <input id="max-map" type="number" value="20" min="1" max="60"/>
+
+        <label class="chk"><input id="incl-map" type="checkbox"/> Incluir negocios ya con web</label>
+        <label class="chk"><input id="skip-map" type="checkbox"/> Omitir Ollama</label>
+      </div>
+
+      <div style="padding: 0 16px 14px">
+        <button class="btn btn-blue" id="go-map" onclick="doMapSearch()" disabled>
+          🗺️ Explorar esta zona
+        </button>
+      </div>
+    </div>
+
+    <!-- Log -->
+    <div id="log-wrap" style="display:none">
+      <div id="log-head">
+        <span>Log</span>
+        <div id="log-status"></div>
+      </div>
+      <div id="log-lines"></div>
+    </div>
+  </div>
+
+  <!-- ──────── COL 2: PROMPT LIST ──────── -->
+  <div class="col">
+    <div class="col-head">
+      <h2>Prompts generados</h2>
+      <div class="stats" id="prompt-count"></div>
+    </div>
+    <div class="col-body">
+      <ul id="prompts-list"></ul>
+    </div>
+  </div>
+
+  <!-- ──────── COL 3: VIEWER ──────── -->
+  <div class="col">
+    <div class="col-head" id="viewer-head" style="display:none">
+      <div id="viewer-title"></div>
+      <button class="copy-btn" onclick="copyPrompt()">Copiar</button>
+    </div>
+    <div class="col-body" id="viewer-body">
+      <div class="viewer-empty">
+        <div class="icon">📄</div>
+        Selecciona un prompt para ver su contenido
+      </div>
+    </div>
+  </div>
+
+</div><!-- #app -->
+
+<script>
+/* ════════════════════════════════════════════════════════════════
+   ESTADO
+   ════════════════════════════════════════════════════════════════ */
+let activeName = null;
+let activeContent = null;
+let pollInterval = null;
+let mapPinLat = null;
+let mapPinLng = null;
+let radiusM = 1500;
+let mapCircle = null;
+let mapMarker = null;
+let leafletMap = null;
+let mapInitialized = false;
+
+/* ════════════════════════════════════════════════════════════════
+   HEALTH
+   ════════════════════════════════════════════════════════════════ */
+async function loadHealth() {
+  try {
+    const h = await fetch("/api/health").then(r => r.json());
+    document.getElementById("dot-goog").className   = "dot " + (h.google_api_key ? "ok" : "err");
+    document.getElementById("dot-ollama").className = "dot " + (h.ollama ? "ok" : "err");
+    document.getElementById("stats").innerHTML =
+      `<div class="stat"><b>${h.prompts_count}</b> prompts</div>` +
+      `<div class="stat"><b>${h.registry_count}</b> procesados</div>`;
+  } catch(_) {}
+}
+
+/* ════════════════════════════════════════════════════════════════
+   TABS
+   ════════════════════════════════════════════════════════════════ */
+function switchTab(mode) {
+  document.getElementById("tab-text").classList.toggle("active", mode === "text");
+  document.getElementById("tab-map").classList.toggle("active",  mode === "map");
+  document.getElementById("pane-text").style.display = mode === "text" ? "" : "none";
+  document.getElementById("pane-map").style.display  = mode === "map"  ? "" : "none";
+
+  if (mode === "map" && !mapInitialized) initMap();
+}
+
+/* ════════════════════════════════════════════════════════════════
+   LEAFLET MAP — centrado en Tenerife
+   ════════════════════════════════════════════════════════════════ */
+function initMap() {
+  mapInitialized = true;
+  leafletMap = L.map("map", { zoomControl: true }).setView([28.2916, -16.6291], 10);
+
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    attribution: "© OpenStreetMap",
+    maxZoom: 18,
+  }).addTo(leafletMap);
+
+  // Contorno aproximado de Tenerife (bounding box visual)
+  L.rectangle([[27.97, -16.95], [28.60, -16.08]], {
+    color: "#d4a44c", weight: 1, dashArray: "4 4",
+    fillOpacity: 0, interactive: false,
+  }).addTo(leafletMap);
+
+  leafletMap.on("click", function(e) {
+    const { lat, lng } = e.latlng;
+    // Validar que está en Tenerife
+    if (lat < 27.97 || lat > 28.60 || lng < -16.95 || lng > -16.08) {
+      document.getElementById("map-info").textContent =
+        "⚠ Ese punto está fuera de Tenerife";
+      return;
+    }
+    setPin(lat, lng);
+  });
+}
+
+function setPin(lat, lng) {
+  mapPinLat = lat;
+  mapPinLng = lng;
+
+  if (mapMarker) mapMarker.remove();
+  if (mapCircle) mapCircle.remove();
+
+  mapMarker = L.marker([lat, lng]).addTo(leafletMap);
+  mapCircle = L.circle([lat, lng], {
+    radius: radiusM, color: "#5b8def", weight: 2, fillOpacity: .15,
+  }).addTo(leafletMap);
+
+  document.getElementById("map-info").textContent =
+    `📍 ${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+  document.getElementById("go-map").disabled = false;
+}
+
+function updateRadius(val) {
+  radiusM = parseInt(val);
+  const label = radiusM >= 1000
+    ? (radiusM / 1000).toFixed(1).replace(".", ",") + " km"
+    : radiusM + " m";
+  document.getElementById("radius-label").textContent = label;
+
+  if (mapCircle && mapPinLat !== null) {
+    mapCircle.setRadius(radiusM);
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════
+   BÚSQUEDA POR TEXTO
+   ════════════════════════════════════════════════════════════════ */
+async function doTextSearch() {
+  const query = document.getElementById("q").value.trim();
+  if (!query) { alert("Escribe una búsqueda"); return; }
+
+  const btn = document.getElementById("go-txt");
+  btn.disabled = true;
+
+  const payload = {
+    query,
+    region:              document.getElementById("region").value.trim() || null,
+    max:                 parseInt(document.getElementById("max-txt").value || "5"),
+    include_with_website: document.getElementById("incl-txt").checked,
+    skip_ollama:          document.getElementById("skip-txt").checked,
+  };
+
+  await startJob("/api/generate", payload, btn);
+}
+
+/* ════════════════════════════════════════════════════════════════
+   BÚSQUEDA POR ZONA (mapa)
+   ════════════════════════════════════════════════════════════════ */
+async function doMapSearch() {
+  if (mapPinLat === null) { alert("Haz clic en el mapa primero"); return; }
+
+  const btn = document.getElementById("go-map");
+  btn.disabled = true;
+
+  const payload = {
+    lat: mapPinLat,
+    lng: mapPinLng,
+    radius_m:             radiusM,
+    max:                  parseInt(document.getElementById("max-map").value || "20"),
+    include_with_website: document.getElementById("incl-map").checked,
+    skip_ollama:          document.getElementById("skip-map").checked,
+  };
+
+  await startJob("/api/discover", payload, btn);
+}
+
+/* ════════════════════════════════════════════════════════════════
+   JOB RUNNER (compartido)
+   ════════════════════════════════════════════════════════════════ */
+async function startJob(endpoint, payload, btn) {
+  showLog(true);
+  clearLog();
+  setLogStatus("running");
+
+  try {
+    const r = await fetch(endpoint, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    const { job_id, error } = await r.json();
+    if (error) { appendLog(error, "err"); setLogStatus("error"); btn.disabled = false; return; }
+
+    if (pollInterval) clearInterval(pollInterval);
+    pollInterval = setInterval(async () => {
+      const j = await fetch("/api/jobs/" + job_id).then(r => r.json());
+      renderLog(j.log);
+      setLogStatus(j.status);
+
+      if (j.status === "done" || j.status === "error") {
+        clearInterval(pollInterval);
+        btn.disabled = false;
+        loadPrompts();
+        loadHealth();
+      }
+    }, 800);
+  } catch(e) {
+    appendLog("Error de red: " + e.message, "err");
+    setLogStatus("error");
+    btn.disabled = false;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════
+   LOG
+   ════════════════════════════════════════════════════════════════ */
+function showLog(visible) {
+  document.getElementById("log-wrap").style.display = visible ? "" : "none";
+}
+function clearLog() {
+  document.getElementById("log-lines").innerHTML = "";
+}
+function appendLog(msg, cls) {
+  const el = document.getElementById("log-lines");
+  const d = document.createElement("div");
+  if (cls) d.className = cls;
+  d.textContent = msg;
+  el.appendChild(d);
+  el.scrollTop = el.scrollHeight;
+}
+function renderLog(lines) {
+  const el = document.getElementById("log-lines");
+  el.innerHTML = lines.map(l => {
+    const cls = l.includes("✓") ? "ok" : l.includes("✗") || l.startsWith("✗") || l.includes("ERROR") ? "err" : l.startsWith("▶") ? "info" : "";
+    return `<div class="${cls}">${esc(l)}</div>`;
+  }).join("");
+  el.scrollTop = el.scrollHeight;
+}
+function setLogStatus(s) {
+  document.getElementById("log-status").className = s;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   LISTA DE PROMPTS
+   ════════════════════════════════════════════════════════════════ */
+const SECTOR_BADGE = {
+  barberia:    ["Barbería",    "s-barberia"],
+  peluqueria:  ["Peluquería",  "s-peluqueria"],
+  restaurante: ["Restaurante", "s-restaurante"],
+  cafeteria:   ["Cafetería",   "s-cafeteria"],
+  clinica:     ["Clínica",     "s-clinica"],
+  taller:      ["Taller",      "s-taller"],
+  tienda_ropa: ["Moda",        "s-tienda"],
+  gimnasio:    ["Gimnasio",    "s-gimnasio"],
+  floristeria: ["Floristería", "s-floristeria"],
+  estetica:    ["Estética",    "s-estetica"],
+};
+
+function guessSector(name) {
+  const n = name.toLowerCase();
+  if (/barber|barbería/.test(n))          return "barberia";
+  if (/peluq|salon|hair/.test(n))         return "peluqueria";
+  if (/restaur|asador|bistro|grill/.test(n)) return "restaurante";
+  if (/café|cafe|coffee|pastel|pan/.test(n)) return "cafeteria";
+  if (/clínica|clinica|dental|fisio|doctor/.test(n)) return "clinica";
+  if (/taller|mecánic/.test(n))           return "taller";
+  if (/boutique|moda|fashion/.test(n))    return "tienda_ropa";
+  if (/gym|fitness|crossfit/.test(n))     return "gimnasio";
+  if (/florist/.test(n))                  return "floristeria";
+  if (/estét|estetica|spa/.test(n))       return "estetica";
+  return "default";
+}
+
+async function loadPrompts() {
+  const r = await fetch("/api/prompts");
+  const items = await r.json();
+  const ul = document.getElementById("prompts-list");
+  const cnt = document.getElementById("prompt-count");
+  cnt.innerHTML = `<div class="stat"><b>${items.length}</b> archivos</div>`;
+
+  if (!items.length) {
+    ul.innerHTML = '<li><div class="empty-state">Sin prompts todavía.<br>Lanza una búsqueda para empezar.</div></li>';
+    return;
+  }
+
+  ul.innerHTML = items.map(it => {
+    const sector = guessSector(it.business_name || it.name);
+    const [label, cls] = SECTOR_BADGE[sector] || ["—", "s-default"];
+    const kb = (it.size / 1024).toFixed(1);
+    const date = it.processed_at ? it.processed_at.slice(0,10) : "—";
+    return `
+      <li data-name="${it.name}" class="${it.name === activeName ? 'active' : ''}" onclick="openPrompt('${it.name}')">
+        <div class="pl-name">${esc(it.business_name || it.name)}</div>
+        <div class="pl-meta">
+          <span class="badge ${cls}">${label}</span>
+          <span class="pl-date">${date}</span>
+          <span class="badge badge-kb">${kb} KB</span>
+        </div>
+      </li>`;
+  }).join("");
+}
+
+async function openPrompt(name) {
+  activeName = name;
+  const data = await fetch("/api/prompts/" + encodeURIComponent(name)).then(r => r.json());
+  activeContent = data.content;
+
+  document.getElementById("viewer-head").style.display = "";
+  document.getElementById("viewer-title").textContent = name.replace(".txt", "");
+  document.getElementById("viewer-body").innerHTML =
+    `<div id="viewer-pre">${esc(data.content)}</div>`;
+  loadPrompts(); // actualiza active state
+}
+
+function copyPrompt() {
+  if (!activeContent) return;
+  navigator.clipboard.writeText(activeContent).then(() => {
+    const btn = document.querySelector(".copy-btn");
+    btn.textContent = "✓ Copiado";
+    setTimeout(() => btn.textContent = "Copiar", 1500);
+  });
+}
+
+/* ════════════════════════════════════════════════════════════════
+   UTILS
+   ════════════════════════════════════════════════════════════════ */
+function esc(s) {
+  return String(s).replace(/[&<>]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
+}
+
+/* ════════════════════════════════════════════════════════════════
+   INIT
+   ════════════════════════════════════════════════════════════════ */
+loadHealth();
+loadPrompts();
+setInterval(loadHealth, 20000);
+</script>
+</body>
+</html>
