@@ -1,0 +1,25 @@
+{%- set pitch_by_sector = {
+  "barberia":    "Sin web propia, cada cliente nuevo que te busca tiene que moverse entre Google Maps y redes sociales para ver cortes, precios y reservar. Con una web el cliente entra, ve tu trabajo en 10 segundos y reserva cita sin salir.",
+  "peluqueria":  "Sin web propia, el cliente que te encuentra en Google no puede ver estilos, precios o reservar online. Una web con galería + reservas digitales diferencia de inmediato.",
+  "restaurante": "Sin web propia quien busca carta, hace reservas o mira fotos del local tiene que saltar entre Google, TripAdvisor y redes. Una web centraliza todo y mejora tu posicionamiento.",
+  "cafeteria":   "Sin web propia tu cafetería depende 100% de Google Maps. Con una web cuentas historia, enseñas carta y enganchas clientes fieles (bono, suscripción, eventos…).",
+  "clinica":     "En salud una web transmite profesionalidad antes de la primera consulta. Sin web, el paciente que te busca por primera vez duda más de reservar.",
+  "taller":      "Sin web propia el cliente que busca mecánico de confianza acaba en directorios genéricos. Una web con servicios, precios orientativos y cita previa te pone por delante.",
+  "tienda_ropa": "Sin web propia tu tienda vive al 100% del paseo + Instagram. Con una web captas clientes de fuera, vendes online y amplías alcance más allá del barrio.",
+  "gimnasio":    "Sin web propia captar nuevos socios depende del boca a boca. Con una web explicas clases, tarifas, entrenadores y captas leads 24/7.",
+  "floristeria": "Sin web propia pierdes pedidos que hoy se hacen online (bodas, aniversarios, empresas). Una web con catálogo + pedido online abre un canal nuevo de ingresos.",
+  "estetica":    "Sin web propia el cliente que busca tratamientos concretos no te encuentra. Una web con servicios, precios y reservas online sube conversión desde Google.",
+  "default":     "Sin web propia en 2026 muchos clientes potenciales se pierden antes de llegar a ti — van al siguiente resultado que sí tenga web.",
+} -%}
+¡Hola! Soy Fran, desarrollador web en Tenerife 👋
+
+Vi **{{ name }}**{% if city %} en {{ city }}{% endif %} en Google{% if review_count and review_count >= 20 %} — {{ review_count }} reseñas con {{ rating }}★ ✨ (muy buena pinta){% endif %}.
+
+{{ pitch_by_sector.get(sector, pitch_by_sector["default"]) }}
+
+Te he preparado una propuesta de diseño base usando tus fotos y las reseñas reales de tus clientes. En 24-48h la tengo montada, funcionando y lista para enseñarte.
+
+¿Te interesa que te pase una vista previa sin compromiso?
+
+Gracias, un saludo.
+Fran.

@@ -7,58 +7,73 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
-/* ── Variables ── */
-:root {
-  --bg:      #0c0e14; --surface:  #141720; --surface2: #1b1f2e;
-  --surface3:#222740; --border:   #252a3a; --text:     #e4e8f0;
-  --muted:   #6b7590; --gold:     #d4a44c; --gold2:    #f0c060;
-  --blue:    #5b8def; --green:    #3ecf8e; --red:      #f06060;
-  --yellow:  #f5c842; --r: 8px;   --sidebar: 350px;
+:root{
+  --bg:#0c0e14;--surface:#141720;--surface2:#1b1f2e;--surface3:#222740;
+  --border:#252a3a;--text:#e4e8f0;--muted:#6b7590;
+  --gold:#d4a44c;--blue:#5b8def;--green:#3ecf8e;--red:#f06060;
+  --yellow:#f5c842;--purple:#b57bee;--r:8px;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;overflow:hidden}
 body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
      font-size:13px;background:var(--bg);color:var(--text)}
 
-/* ── Header ── */
+/* ───── Header ───── */
 #header{height:50px;display:flex;align-items:center;justify-content:space-between;
-        padding:0 18px;background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0}
-.logo{font-size:15px;font-weight:700;letter-spacing:.3px}
+        padding:0 18px;background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0;gap:18px}
+.logo{font-size:15px;font-weight:700;letter-spacing:.3px;white-space:nowrap}
 .logo span{color:var(--gold)}
-.hrow{display:flex;gap:12px;align-items:center}
+
+.mainTabs{display:flex;gap:4px;flex:1;justify-content:center}
+.mainTab{padding:7px 16px;font-size:12.5px;font-weight:600;cursor:pointer;border-radius:6px;
+         color:var(--muted);background:transparent;border:1px solid transparent;transition:all .15s}
+.mainTab:hover{color:var(--text);background:var(--surface2)}
+.mainTab.active{color:var(--gold);background:var(--surface2);border-color:var(--border)}
+
+.hrow{display:flex;gap:10px;align-items:center;white-space:nowrap}
 .hchip{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted)}
 .dot{width:7px;height:7px;border-radius:50%;background:var(--muted)}
 .dot.ok{background:var(--green)}.dot.err{background:var(--red)}
 .stat{font-size:11px;color:var(--muted)}.stat b{color:var(--text)}
 
-/* ── Layout ── */
-#app{display:grid;grid-template-columns:var(--sidebar) 1fr 1fr;height:calc(100vh - 50px)}
+/* ───── Main panels ───── */
+.page{display:none;height:calc(100vh - 50px);overflow:hidden}
+.page.active{display:grid}
+
+/* Page: búsqueda (3 cols) */
+#page-search{grid-template-columns:350px 1fr 1fr}
+/* Page: pipeline (kanban full width) */
+#page-pipeline{grid-template-columns:1fr}
+/* Page: dashboard */
+#page-dashboard{grid-template-columns:1fr}
+
 .col{overflow:hidden;display:flex;flex-direction:column;border-right:1px solid var(--border)}
 .col:last-child{border-right:none}
-.col-head{padding:12px 16px 10px;border-bottom:1px solid var(--border);
-          flex-shrink:0;display:flex;align-items:center;justify-content:space-between}
+.col-head{padding:12px 16px 10px;border-bottom:1px solid var(--border);flex-shrink:0;
+          display:flex;align-items:center;justify-content:space-between;gap:8px}
 .col-head h2{font-size:10px;text-transform:uppercase;letter-spacing:1.2px;color:var(--muted)}
 .col-body{overflow-y:auto;flex:1}
 
-/* ── Tabs ── */
+/* ───── Sub-tabs búsqueda ───── */
 .tabs{display:flex;border-bottom:1px solid var(--border);flex-shrink:0}
 .tab{flex:1;padding:10px;font-size:12px;font-weight:600;cursor:pointer;text-align:center;
      color:var(--muted);border-bottom:2px solid transparent;transition:color .15s,border-color .15s}
 .tab:hover{color:var(--text)}
 .tab.active{color:var(--gold);border-bottom-color:var(--gold)}
 
-/* ── Form elements ── */
+/* ───── Forms ───── */
 .fsec{padding:12px 16px}
 .lbl{display:block;font-size:11px;color:var(--muted);margin:9px 0 3px}
-input[type=text],input[type=number]{
+input[type=text],input[type=number],textarea,select{
   width:100%;padding:7px 10px;font:inherit;font-size:13px;
   background:var(--surface2);color:var(--text);
   border:1px solid var(--border);border-radius:var(--r);outline:none;transition:border-color .15s}
-input:focus{border-color:var(--gold)}
-.chk{display:flex;align-items:center;gap:8px;margin-top:7px;font-size:12px;color:var(--text);cursor:pointer}
+input:focus,textarea:focus,select:focus{border-color:var(--gold)}
+textarea{resize:vertical;min-height:70px;font-family:inherit}
+.chk{display:flex;align-items:center;gap:8px;margin-top:7px;font-size:12px;cursor:pointer}
 .chk input{accent-color:var(--gold);width:14px;height:14px;cursor:pointer}
 
-/* ── Buttons ── */
+/* ───── Buttons ───── */
 .btn{display:flex;align-items:center;justify-content:center;gap:6px;
      padding:9px 14px;border:none;border-radius:var(--r);cursor:pointer;
      font:inherit;font-size:13px;font-weight:600;transition:opacity .15s,transform .1s}
@@ -66,22 +81,23 @@ input:focus{border-color:var(--gold)}
 .btn:disabled{opacity:.45;cursor:not-allowed}
 .btn-gold{background:var(--gold);color:#000;width:100%;margin-top:11px}
 .btn-blue{background:var(--blue);color:#fff;width:100%;margin-top:11px}
+.btn-green{background:var(--green);color:#000}
 .btn-ghost{background:var(--surface3);color:var(--text);border:1px solid var(--border);
            padding:5px 11px;font-size:11px;font-weight:600;border-radius:5px;cursor:pointer}
 .btn-ghost:hover{border-color:var(--gold);color:var(--gold)}
 .btn-ghost.danger:hover{border-color:var(--red);color:var(--red)}
-.btn-ghost.save:hover{border-color:var(--green);color:var(--green)}
+.btn-ghost.ok:hover{border-color:var(--green);color:var(--green)}
 
-/* ── Map ── */
+/* ───── Map ───── */
 #map-wrap{padding:0 16px 10px}
 #map{height:210px;border-radius:var(--r);border:1px solid var(--border);overflow:hidden}
 #map-info{font-size:11px;color:var(--muted);margin-top:5px;text-align:center;min-height:15px}
 .radius-row{display:flex;align-items:center;gap:10px;margin-top:8px}
-.radius-row input[type=range]{flex:1;accent-color:var(--blue);background:transparent;cursor:pointer}
+.radius-row input[type=range]{flex:1;accent-color:var(--blue);cursor:pointer}
 .radius-row span{font-size:11px;color:var(--text);min-width:56px;text-align:right}
 
-/* ── Log ── */
-#log-wrap{border-top:1px solid var(--border);flex-shrink:0;max-height:190px;overflow-y:auto}
+/* ───── Log ───── */
+#log-wrap{border-top:1px solid var(--border);flex-shrink:0;max-height:210px;overflow-y:auto}
 #log-head{padding:7px 16px;display:flex;align-items:center;justify-content:space-between;
           position:sticky;top:0;background:var(--surface);z-index:2;border-bottom:1px solid var(--border)}
 #log-head span{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--muted)}
@@ -96,23 +112,51 @@ input:focus{border-color:var(--gold)}
 #log-status.error{background:var(--red)}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
 
-/* ── Prompt list ── */
+/* ───── Prompt list ───── */
 #prompts-list{list-style:none}
 #prompts-list li{
   padding:11px 14px;border-bottom:1px solid var(--border);
   cursor:pointer;transition:background .1s;
-  display:grid;grid-template-rows:auto auto;gap:4px;position:relative}
+  display:grid;grid-template-rows:auto auto auto;gap:4px;position:relative}
 #prompts-list li:hover{background:var(--surface2)}
 #prompts-list li:hover .item-actions{opacity:1}
 #prompts-list li.active{background:var(--surface3);border-left:3px solid var(--gold)}
-.pl-name{font-weight:600;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-         padding-right:56px}
-.pl-meta{display:flex;gap:7px;align-items:center}
+.pl-top{display:flex;align-items:center;gap:8px;padding-right:60px}
+.pl-name{font-weight:600;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1}
+.pl-meta{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
 .pl-date{font-size:10px;color:var(--muted)}
+
+.score-badge{display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:700;
+             padding:2px 7px;border-radius:10px;background:var(--surface3);color:var(--text)}
+.score-9,.score-10{background:#2a1206;color:#ff8a3c}
+.score-7,.score-8 {background:#0a2015;color:#3ecf8e}
+.score-5,.score-6 {background:#1a1a05;color:#f5c842}
+.score-0,.score-1,.score-2,.score-3,.score-4{background:var(--surface3);color:var(--muted)}
+
+/* Status pill */
+.status-pill{font-size:9px;font-weight:700;padding:2px 7px;border-radius:10px;text-transform:uppercase;letter-spacing:.4px}
+.st-found     {background:var(--surface3);color:var(--muted)}
+.st-contacted {background:#0a1a2a;color:#5b8def}
+.st-interested{background:#1a1a05;color:#f5c842}
+.st-quoted    {background:#2a1a0a;color:#d4a44c}
+.st-closed    {background:#0a2015;color:#3ecf8e}
+.st-rejected  {background:#1a0a0a;color:#f06060}
+
+/* Sector badge */
 .badge{font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;
        text-transform:uppercase;letter-spacing:.4px}
-.badge-kb{background:var(--surface3);color:var(--muted)}
-/* item action buttons (appear on hover) */
+.s-barberia   {background:#2a1a0a;color:#d4a44c}
+.s-peluqueria {background:#2a0a1a;color:#e87ab0}
+.s-restaurante{background:#0a2015;color:#3ecf8e}
+.s-cafeteria  {background:#2a1800;color:#f0c060}
+.s-clinica    {background:#0a1a2a;color:#5b8def}
+.s-taller     {background:#1a0a0a;color:#f06060}
+.s-tienda_ropa{background:#1a0a2a;color:#b57bee}
+.s-gimnasio   {background:#0a1a0a;color:#50e878}
+.s-floristeria{background:#0a200a;color:#78e870}
+.s-estetica   {background:#200a15;color:#f09070}
+.s-default    {background:var(--surface3);color:var(--muted)}
+
 .item-actions{position:absolute;top:50%;right:10px;transform:translateY(-50%);
               display:flex;gap:4px;opacity:0;transition:opacity .15s}
 .ia-btn{width:26px;height:26px;border:1px solid var(--border);border-radius:5px;
@@ -121,22 +165,9 @@ input:focus{border-color:var(--gold)}
 .ia-btn:hover.edit  {border-color:var(--blue);color:var(--blue);background:var(--surface3)}
 .ia-btn:hover.delete{border-color:var(--red);color:var(--red);background:var(--surface3)}
 
-/* sector colors */
-.s-barberia   {background:#2a1a0a;color:#d4a44c}
-.s-peluqueria {background:#2a0a1a;color:#e87ab0}
-.s-restaurante{background:#0a2015;color:#3ecf8e}
-.s-cafeteria  {background:#2a1800;color:#f0c060}
-.s-clinica    {background:#0a1a2a;color:#5b8def}
-.s-taller     {background:#1a0a0a;color:#f06060}
-.s-tienda     {background:#1a0a2a;color:#b57bee}
-.s-gimnasio   {background:#0a1a0a;color:#50e878}
-.s-floristeria{background:#0a200a;color:#78e870}
-.s-estetica   {background:#200a15;color:#f09070}
-.s-default    {background:var(--surface3);color:var(--muted)}
-
 .empty-state{padding:40px 20px;text-align:center;color:var(--muted);font-style:italic;line-height:1.8}
 
-/* ── Viewer ── */
+/* ───── Viewer ───── */
 .viewer-toolbar{padding:10px 14px;display:flex;align-items:center;gap:8px;
                 border-bottom:1px solid var(--border);flex-shrink:0;flex-wrap:wrap}
 .viewer-title{flex:1;font-size:12px;font-weight:600;overflow:hidden;
@@ -152,15 +183,83 @@ input:focus{border-color:var(--gold)}
               justify-content:center;height:100%;color:var(--muted);font-size:13px;gap:10px}
 .viewer-empty .icon{font-size:36px;opacity:.25}
 
-/* ── Confirm dialog ── */
-#confirm-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);
-                 z-index:1000;align-items:center;justify-content:center}
+/* CRM panel inside viewer */
+.crm-panel{padding:14px 16px;border-bottom:1px solid var(--border);background:var(--surface2)}
+.crm-row{display:flex;gap:10px;align-items:center;margin-bottom:8px;flex-wrap:wrap}
+.crm-row label{font-size:11px;color:var(--muted);min-width:60px}
+.crm-row select{max-width:180px;flex:none}
+.crm-notes{width:100%;font-size:12px}
+.ext-links{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.ext-links a{text-decoration:none;font-size:11px;padding:4px 9px;border-radius:5px;
+             background:var(--surface3);color:var(--text);border:1px solid var(--border);
+             transition:border-color .15s}
+.ext-links a:hover{border-color:var(--gold);color:var(--gold)}
+.ext-links a.bolt{background:#1a2a1a;border-color:#2a4a2a}
+.ext-links a.v0{background:#2a2a1a;border-color:#4a4a2a}
+.ext-links a.ig{background:#2a1a2a;border-color:#4a2a4a}
+.ext-links a.fb{background:#0a1a2a;border-color:#2a3a5a}
+.ext-links a.wa{background:#0a1a0a;border-color:#1a3a1a}
+
+/* Outreach boxes */
+.outreach-box{background:var(--surface2);padding:12px 14px;margin:10px 16px;
+              border-radius:var(--r);border:1px solid var(--border)}
+.outreach-box h4{font-size:10px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;
+                 letter-spacing:1px;display:flex;align-items:center;justify-content:space-between}
+.outreach-box pre{white-space:pre-wrap;font-family:inherit;font-size:12px;line-height:1.55;color:#c5cdd9}
+
+/* ───── Pipeline Kanban ───── */
+.kanban{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;padding:16px;height:100%;overflow:hidden}
+.kcol{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);
+      display:flex;flex-direction:column;overflow:hidden}
+.kcol h3{padding:10px 12px;font-size:11px;text-transform:uppercase;letter-spacing:1px;
+         color:var(--muted);border-bottom:1px solid var(--border);
+         display:flex;justify-content:space-between;align-items:center}
+.kcol h3 .count{background:var(--surface3);color:var(--text);font-size:10px;padding:2px 7px;border-radius:10px}
+.kbody{overflow-y:auto;flex:1;padding:8px}
+.kcard{background:var(--surface2);border:1px solid var(--border);border-radius:6px;
+       padding:9px 10px;margin-bottom:8px;cursor:pointer;transition:border-color .15s}
+.kcard:hover{border-color:var(--gold)}
+.kcard .kn{font-weight:600;font-size:12px;margin-bottom:5px;overflow:hidden;
+           text-overflow:ellipsis;white-space:nowrap}
+.kcard .km{display:flex;gap:5px;flex-wrap:wrap;align-items:center}
+.kcard .knote{color:var(--muted);font-size:10.5px;margin-top:5px;font-style:italic;
+              overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* ───── Dashboard ───── */
+.dash{padding:24px;display:grid;grid-template-columns:repeat(4,1fr);gap:16px;
+      grid-auto-rows:min-content;overflow-y:auto;height:100%}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px}
+.stat-card .label{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:8px}
+.stat-card .value{font-size:28px;font-weight:700;color:var(--text)}
+.stat-card .value.gold{color:var(--gold)}
+.stat-card .value.green{color:var(--green)}
+.stat-card .value.blue{color:var(--blue)}
+.stat-card .sub{font-size:11px;color:var(--muted);margin-top:6px}
+
+.chart-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;
+            padding:18px;grid-column:span 2}
+.chart-card h3{font-size:12px;text-transform:uppercase;color:var(--muted);margin-bottom:14px;letter-spacing:1px}
+.bar-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;font-size:12px}
+.bar-label{width:110px;color:var(--muted);flex-shrink:0;font-size:11.5px}
+.bar-track{flex:1;background:var(--surface2);border-radius:4px;height:20px;overflow:hidden;position:relative}
+.bar-fill{height:100%;border-radius:4px;transition:width .3s}
+.bar-val{position:absolute;right:8px;top:50%;transform:translateY(-50%);font-size:11px;font-weight:600;color:var(--text)}
+
+/* ───── Confirm ───── */
+#confirm-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:1000;align-items:center;justify-content:center}
 #confirm-overlay.show{display:flex}
 #confirm-box{background:var(--surface);border:1px solid var(--border);border-radius:10px;
              padding:24px;max-width:360px;width:90%;text-align:center}
 #confirm-box h3{margin-bottom:10px;font-size:14px}
 #confirm-box p{color:var(--muted);font-size:13px;margin-bottom:18px;line-height:1.6}
 #confirm-box .btns{display:flex;gap:10px;justify-content:center}
+
+/* toast */
+#toast{position:fixed;bottom:20px;right:20px;background:var(--surface);
+       border:1px solid var(--border);border-radius:6px;padding:10px 16px;
+       font-size:12px;color:var(--text);z-index:999;display:none;box-shadow:0 4px 16px rgba(0,0,0,.4)}
+#toast.show{display:block;animation:slideIn .2s}
+@keyframes slideIn{from{transform:translateX(20px);opacity:0}to{transform:translateX(0);opacity:1}}
 </style>
 </head>
 <body>
@@ -168,26 +267,29 @@ input:focus{border-color:var(--gold)}
 <!-- ═══ HEADER ═══ -->
 <div id="header">
   <div class="logo">Prospector <span>Tenerife</span></div>
+  <div class="mainTabs">
+    <div class="mainTab active" onclick="switchPage('search')">🔍 Buscar</div>
+    <div class="mainTab"        onclick="switchPage('pipeline')">📋 Pipeline</div>
+    <div class="mainTab"        onclick="switchPage('dashboard')">📊 Dashboard</div>
+  </div>
   <div class="hrow">
-    <div class="hchip"><div class="dot" id="dot-goog"></div>Google API</div>
+    <div class="hchip"><div class="dot" id="dot-goog"></div>Google</div>
     <div class="hchip"><div class="dot" id="dot-ollama"></div>Ollama</div>
-    <div class="hchip"><div class="dot" id="dot-ddgs"></div>Verificador web</div>
+    <div class="hchip"><div class="dot" id="dot-ddgs"></div>DDG</div>
     <div class="stat" id="stat-prompts"></div>
-    <div class="stat" id="stat-reg"></div>
   </div>
 </div>
 
-<!-- ═══ APP ═══ -->
-<div id="app">
+<!-- ══════════ PAGE: SEARCH ══════════ -->
+<div id="page-search" class="page active">
 
-  <!-- ── COL 1: SEARCH ── -->
+  <!-- Col 1: controles -->
   <div class="col">
     <div class="tabs">
       <div class="tab active" id="tab-text" onclick="switchTab('text')">🔍 Por texto</div>
       <div class="tab"        id="tab-map"  onclick="switchTab('map')">🗺️ Por zona</div>
     </div>
 
-    <!-- Pane: texto -->
     <div id="pane-text" class="col-body">
       <div class="fsec">
         <label class="lbl">Búsqueda (sector, zona o nombre)</label>
@@ -196,118 +298,159 @@ input:focus{border-color:var(--gold)}
         <input id="region" type="text" placeholder="Tenerife, España"/>
         <label class="lbl">Máx. resultados</label>
         <input id="max-txt" type="number" value="5" min="1" max="30"/>
-        <label class="chk"><input id="incl-txt" type="checkbox"/> Incluir negocios ya con web</label>
-        <label class="chk"><input id="skip-txt" type="checkbox"/> Omitir Ollama (sin insights, rápido)</label>
-        <label class="chk"><input id="skip-verify-txt" type="checkbox"/> Omitir verificación web (menos preciso)</label>
+        <label class="chk"><input id="incl-txt" type="checkbox"/> Incluir negocios con web</label>
+        <label class="chk"><input id="skip-txt" type="checkbox"/> Omitir Ollama</label>
+        <label class="chk"><input id="skipv-txt" type="checkbox"/> Omitir verificación web</label>
+        <label class="chk"><input id="skips-txt" type="checkbox"/> Omitir búsqueda de redes</label>
         <button class="btn btn-gold" id="go-txt" onclick="doTextSearch()">▶ Generar prompts</button>
       </div>
     </div>
 
-    <!-- Pane: mapa -->
     <div id="pane-map" class="col-body" style="display:none">
       <div class="fsec" style="padding-bottom:0">
-        <label class="lbl">Clic en el mapa → selecciona el centro del área</label>
+        <label class="lbl">Clic en el mapa → centro del área</label>
       </div>
       <div id="map-wrap">
         <div id="map"></div>
         <div id="map-info">Sin punto seleccionado</div>
         <div class="radius-row">
           <span style="color:var(--muted);font-size:11px">Radio:</span>
-          <input type="range" id="radius-slider" min="250" max="5000" step="250" value="1500"
-                 oninput="updateRadius(this.value)"/>
+          <input type="range" id="radius-slider" min="250" max="5000" step="250" value="1500" oninput="updateRadius(this.value)"/>
           <span id="radius-label">1 500 m</span>
         </div>
         <label class="lbl" style="margin-top:8px">Máx. resultados</label>
         <input id="max-map" type="number" value="20" min="1" max="60"/>
-        <label class="chk"><input id="incl-map" type="checkbox"/> Incluir negocios ya con web</label>
+        <label class="chk"><input id="incl-map" type="checkbox"/> Incluir con web</label>
         <label class="chk"><input id="skip-map" type="checkbox"/> Omitir Ollama</label>
-        <label class="chk"><input id="skip-verify-map" type="checkbox"/> Omitir verificación web</label>
+        <label class="chk"><input id="skipv-map" type="checkbox"/> Omitir verificación web</label>
+        <label class="chk"><input id="skips-map" type="checkbox"/> Omitir redes</label>
       </div>
       <div style="padding:0 16px 14px">
-        <button class="btn btn-blue" id="go-map" onclick="doMapSearch()" disabled>
-          🗺️ Explorar esta zona
-        </button>
+        <button class="btn btn-blue" id="go-map" onclick="doMapSearch()" disabled>🗺️ Explorar zona</button>
       </div>
     </div>
 
-    <!-- Log -->
     <div id="log-wrap" style="display:none">
-      <div id="log-head">
-        <span>Log</span><div id="log-status"></div>
-      </div>
+      <div id="log-head"><span>Log</span><div id="log-status"></div></div>
       <div id="log-lines"></div>
     </div>
   </div>
 
-  <!-- ── COL 2: PROMPT LIST ── -->
+  <!-- Col 2: lista -->
   <div class="col">
     <div class="col-head">
-      <h2>Prompts generados</h2>
-      <div class="stat" id="prompt-count"></div>
+      <h2>Leads</h2>
+      <div style="display:flex;gap:6px">
+        <button class="btn-ghost" onclick="exportCsv()">⬇ CSV</button>
+        <div class="stat" id="prompt-count"></div>
+      </div>
     </div>
-    <div class="col-body">
-      <ul id="prompts-list"></ul>
-    </div>
+    <div class="col-body"><ul id="prompts-list"></ul></div>
   </div>
 
-  <!-- ── COL 3: VIEWER ── -->
-  <div class="col" id="viewer-col">
+  <!-- Col 3: viewer -->
+  <div class="col">
     <div class="viewer-toolbar" id="viewer-toolbar" style="display:none">
       <div class="viewer-title" id="viewer-title"></div>
       <button class="btn-ghost" id="btn-edit"   onclick="startEdit()">✏️ Editar</button>
-      <button class="btn-ghost save" id="btn-save" onclick="saveEdit()" style="display:none">💾 Guardar</button>
-      <button class="btn-ghost" id="btn-cancel"  onclick="cancelEdit()" style="display:none">✕ Cancelar</button>
-      <button class="btn-ghost" id="btn-copy"    onclick="copyPrompt()">Copiar</button>
+      <button class="btn-ghost ok" id="btn-save" onclick="saveEdit()" style="display:none">💾 Guardar</button>
+      <button class="btn-ghost" id="btn-cancel" onclick="cancelEdit()" style="display:none">✕ Cancelar</button>
+      <button class="btn-ghost" id="btn-copy"   onclick="copyPrompt()">Copiar</button>
     </div>
     <div id="viewer-body">
       <div class="viewer-empty"><div class="icon">📄</div>Selecciona un prompt</div>
     </div>
   </div>
+</div><!-- /page-search -->
+
+
+<!-- ══════════ PAGE: PIPELINE ══════════ -->
+<div id="page-pipeline" class="page">
+  <div class="col">
+    <div class="col-head">
+      <h2>Pipeline de leads</h2>
+      <div style="display:flex;gap:6px">
+        <button class="btn-ghost" onclick="loadPipeline()">↻ Refrescar</button>
+        <button class="btn-ghost" onclick="exportCsv()">⬇ CSV</button>
+      </div>
+    </div>
+    <div class="col-body" id="kanban-wrap"></div>
+  </div>
 </div>
 
-<!-- ═══ CONFIRM DIALOG ═══ -->
+
+<!-- ══════════ PAGE: DASHBOARD ══════════ -->
+<div id="page-dashboard" class="page">
+  <div class="col">
+    <div class="col-head">
+      <h2>Dashboard</h2>
+      <button class="btn-ghost" onclick="loadDashboard()">↻ Refrescar</button>
+    </div>
+    <div class="col-body"><div class="dash" id="dashboard-wrap"></div></div>
+  </div>
+</div>
+
+
+<!-- ═══ Confirm dialog ═══ -->
 <div id="confirm-overlay">
   <div id="confirm-box">
-    <h3>¿Eliminar prompt?</h3>
+    <h3 id="confirm-title">¿Eliminar prompt?</h3>
     <p id="confirm-msg"></p>
     <div class="btns">
-      <button class="btn-ghost danger" id="confirm-yes" onclick="confirmDelete()">Eliminar</button>
+      <button class="btn-ghost danger" id="confirm-yes">Eliminar</button>
       <button class="btn-ghost" onclick="closeConfirm()">Cancelar</button>
     </div>
   </div>
 </div>
 
+<div id="toast"></div>
+
 <script>
-/* ════ ESTADO ════ */
+/* ═══ ESTADO ═══ */
 let activeName    = null;
 let activeContent = null;
-let pendingDelete = null;
+let activeEntry   = null;     // datos del registro para el prompt activo
+let pendingAction = null;
 let isEditing     = false;
 let pollInterval  = null;
-let mapPin        = null;   // {lat, lng}
+let mapPin        = null;
 let radiusM       = 1500;
 let mapCircle     = null;
 let mapMarker     = null;
 let leafletMap    = null;
 let mapReady      = false;
+let currentPage   = "search";
 
-/* ════ HEALTH ════ */
-async function loadHealth() {
-  try {
-    const h = await api("/api/health");
-    setDot("dot-goog",   h.google_api_key);
-    setDot("dot-ollama", h.ollama);
-    setDot("dot-ddgs",   h.web_verifier);
-    text("stat-prompts", `<b>${h.prompts_count}</b> prompts`);
-    text("stat-reg",     `<b>${h.registry_count}</b> procesados`);
-  } catch(_) {}
+const STATUS_LABELS = {
+  found:      "🆕 Encontrado",
+  contacted:  "📨 Contactado",
+  interested: "💬 Interesado",
+  quoted:     "💰 Presupuesto",
+  closed:     "✅ Cerrado",
+  rejected:   "❌ Descartado",
+};
+const STATUS_ORDER = ["found","contacted","interested","quoted","closed","rejected"];
+
+const SECTOR_LABELS = {
+  barberia:"Barbería",peluqueria:"Peluquería",restaurante:"Restaurante",
+  cafeteria:"Cafetería",clinica:"Clínica",taller:"Taller",
+  tienda_ropa:"Moda",gimnasio:"Gimnasio",floristeria:"Floristería",
+  estetica:"Estética",default:"—",
+};
+
+/* ═══ NAVEGACIÓN ═══ */
+function switchPage(p) {
+  currentPage = p;
+  document.querySelectorAll(".mainTab").forEach((el,i) => {
+    el.classList.toggle("active", ["search","pipeline","dashboard"][i]===p);
+  });
+  ["search","pipeline","dashboard"].forEach(k => {
+    document.getElementById("page-"+k).classList.toggle("active", k===p);
+  });
+  if (p==="pipeline")  loadPipeline();
+  if (p==="dashboard") loadDashboard();
 }
 
-function setDot(id, ok) {
-  document.getElementById(id).className = "dot " + (ok ? "ok" : "err");
-}
-
-/* ════ TABS ════ */
 function switchTab(mode) {
   ["text","map"].forEach(m => {
     document.getElementById("tab-"+m).classList.toggle("active", m===mode);
@@ -316,22 +459,33 @@ function switchTab(mode) {
   if (mode==="map" && !mapReady) initMap();
 }
 
-/* ════ LEAFLET MAP ════ */
+/* ═══ HEALTH ═══ */
+async function loadHealth() {
+  try {
+    const h = await api("/api/health");
+    setDot("dot-goog",   h.google_api_key);
+    setDot("dot-ollama", h.ollama);
+    setDot("dot-ddgs",   h.web_verifier);
+    document.getElementById("stat-prompts").innerHTML =
+      `<b>${h.prompts_count}</b> prompts · <b>${h.registry_count}</b> leads`;
+  } catch(_) {}
+}
+function setDot(id, ok) { document.getElementById(id).className = "dot " + (ok?"ok":"err") }
+
+/* ═══ MAP ═══ */
 function initMap() {
   mapReady = true;
   leafletMap = L.map("map",{zoomControl:true}).setView([28.2916,-16.6291],10);
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{
     attribution:"© OpenStreetMap", maxZoom:18
   }).addTo(leafletMap);
-  // Bounding box Tenerife
   L.rectangle([[27.97,-16.95],[28.60,-16.08]],{
     color:"#d4a44c",weight:1,dashArray:"4 4",fillOpacity:0,interactive:false
   }).addTo(leafletMap);
   leafletMap.on("click", e => {
     const {lat,lng} = e.latlng;
     if (lat<27.97||lat>28.60||lng<-16.95||lng>-16.08) {
-      document.getElementById("map-info").textContent="⚠ Punto fuera de Tenerife";
-      return;
+      document.getElementById("map-info").textContent="⚠ Fuera de Tenerife"; return;
     }
     setPin(lat,lng);
   });
@@ -352,19 +506,19 @@ function updateRadius(val) {
   if (mapCircle && mapPin) mapCircle.setRadius(radiusM);
 }
 
-/* ════ BÚSQUEDAS ════ */
+/* ═══ BÚSQUEDAS ═══ */
 async function doTextSearch() {
   const q = document.getElementById("q").value.trim();
   if (!q) { alert("Escribe una búsqueda"); return; }
   const btn = document.getElementById("go-txt");
   btn.disabled = true;
   await startJob("/api/generate", {
-    query:               q,
-    region:              document.getElementById("region").value.trim()||null,
-    max:                 +document.getElementById("max-txt").value||5,
+    query:q, region:document.getElementById("region").value.trim()||null,
+    max:+document.getElementById("max-txt").value||5,
     include_with_website:document.getElementById("incl-txt").checked,
-    skip_ollama:         document.getElementById("skip-txt").checked,
-    skip_verify:         document.getElementById("skip-verify-txt").checked,
+    skip_ollama:document.getElementById("skip-txt").checked,
+    skip_verify:document.getElementById("skipv-txt").checked,
+    skip_social:document.getElementById("skips-txt").checked,
   }, btn);
 }
 async function doMapSearch() {
@@ -372,20 +526,17 @@ async function doMapSearch() {
   const btn = document.getElementById("go-map");
   btn.disabled = true;
   await startJob("/api/discover", {
-    lat:                 mapPin.lat,
-    lng:                 mapPin.lng,
-    radius_m:            radiusM,
-    max:                 +document.getElementById("max-map").value||20,
+    lat:mapPin.lat, lng:mapPin.lng, radius_m:radiusM,
+    max:+document.getElementById("max-map").value||20,
     include_with_website:document.getElementById("incl-map").checked,
-    skip_ollama:         document.getElementById("skip-map").checked,
-    skip_verify:         document.getElementById("skip-verify-map").checked,
+    skip_ollama:document.getElementById("skip-map").checked,
+    skip_verify:document.getElementById("skipv-map").checked,
+    skip_social:document.getElementById("skips-map").checked,
   }, btn);
 }
 
 async function startJob(endpoint, payload, btn) {
-  showLog(true);
-  clearLog();
-  setLogStatus("running");
+  showLog(true); clearLog(); setLogStatus("running");
   try {
     const {job_id, error} = await api(endpoint,"POST",payload);
     if (error) { appendLog(error,"err"); setLogStatus("error"); btn.disabled=false; return; }
@@ -402,28 +553,23 @@ async function startJob(endpoint, payload, btn) {
       }
     }, 800);
   } catch(e) {
-    appendLog("Error de red: "+e.message,"err");
-    setLogStatus("error");
-    btn.disabled = false;
+    appendLog("Error: "+e.message,"err"); setLogStatus("error"); btn.disabled=false;
   }
 }
 
-/* ════ LOG ════ */
+/* ═══ LOG ═══ */
 function showLog(v) { document.getElementById("log-wrap").style.display = v?"":"none" }
 function clearLog() { document.getElementById("log-lines").innerHTML = "" }
 function appendLog(msg,cls="") {
   const el=document.getElementById("log-lines");
-  const d=document.createElement("div");
-  if(cls)d.className=cls;
-  d.textContent=msg;
-  el.appendChild(d);
-  el.scrollTop=el.scrollHeight;
+  const d=document.createElement("div"); if(cls)d.className=cls; d.textContent=msg;
+  el.appendChild(d); el.scrollTop=el.scrollHeight;
 }
 function renderLog(lines) {
   const el=document.getElementById("log-lines");
   el.innerHTML=lines.map(l=>{
     const c=l.includes("✓")?"ok":l.includes("✗")||l.includes("ERROR")?"err":
-            l.startsWith("▶")||l.startsWith("🌐")||l.startsWith("🔎")?"info":
+            l.startsWith("▶")||l.startsWith("🌐")||l.startsWith("🔎")||l.startsWith("🔍")?"info":
             l.startsWith("⏭")?"skip":"";
     return `<div class="${c}">${esc(l)}</div>`;
   }).join("");
@@ -431,158 +577,313 @@ function renderLog(lines) {
 }
 function setLogStatus(s) { document.getElementById("log-status").className=s }
 
-/* ════ PROMPT LIST ════ */
-const SECTOR_MAP = {
-  barberia:"Barbería|s-barberia",peluqueria:"Peluquería|s-peluqueria",
-  restaurante:"Restaurante|s-restaurante",cafeteria:"Cafetería|s-cafeteria",
-  clinica:"Clínica|s-clinica",taller:"Taller|s-taller",tienda_ropa:"Moda|s-tienda",
-  gimnasio:"Gimnasio|s-gimnasio",floristeria:"Floristería|s-floristeria",estetica:"Estética|s-estetica"
-};
-function guessSector(name) {
-  const n=name.toLowerCase();
-  if(/barber|barbería/.test(n))          return "barberia";
-  if(/peluq|salon|hair/.test(n))         return "peluqueria";
-  if(/restaur|asador|bistro|grill|pizz/.test(n)) return "restaurante";
-  if(/café|cafe|coffee|pastel|pan|heladería/.test(n)) return "cafeteria";
-  if(/clínica|clinica|dental|fisio|doctor|vet/.test(n)) return "clinica";
-  if(/taller|mecánic/.test(n))           return "taller";
-  if(/boutique|moda|fashion/.test(n))    return "tienda_ropa";
-  if(/gym|fitness|crossfit/.test(n))     return "gimnasio";
-  if(/florist/.test(n))                  return "floristeria";
-  if(/estét|estetica|spa/.test(n))       return "estetica";
-  return "default";
-}
-
+/* ═══ LISTA PROMPTS ═══ */
 async function loadPrompts() {
   const items = await api("/api/prompts");
-  const ul  = document.getElementById("prompts-list");
-  text("prompt-count", `<b>${items.length}</b> archivos`);
+  const ul = document.getElementById("prompts-list");
+  document.getElementById("prompt-count").innerHTML = `<b>${items.length}</b>`;
   if (!items.length) {
-    ul.innerHTML='<li><div class="empty-state">Sin prompts todavía.<br>Lanza una búsqueda para empezar.</div></li>';
+    ul.innerHTML='<li><div class="empty-state">Sin leads todavía.<br>Lanza una búsqueda.</div></li>';
     return;
   }
   ul.innerHTML = items.map(it => {
-    const sector = guessSector(it.business_name||it.name);
-    const parts  = (SECTOR_MAP[sector]||"—|s-default").split("|");
-    const [lbl,cls] = parts;
-    const kb   = (it.size/1024).toFixed(1);
+    const sector = it.sector || "default";
+    const secLbl = SECTOR_LABELS[sector] || "—";
+    const statusLbl = STATUS_LABELS[it.status] || it.status;
     const date = it.processed_at ? it.processed_at.slice(0,10) : "—";
     const active = it.name===activeName ? "active" : "";
-    return `<li class="${active}" data-name="${esc(it.name)}" onclick="openPrompt('${esc(it.name)}')">
-      <div class="pl-name">${esc(it.business_name||it.name)}</div>
+    return `<li class="${active}" onclick="openPrompt('${esc(it.name)}')">
+      <div class="pl-top">
+        <div class="pl-name">${esc(it.business_name)}</div>
+        <span class="score-badge score-${it.score}">⭐${it.score}</span>
+      </div>
       <div class="pl-meta">
-        <span class="badge ${cls}">${lbl}</span>
+        <span class="badge s-${sector}">${secLbl}</span>
+        <span class="status-pill st-${it.status}">${statusLbl}</span>
         <span class="pl-date">${date}</span>
-        <span class="badge badge-kb">${kb} KB</span>
       </div>
       <div class="item-actions" onclick="event.stopPropagation()">
         <button class="ia-btn edit"   title="Editar"   onclick="startEditFile('${esc(it.name)}')">✏️</button>
-        <button class="ia-btn delete" title="Eliminar" onclick="askDelete('${esc(it.name)}','${esc(it.business_name||it.name)}')">🗑️</button>
+        <button class="ia-btn delete" title="Eliminar" onclick="askDelete('${esc(it.name)}','${esc(it.business_name)}')">🗑️</button>
       </div>
     </li>`;
   }).join("");
 }
 
-/* ════ VIEWER ════ */
+/* ═══ VIEWER ═══ */
 async function openPrompt(name) {
   if (isEditing && activeName !== name) cancelEdit();
   activeName = name;
   const data = await api("/api/prompts/"+encodeURIComponent(name));
   activeContent = data.content;
-  showViewer(name, data.content, false);
+
+  // Buscar entrada CRM
+  const all = await api("/api/businesses");
+  activeEntry = Object.values(all).find(e => e.output_file === name) || null;
+
+  showViewer(false);
   loadPrompts();
 }
 
-function showViewer(name, content, editing) {
+function showViewer(editing) {
+  if (!activeName) return;
   document.getElementById("viewer-toolbar").style.display = "";
-  document.getElementById("viewer-title").textContent = name.replace(".txt","");
-  const body = document.getElementById("viewer-body");
-  if (editing) {
-    body.innerHTML = `<textarea id="viewer-editor" spellcheck="false">${esc(content)}</textarea>`;
-    // Unesc textarea value
-    document.getElementById("viewer-editor").value = content;
-  } else {
-    body.innerHTML = `<div id="viewer-pre">${esc(content)}</div>`;
-  }
+  document.getElementById("viewer-title").textContent = activeName.replace(".txt","");
   document.getElementById("btn-edit").style.display   = editing ? "none" : "";
   document.getElementById("btn-save").style.display   = editing ? "" : "none";
   document.getElementById("btn-cancel").style.display = editing ? "" : "none";
-  document.getElementById("btn-copy").style.display   = "";
   isEditing = editing;
+
+  const body = document.getElementById("viewer-body");
+  const crmHtml = activeEntry ? renderCrmPanel(activeEntry) : "";
+  const promptHtml = editing
+    ? `<textarea id="viewer-editor" spellcheck="false"></textarea>`
+    : `<div id="viewer-pre">${esc(activeContent)}</div>`;
+
+  body.innerHTML = crmHtml + promptHtml;
+  if (editing) document.getElementById("viewer-editor").value = activeContent;
 }
 
-function startEdit() {
-  if (!activeName) return;
-  showViewer(activeName, activeContent, true);
+function renderCrmPanel(e) {
+  const soc = e.social || {};
+  const out = e.outreach || {};
+  const promptEnc = encodeURIComponent(activeContent || "");
+  const waPhone = (e.phone||"").replace(/\D/g,"");
+  const waMsg = encodeURIComponent(out.whatsapp || "");
+  const statusOpts = STATUS_ORDER.map(s =>
+    `<option value="${s}" ${s===e.status?'selected':''}>${STATUS_LABELS[s]}</option>`
+  ).join("");
+
+  return `
+  <div class="crm-panel">
+    <div class="crm-row">
+      <label>Estado:</label>
+      <select onchange="updateStatus('${e.place_id}', this.value)">${statusOpts}</select>
+      <span class="score-badge score-${e.score}">⭐ Score ${e.score}/10</span>
+    </div>
+    <div class="crm-row">
+      <label>Notas:</label>
+      <textarea class="crm-notes" placeholder="Añade notas (seguimiento, respuesta del cliente, etc.)"
+                onblur="updateNotes('${e.place_id}', this.value)">${esc(e.notes||"")}</textarea>
+    </div>
+    <div class="ext-links">
+      <a class="bolt" target="_blank" href="https://bolt.new/?prompt=${promptEnc}">⚡ Abrir en Bolt</a>
+      <a class="v0"   target="_blank" href="https://v0.dev/chat?q=${promptEnc}">✨ Abrir en v0</a>
+      ${e.maps_url ? `<a target="_blank" href="${esc(e.maps_url)}">📍 Maps</a>` : ""}
+      ${soc.instagram ? `<a class="ig" target="_blank" href="${esc(soc.instagram)}">📸 Instagram</a>` : ""}
+      ${soc.facebook  ? `<a class="fb" target="_blank" href="${esc(soc.facebook)}">📘 Facebook</a>` : ""}
+      ${waPhone && out.whatsapp ? `<a class="wa" target="_blank" href="https://wa.me/${waPhone}?text=${waMsg}">💬 WhatsApp</a>` : ""}
+      <a onclick="detectSocial('${e.place_id}')" style="cursor:pointer">🔄 Buscar redes</a>
+      <a onclick="regenerateOutreach('${e.place_id}')" style="cursor:pointer">🔄 Regenerar mensajes</a>
+    </div>
+    ${out.whatsapp ? `<div class="outreach-box" style="margin:10px 0 0 0">
+      <h4>💬 Mensaje WhatsApp <button class="btn-ghost" onclick="copyText(\`${esc(out.whatsapp).replace(/`/g,'\\`')}\`)">Copiar</button></h4>
+      <pre>${esc(out.whatsapp)}</pre>
+    </div>` : ""}
+    ${out.email ? `<div class="outreach-box" style="margin:10px 0 0 0">
+      <h4>✉️ Email <button class="btn-ghost" onclick="copyText(\`${esc(out.email).replace(/`/g,'\\`')}\`)">Copiar</button></h4>
+      <pre>${esc(out.email)}</pre>
+    </div>` : ""}
+  </div>`;
 }
+
+function startEdit()   { showViewer(true); }
+function cancelEdit()  { isEditing=false; showViewer(false); }
 async function startEditFile(name) {
   if (isEditing && activeName !== name) cancelEdit();
   if (activeName !== name) await openPrompt(name);
   startEdit();
 }
-function cancelEdit() {
-  isEditing = false;
-  showViewer(activeName, activeContent, false);
-}
 async function saveEdit() {
   const ta = document.getElementById("viewer-editor");
   if (!ta || !activeName) return;
-  const newContent = ta.value;
-  await api("/api/prompts/"+encodeURIComponent(activeName), "PUT", {content: newContent});
-  activeContent = newContent;
+  activeContent = ta.value;
+  await api("/api/prompts/"+encodeURIComponent(activeName), "PUT", {content: activeContent});
   isEditing = false;
-  showViewer(activeName, newContent, false);
-  loadPrompts();
+  showViewer(false);
+  toast("✓ Guardado");
 }
 function copyPrompt() {
-  const content = isEditing
-    ? (document.getElementById("viewer-editor")?.value || activeContent)
-    : activeContent;
-  if (!content) return;
-  navigator.clipboard.writeText(content).then(() => {
-    const btn = document.getElementById("btn-copy");
-    btn.textContent = "✓ Copiado";
-    setTimeout(()=>btn.textContent="Copiar",1500);
-  });
+  const c = isEditing ? (document.getElementById("viewer-editor")?.value||activeContent) : activeContent;
+  copyText(c);
+}
+function copyText(txt) {
+  if (!txt) return;
+  navigator.clipboard.writeText(txt).then(() => toast("✓ Copiado al portapapeles"));
 }
 
-/* ════ DELETE ════ */
+/* ═══ CRM actions ═══ */
+async function updateStatus(pid, status) {
+  const updated = await api(`/api/businesses/${pid}`, "PATCH", {status});
+  if (activeEntry && activeEntry.place_id===pid) activeEntry = updated;
+  toast(`✓ Estado: ${STATUS_LABELS[status]}`);
+  loadPrompts();
+}
+async function updateNotes(pid, notes) {
+  await api(`/api/businesses/${pid}`, "PATCH", {notes});
+  if (activeEntry && activeEntry.place_id===pid) activeEntry.notes = notes;
+}
+async function detectSocial(pid) {
+  toast("🔍 Buscando redes…");
+  const updated = await api(`/api/businesses/${pid}/detect_social`, "POST");
+  if (updated.error) { toast("⚠ " + updated.error); return; }
+  if (activeEntry && activeEntry.place_id===pid) activeEntry = updated;
+  showViewer(false);
+  toast("✓ Redes actualizadas");
+}
+async function regenerateOutreach(pid) {
+  const updated = await api(`/api/businesses/${pid}/regenerate_outreach`, "POST");
+  if (activeEntry && activeEntry.place_id===pid) activeEntry = updated;
+  showViewer(false);
+  toast("✓ Mensajes regenerados");
+}
+
+/* ═══ DELETE ═══ */
 function askDelete(name, bizName) {
-  pendingDelete = name;
-  document.getElementById("confirm-msg").textContent = `"${bizName}" se eliminará permanentemente.`;
+  pendingAction = () => doDelete(name);
+  document.getElementById("confirm-title").textContent = "¿Eliminar prompt?";
+  document.getElementById("confirm-msg").textContent = `"${bizName}" se eliminará.`;
+  document.getElementById("confirm-yes").onclick = () => { pendingAction && pendingAction(); closeConfirm(); };
   document.getElementById("confirm-overlay").classList.add("show");
 }
 function closeConfirm() {
-  pendingDelete = null;
+  pendingAction = null;
   document.getElementById("confirm-overlay").classList.remove("show");
 }
-async function confirmDelete() {
-  if (!pendingDelete) return;
-  const name = pendingDelete;
-  closeConfirm();
+async function doDelete(name) {
   await api("/api/prompts/"+encodeURIComponent(name), "DELETE");
   if (activeName === name) {
-    activeName = null; activeContent = null; isEditing = false;
+    activeName=null; activeContent=null; activeEntry=null; isEditing=false;
     document.getElementById("viewer-toolbar").style.display = "none";
     document.getElementById("viewer-body").innerHTML =
       '<div class="viewer-empty"><div class="icon">📄</div>Selecciona un prompt</div>';
   }
-  loadPrompts();
-  loadHealth();
+  loadPrompts(); loadHealth();
 }
 
-/* ════ UTILS ════ */
+/* ═══ EXPORT CSV ═══ */
+function exportCsv() { window.open("/api/export/csv", "_blank"); }
+
+/* ═══ PIPELINE KANBAN ═══ */
+async function loadPipeline() {
+  const businesses = await api("/api/businesses");
+  const wrap = document.getElementById("kanban-wrap");
+  const byStatus = {};
+  STATUS_ORDER.forEach(s => byStatus[s] = []);
+  Object.values(businesses).forEach(b => {
+    (byStatus[b.status] || byStatus.found).push(b);
+  });
+
+  wrap.innerHTML = `<div class="kanban">` + STATUS_ORDER.map(s => {
+    const list = byStatus[s] || [];
+    list.sort((a,b) => (b.score||0) - (a.score||0));
+    return `<div class="kcol">
+      <h3>${STATUS_LABELS[s]} <span class="count">${list.length}</span></h3>
+      <div class="kbody">
+        ${list.length===0 ? '<div style="padding:14px;color:var(--muted);font-size:11px;text-align:center;font-style:italic">vacío</div>' :
+          list.map(b => `<div class="kcard" onclick="openFromPipeline('${esc(b.output_file||"")}')">
+            <div class="kn">${esc(b.name)}</div>
+            <div class="km">
+              <span class="badge s-${b.sector||"default"}">${SECTOR_LABELS[b.sector]||"—"}</span>
+              <span class="score-badge score-${b.score||0}">⭐${b.score||0}</span>
+            </div>
+            ${b.notes ? `<div class="knote">${esc(b.notes)}</div>` : ""}
+          </div>`).join("")
+        }
+      </div>
+    </div>`;
+  }).join("") + `</div>`;
+}
+
+function openFromPipeline(outputFile) {
+  if (!outputFile) { toast("Este lead no tiene prompt"); return; }
+  switchPage("search");
+  setTimeout(() => openPrompt(outputFile), 50);
+}
+
+/* ═══ DASHBOARD ═══ */
+async function loadDashboard() {
+  const s = await api("/api/stats");
+  const wrap = document.getElementById("dashboard-wrap");
+  const total = s.total || 0;
+
+  const statusRows = STATUS_ORDER.map(k => {
+    const n = s.by_status[k] || 0;
+    const pct = total ? Math.round(n/total*100) : 0;
+    const col = {found:"#6b7590",contacted:"#5b8def",interested:"#f5c842",
+                 quoted:"#d4a44c",closed:"#3ecf8e",rejected:"#f06060"}[k];
+    return `<div class="bar-row">
+      <div class="bar-label">${STATUS_LABELS[k]}</div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width:${pct}%;background:${col}"></div>
+        <div class="bar-val">${n}</div>
+      </div>
+    </div>`;
+  }).join("");
+
+  const secEntries = Object.entries(s.by_sector||{}).sort((a,b)=>b[1]-a[1]);
+  const maxSec = secEntries[0]?.[1] || 1;
+  const sectorRows = secEntries.map(([k,v]) => {
+    const pct = Math.round(v/maxSec*100);
+    return `<div class="bar-row">
+      <div class="bar-label">${SECTOR_LABELS[k]||k}</div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width:${pct}%;background:var(--gold)"></div>
+        <div class="bar-val">${v}</div>
+      </div>
+    </div>`;
+  }).join("") || '<div style="color:var(--muted);font-size:12px">Aún no hay datos</div>';
+
+  wrap.innerHTML = `
+    <div class="stat-card">
+      <div class="label">Total leads</div>
+      <div class="value gold">${total}</div>
+      <div class="sub">negocios en el sistema</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">Cerrados</div>
+      <div class="value green">${s.by_status.closed||0}</div>
+      <div class="sub">tasa ${total?Math.round((s.by_status.closed||0)/total*100):0}%</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">En conversación</div>
+      <div class="value blue">${(s.by_status.contacted||0)+(s.by_status.interested||0)+(s.by_status.quoted||0)}</div>
+      <div class="sub">contactado · interesado · presupuesto</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">Score promedio</div>
+      <div class="value gold">${s.avg_score}</div>
+      <div class="sub">${s.with_instagram} con IG · ${s.with_facebook} con FB</div>
+    </div>
+    <div class="chart-card">
+      <h3>Embudo por estado</h3>
+      ${statusRows}
+    </div>
+    <div class="chart-card">
+      <h3>Distribución por sector</h3>
+      ${sectorRows}
+    </div>
+  `;
+}
+
+/* ═══ UTILS ═══ */
 async function api(url, method="GET", body=null) {
   const opts = {method, headers:{"Content-Type":"application/json"}};
   if (body) opts.body = JSON.stringify(body);
   return (await fetch(url, opts)).json();
 }
 function esc(s) {
-  return String(s).replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  return String(s??"").replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 }
-function text(id, html) { document.getElementById(id).innerHTML = html }
+function toast(msg) {
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(t._timeout);
+  t._timeout = setTimeout(()=>t.classList.remove("show"), 2000);
+}
 
-/* ════ INIT ════ */
+/* ═══ INIT ═══ */
 loadHealth();
 loadPrompts();
 setInterval(loadHealth, 20000);
