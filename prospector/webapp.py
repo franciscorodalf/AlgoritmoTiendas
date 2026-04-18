@@ -132,7 +132,7 @@ def read_prompt(name: str):
 @app.route("/api/prompts/<path:name>", methods=["PUT"])
 def update_prompt(name: str):
     target = OUTPUT_DIR / name
-    if not target.exists():
+    if not target.is_file():
         return jsonify({"error": "not found"}), 404
     payload = request.get_json(force=True) or {}
     target.write_text(payload.get("content", ""), encoding="utf-8")
@@ -169,6 +169,8 @@ def get_business(pid: str):
 
 @app.route("/api/businesses/<pid>", methods=["PATCH"])
 def patch_business(pid: str):
+    if not registry.get(pid):
+        return jsonify({"error": "not found"}), 404
     payload = request.get_json(force=True) or {}
     allowed = {"status", "notes", "score"}
     fields = {k: v for k, v in payload.items() if k in allowed}
@@ -301,9 +303,12 @@ def _run_pipeline(job_id: str, businesses: list, payload: dict) -> None:
 
         # 2. Verificación de web (secundaria)
         if not skip_verify:
-            emit("🌐 Verificando webs ocultas (anti-falsos-positivos)…")
-            fresh = web_verifier.filter_no_website(fresh, log_fn=emit)
-            emit(f"✓ {len(fresh)} confirmados sin web")
+            if web_verifier.available():
+                emit("🌐 Verificando webs ocultas (anti-falsos-positivos)…")
+                fresh = web_verifier.filter_no_website(fresh, log_fn=emit)
+                emit(f"✓ {len(fresh)} confirmados sin web")
+            else:
+                emit("⚠ ddgs no disponible — verificación web omitida (pip install ddgs)")
         else:
             emit("⚡ Verificación web omitida")
 
@@ -345,7 +350,7 @@ def _run_pipeline(job_id: str, businesses: list, payload: dict) -> None:
                     sector=sector,
                     has_phone=bool(biz.phone),
                     has_photos=bool(biz.photo_references),
-                    confirmed_no_web=not skip_verify,
+                    confirmed_no_web=(not skip_verify) and web_verifier.available(),
                 )
 
                 # Outreach
