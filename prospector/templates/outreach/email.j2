@@ -1,0 +1,27 @@
+{%- set subj_by_sector = {
+  "barberia":    "Propuesta de web para " ~ name,
+  "restaurante": "Una web que centralice reservas y carta de " ~ name,
+  "clinica":     "Presencia digital profesional para " ~ name,
+  "default":     "Propuesta de web para " ~ name,
+} -%}
+Asunto: {{ subj_by_sector.get(sector, subj_by_sector["default"]) }}
+
+Buenos días,
+
+Me presento: soy Fran, desarrollador web especializado en negocios locales de Tenerife.
+
+Encontré **{{ name }}**{% if city %} en {{ city }}{% endif %} mientras buscaba negocios con buena reputación en Google{% if review_count and review_count >= 20 %} ({{ review_count }} reseñas, {{ rating }} de valoración media — muy buen trabajo){% endif %}, y me llamó la atención que todavía no tenéis una página web propia.
+
+En 2026 eso supone un problema silencioso: clientes potenciales que os buscan terminan en Google Maps, TripAdvisor o redes sociales, sin poder ver vuestro servicio con detalle, reservar directamente o simplemente entender qué os diferencia.
+
+He preparado una **propuesta de diseño inicial** para {{ name }}, basada en vuestras propias fotos y reseñas reales de clientes. La puedo tener montada y funcionando en **24-48 horas**, sin que tengáis que hacer nada.
+
+Si os parece interesante, os envío la vista previa por WhatsApp o email sin compromiso. Desde ahí hablamos con calma.
+
+{% if has_phone %}Os puedo llamar al teléfono que aparece en Google, o escribirme vosotros cuando os venga bien.{% endif %}
+
+Muchas gracias por vuestro tiempo.
+
+Un saludo,
+**Fran**
+Desarrollador web — Tenerife
