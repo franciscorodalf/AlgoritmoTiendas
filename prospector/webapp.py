@@ -15,10 +15,13 @@ Negocios (CRM)
   GET    /api/businesses              lista completa con status/score/social
   GET    /api/businesses/<pid>        ficha individual
   PATCH  /api/businesses/<pid>        actualizar status/notes/score
+  POST   /api/businesses/<pid>/refresh
+                                      re-pedir datos a Google Places (útil
+                                      para entradas migradas de v1)
   POST   /api/businesses/<pid>/regenerate_outreach
                                       regenerar mensajes WhatsApp/email
   POST   /api/businesses/<pid>/detect_social
-                                      buscar redes sociales
+                                      buscar redes sociales (IG/FB/TikTok)
 
 Stats & export
   GET    /api/stats                   dashboard stats
@@ -211,6 +214,39 @@ def regenerate_outreach(pid: str):
     return jsonify(updated)
 
 
+@app.route("/api/businesses/<pid>/refresh", methods=["POST"])
+def api_refresh_business(pid: str):
+    """Re-pide datos del negocio a Google Places y los persiste.
+    Útil para enriquecer entradas migradas de v1 (sin address/phone/rating)
+    sin tener que rehacer la búsqueda completa."""
+    entry = registry.get(pid)
+    if not entry:
+        return jsonify({"error": "not found"}), 404
+    try:
+        extractor = GoogleExtractor()
+        biz = extractor._fetch_details(pid)  # type: ignore[attr-defined]
+    except Exception as exc:
+        return jsonify({"error": f"google places: {exc}"}), 502
+
+    # Enriquece sin pisar campos de CRM (status, notes, score, social, outreach)
+    fields = {
+        "name":         biz.name or entry.get("name",""),
+        "address":      biz.address or entry.get("address",""),
+        "phone":        biz.phone if biz.phone is not None else entry.get("phone"),
+        "rating":       biz.rating if biz.rating is not None else entry.get("rating"),
+        "review_count": biz.review_count or entry.get("review_count", 0),
+        "maps_url":     biz.maps_url or entry.get("maps_url",""),
+    }
+    if not entry.get("sector"):
+        from modules.typography_rules import get_profile
+        fields["sector"] = get_profile(
+            biz.categories_all or biz.category, name=biz.name
+        ).sector
+    fields["needs_refresh"] = False
+    updated = registry.upsert(pid, **fields)
+    return jsonify(updated)
+
+
 @app.route("/api/businesses/<pid>/detect_social", methods=["POST"])
 def api_detect_social(pid: str):
     entry = registry.get(pid)
@@ -225,6 +261,7 @@ def api_detect_social(pid: str):
     merged = {
         "instagram": found.get("instagram") or prev.get("instagram"),
         "facebook":  found.get("facebook")  or prev.get("facebook"),
+        "tiktok":    found.get("tiktok")    or prev.get("tiktok"),
     }
     updated = registry.upsert(pid, social=merged)
     return jsonify(updated)
@@ -246,7 +283,7 @@ def export_csv():
     writer.writerow([
         "place_id", "name", "sector", "status", "score",
         "address", "phone", "rating", "review_count",
-        "instagram", "facebook", "maps_url",
+        "instagram", "facebook", "tiktok", "maps_url",
         "output_file", "processed_at", "notes",
     ])
     for e in registry.all_entries().values():
@@ -257,6 +294,7 @@ def export_csv():
             e.get("address",""), e.get("phone","") or "",
             e.get("rating","") or "", e.get("review_count",0),
             soc.get("instagram","") or "", soc.get("facebook","") or "",
+            soc.get("tiktok","") or "",
             e.get("maps_url",""), e.get("output_file",""),
             e.get("processed_at",""), (e.get("notes","") or "").replace("\n"," | "),
         ])
@@ -394,12 +432,13 @@ def _run_pipeline(
                 )
 
                 # Social media (opcional, lento)
-                social = {"instagram": None, "facebook": None}
+                social = social_detector.empty_result()
                 if not skip_social and social_detector.available():
                     emit(f"   🔍 buscando redes sociales…")
                     social = social_detector.detect(biz.name, biz.address)
-                    if social["instagram"]: emit(f"   📸 Instagram: {social['instagram']}")
-                    if social["facebook"]:  emit(f"   📘 Facebook: {social['facebook']}")
+                    if social.get("instagram"): emit(f"   📸 Instagram: {social['instagram']}")
+                    if social.get("facebook"):  emit(f"   📘 Facebook: {social['facebook']}")
+                    if social.get("tiktok"):    emit(f"   🎵 TikTok: {social['tiktok']}")
 
                 # Guardar todo en el registro
                 registry.upsert(

@@ -1,9 +1,9 @@
 """
 social_detector.py
 ------------------
-Detecta perfiles de Instagram y Facebook de un negocio vía DuckDuckGo.
+Detecta perfiles de Instagram, Facebook y TikTok de un negocio vía DuckDuckGo.
 
-Útil para ajustar el pitch de ventas: un negocio con Instagram activo
+Útil para ajustar el pitch de ventas: un negocio con Instagram/TikTok activo
 pero sin web tiene un argumento de venta distinto a uno sin presencia.
 """
 
@@ -22,6 +22,7 @@ except ImportError:
 
 _RE_INSTA = re.compile(r"https?://(?:www\.)?instagram\.com/([a-zA-Z0-9_.]+)", re.I)
 _RE_FB    = re.compile(r"https?://(?:www\.)?(?:m\.|web\.)?facebook\.com/([^/?#\s]+)", re.I)
+_RE_TT    = re.compile(r"https?://(?:www\.|m\.)?tiktok\.com/@([a-zA-Z0-9_.]+)", re.I)
 
 # Slugs de Facebook que NO son páginas de negocio
 _FB_SKIP = {"pages", "pg", "people", "sharer", "login", "dialog",
@@ -31,6 +32,9 @@ _FB_SKIP = {"pages", "pg", "people", "sharer", "login", "dialog",
 # Handles de Instagram que NO son cuentas reales
 _IG_SKIP = {"p", "explore", "reel", "reels", "tv", "stories",
             "accounts", "direct", "about", "developers"}
+
+# Handles de TikTok que NO son cuentas reales (rutas internas)
+_TT_SKIP = {"discover", "tag", "music", "trending", "live", "explore"}
 
 # Delay por defecto entre llamadas DDG. DDG empieza a bloquear con bursts
 # >5 queries/segundo. 0.6 s da margen.
@@ -66,22 +70,49 @@ def _extract_facebook(results: list[dict]) -> Optional[str]:
     return None
 
 
-def detect(name: str, address: str = "", *, delay: float = _DEFAULT_DELAY) -> dict:
-    """
-    Devuelve {'instagram': url|None, 'facebook': url|None}.
+def _extract_tiktok(results: list[dict]) -> Optional[str]:
+    for r in results:
+        url = r.get("href", "")
+        m = _RE_TT.search(url)
+        if not m:
+            continue
+        handle = m.group(1).rstrip("/").lower()
+        if handle and handle not in _TT_SKIP:
+            return "https://tiktok.com/@" + handle
+    return None
 
-    Usa una única sesión DDGS para las dos búsquedas (más eficiente y menos
+
+def empty_result() -> dict:
+    """Estructura vacía (claves estables para el resto del pipeline)."""
+    return {"instagram": None, "facebook": None, "tiktok": None}
+
+
+def detect(
+    name: str,
+    address: str = "",
+    *,
+    delay: float = _DEFAULT_DELAY,
+    include_tiktok: bool = True,
+) -> dict:
+    """
+    Devuelve {'instagram': url|None, 'facebook': url|None, 'tiktok': url|None}.
+
+    Usa una única sesión DDGS para las búsquedas (más eficiente y menos
     propenso a bloqueo) y aplica `delay` entre ellas. Si DDG falla en una
     búsqueda, el campo correspondiente queda en None pero no propagamos
     el error (a diferencia de web_verifier, aquí los None no son cascada
     crítica — el caller puede decidir conservar valores previos).
+
+    `include_tiktok=False` salta la tercera búsqueda DDG si te importa más
+    la velocidad/cuota que TikTok.
     """
     if not _AVAILABLE:
-        return {"instagram": None, "facebook": None}
+        return empty_result()
     city = address.split(",")[0].strip() if address else ""
 
     insta_url: Optional[str] = None
     fb_url: Optional[str] = None
+    tt_url: Optional[str] = None
     try:
         session = DDGS()
         try:
@@ -97,24 +128,41 @@ def detect(name: str, address: str = "", *, delay: float = _DEFAULT_DELAY) -> di
             )
         except Exception:
             pass
+        if include_tiktok:
+            time.sleep(delay)
+            try:
+                tt_url = _extract_tiktok(
+                    _ddgs_text(session, f'"{name}" {city} tiktok'.strip())
+                )
+            except Exception:
+                pass
     except Exception:
         # No se pudo crear la sesión DDG en absoluto
         pass
-    return {"instagram": insta_url, "facebook": fb_url}
+    return {"instagram": insta_url, "facebook": fb_url, "tiktok": tt_url}
 
 
 def find_instagram(name: str, city: str = "") -> Optional[str]:
     """Atajo: solo Instagram (compatibilidad)."""
-    return detect(name, city).get("instagram")
+    return detect(name, city, include_tiktok=False).get("instagram")
 
 
 def find_facebook(name: str, city: str = "") -> Optional[str]:
     """Atajo: solo Facebook (compatibilidad)."""
-    return detect(name, city).get("facebook")
+    return detect(name, city, include_tiktok=False).get("facebook")
+
+
+def find_tiktok(name: str, city: str = "") -> Optional[str]:
+    """Atajo: solo TikTok."""
+    return detect(name, city).get("tiktok")
 
 
 def available() -> bool:
     return _AVAILABLE
 
 
-__all__ = ["detect", "find_instagram", "find_facebook", "available"]
+__all__ = [
+    "detect", "empty_result",
+    "find_instagram", "find_facebook", "find_tiktok",
+    "available",
+]
