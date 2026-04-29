@@ -15,10 +15,13 @@ Negocios (CRM)
   GET    /api/businesses              lista completa con status/score/social
   GET    /api/businesses/<pid>        ficha individual
   PATCH  /api/businesses/<pid>        actualizar status/notes/score
+  POST   /api/businesses/<pid>/refresh
+                                      re-pedir datos a Google Places (útil
+                                      para entradas migradas de v1)
   POST   /api/businesses/<pid>/regenerate_outreach
                                       regenerar mensajes WhatsApp/email
   POST   /api/businesses/<pid>/detect_social
-                                      buscar redes sociales
+                                      buscar redes sociales (IG/FB/TikTok)
 
 Stats & export
   GET    /api/stats                   dashboard stats
@@ -88,15 +91,27 @@ def index():
 
 @app.route("/api/prompts")
 def list_prompts():
+    """Lista de prompts generados (.txt en disco) enriquecidos con datos
+    del registry. El registry sigue siendo la fuente de verdad para CRM
+    (vía /api/businesses), aquí solo listamos lo que tiene archivo."""
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+
+    # Índice O(1) output_file → entry, en una pasada al registry
+    by_file: dict[str, dict] = {}
+    for entry in registry.all_entries().values():
+        ofile = entry.get("output_file")
+        if ofile:
+            by_file[ofile] = entry
+
     files = sorted(
         [f for f in OUTPUT_DIR.glob("*.txt") if not f.name.startswith("_")],
         key=lambda p: p.stat().st_mtime, reverse=True,
     )
-    result = []
+    result: list[dict] = []
     for f in files:
-        entry = registry.find_by_output_file(f.name)
+        entry = by_file.get(f.name)
         if entry:
+            outreach = entry.get("outreach") or {}
             result.append({
                 "name":          f.name,
                 "size":          f.stat().st_size,
@@ -106,6 +121,7 @@ def list_prompts():
                 "score":         entry.get("score", 0),
                 "processed_at":  entry.get("processed_at"),
                 "place_id":      entry.get("place_id"),
+                "has_outreach":  bool(outreach.get("whatsapp") or outreach.get("email")),
             })
         else:
             result.append({
@@ -117,6 +133,7 @@ def list_prompts():
                 "score":         0,
                 "processed_at":  None,
                 "place_id":      None,
+                "has_outreach":  False,
             })
     return jsonify(result)
 
@@ -197,6 +214,39 @@ def regenerate_outreach(pid: str):
     return jsonify(updated)
 
 
+@app.route("/api/businesses/<pid>/refresh", methods=["POST"])
+def api_refresh_business(pid: str):
+    """Re-pide datos del negocio a Google Places y los persiste.
+    Útil para enriquecer entradas migradas de v1 (sin address/phone/rating)
+    sin tener que rehacer la búsqueda completa."""
+    entry = registry.get(pid)
+    if not entry:
+        return jsonify({"error": "not found"}), 404
+    try:
+        extractor = GoogleExtractor()
+        biz = extractor._fetch_details(pid)  # type: ignore[attr-defined]
+    except Exception as exc:
+        return jsonify({"error": f"google places: {exc}"}), 502
+
+    # Enriquece sin pisar campos de CRM (status, notes, score, social, outreach)
+    fields = {
+        "name":         biz.name or entry.get("name",""),
+        "address":      biz.address or entry.get("address",""),
+        "phone":        biz.phone if biz.phone is not None else entry.get("phone"),
+        "rating":       biz.rating if biz.rating is not None else entry.get("rating"),
+        "review_count": biz.review_count or entry.get("review_count", 0),
+        "maps_url":     biz.maps_url or entry.get("maps_url",""),
+    }
+    if not entry.get("sector"):
+        from modules.typography_rules import get_profile
+        fields["sector"] = get_profile(
+            biz.categories_all or biz.category, name=biz.name
+        ).sector
+    fields["needs_refresh"] = False
+    updated = registry.upsert(pid, **fields)
+    return jsonify(updated)
+
+
 @app.route("/api/businesses/<pid>/detect_social", methods=["POST"])
 def api_detect_social(pid: str):
     entry = registry.get(pid)
@@ -204,8 +254,16 @@ def api_detect_social(pid: str):
         return jsonify({"error": "not found"}), 404
     if not social_detector.available():
         return jsonify({"error": "ddgs no disponible"}), 503
-    social = social_detector.detect(entry.get("name", ""), entry.get("address", ""))
-    updated = registry.upsert(pid, social=social)
+    found = social_detector.detect(entry.get("name", ""), entry.get("address", ""))
+    # Merge no destructivo: si DDG falla y devuelve None para una red
+    # ya detectada antes, conservamos el valor previo.
+    prev = entry.get("social") or {}
+    merged = {
+        "instagram": found.get("instagram") or prev.get("instagram"),
+        "facebook":  found.get("facebook")  or prev.get("facebook"),
+        "tiktok":    found.get("tiktok")    or prev.get("tiktok"),
+    }
+    updated = registry.upsert(pid, social=merged)
     return jsonify(updated)
 
 
@@ -225,7 +283,7 @@ def export_csv():
     writer.writerow([
         "place_id", "name", "sector", "status", "score",
         "address", "phone", "rating", "review_count",
-        "instagram", "facebook", "maps_url",
+        "instagram", "facebook", "tiktok", "maps_url",
         "output_file", "processed_at", "notes",
     ])
     for e in registry.all_entries().values():
@@ -236,6 +294,7 @@ def export_csv():
             e.get("address",""), e.get("phone","") or "",
             e.get("rating","") or "", e.get("review_count",0),
             soc.get("instagram","") or "", soc.get("facebook","") or "",
+            soc.get("tiktok","") or "",
             e.get("maps_url",""), e.get("output_file",""),
             e.get("processed_at",""), (e.get("notes","") or "").replace("\n"," | "),
         ])
@@ -270,13 +329,23 @@ def health():
 # Pipeline (compartido)
 # ---------------------------------------------------------------------------
 
-def _run_pipeline(job_id: str, businesses: list, payload: dict) -> None:
-    log: list[str] = []
-
-    def emit(msg: str) -> None:
-        log.append(msg)
-        with _lock:
-            _jobs[job_id]["log"] = list(log)
+def _run_pipeline(
+    job_id: str,
+    businesses: list,
+    payload: dict,
+    *,
+    extractor: GoogleExtractor | None = None,
+    emit=None,
+) -> None:
+    """Si `extractor` viene del caller, lo reutilizamos (comparte contadores
+    de uso de la API y evita instanciar dos clientes). Si `emit` viene del
+    caller, los logs van al mismo flujo del job."""
+    if emit is None:
+        log: list[str] = []
+        def emit(msg: str) -> None:  # type: ignore[misc]
+            log.append(msg)
+            with _lock:
+                _jobs[job_id]["log"] = list(log)
 
     try:
         with _lock:
@@ -321,7 +390,9 @@ def _run_pipeline(job_id: str, businesses: list, payload: dict) -> None:
         # 3. IA + enriquecimiento + persistencia
         analyzer  = ReviewAnalyzer()
         builder   = PromptBuilder()
-        extractor = GoogleExtractor()
+        if extractor is None:
+            extractor = GoogleExtractor()
+            extractor.reset_counters()
         OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
         if not skip_ollama and not analyzer.ping():
@@ -361,12 +432,13 @@ def _run_pipeline(job_id: str, businesses: list, payload: dict) -> None:
                 )
 
                 # Social media (opcional, lento)
-                social = {"instagram": None, "facebook": None}
+                social = social_detector.empty_result()
                 if not skip_social and social_detector.available():
                     emit(f"   🔍 buscando redes sociales…")
                     social = social_detector.detect(biz.name, biz.address)
-                    if social["instagram"]: emit(f"   📸 Instagram: {social['instagram']}")
-                    if social["facebook"]:  emit(f"   📘 Facebook: {social['facebook']}")
+                    if social.get("instagram"): emit(f"   📸 Instagram: {social['instagram']}")
+                    if social.get("facebook"):  emit(f"   📘 Facebook: {social['facebook']}")
+                    if social.get("tiktok"):    emit(f"   🎵 TikTok: {social['tiktok']}")
 
                 # Guardar todo en el registro
                 registry.upsert(
@@ -383,9 +455,18 @@ def _run_pipeline(job_id: str, businesses: list, payload: dict) -> None:
             except Exception as exc:
                 emit(f"   ✗ {exc}")
 
+        # Resumen de uso de Google Places (auditoría de coste)
+        if extractor is not None:
+            u = extractor.usage()
+            emit(f"📊 Google API: text_search={u['text_search']} "
+                 f"nearby={u['nearby']} place_details={u['place_details']} "
+                 f"photo={u['photo']} (total {u['total']})")
+
         with _lock:
             _jobs[job_id]["status"] = "done"
             _jobs[job_id]["generated"] = generated
+            if extractor is not None:
+                _jobs[job_id]["usage"] = extractor.usage()
 
     except Exception as exc:
         with _lock:
@@ -409,15 +490,35 @@ def _run_generate(job_id: str, payload: dict) -> None:
         max_results       = int(payload.get("max", 5))
         region            = payload.get("region") or None
         include_with_web  = bool(payload.get("include_with_website", False))
+        restrict_tenerife = bool(payload.get("restrict_tenerife", True))
 
         emit(f"▶ Buscando: {query}")
-        extractor  = GoogleExtractor()
+        extractor = GoogleExtractor()
+        extractor.reset_counters()
+        known = registry.known_ids()
         businesses = extractor.search_many(
             [query], region=region, max_results=max_results,
             only_without_website=not include_with_web,
+            skip_ids=known,  # no malgastar place_details en ya conocidos
         )
         emit(f"✓ {len(businesses)} candidatos en Google Places")
-        _run_pipeline(job_id, businesses, payload)
+
+        # Filtrar por bounding box de Tenerife si se pidió
+        if restrict_tenerife and businesses:
+            in_box: list = []
+            out_box = 0
+            for b in businesses:
+                lat = (b.location or {}).get("lat")
+                lng = (b.location or {}).get("lng")
+                if lat is None or lng is None or _in_tenerife(lat, lng):
+                    in_box.append(b)
+                else:
+                    out_box += 1
+            if out_box:
+                emit(f"⏭ {out_box} fuera de Tenerife — descartados")
+            businesses = in_box
+
+        _run_pipeline(job_id, businesses, payload, extractor=extractor, emit=emit)
     except Exception as exc:
         with _lock:
             _jobs[job_id]["status"] = "error"
@@ -451,20 +552,25 @@ def _run_discover(job_id: str, payload: dict) -> None:
         radius_m         = int(payload.get("radius_m", 2000))
         max_results      = int(payload.get("max", 20))
         include_with_web = bool(payload.get("include_with_website", False))
+        commercial_only  = bool(payload.get("commercial_only", True))
 
         if not _in_tenerife(lat, lng):
             raise ValueError(f"Coordenadas ({lat:.4f}, {lng:.4f}) fuera de Tenerife.")
 
         emit(f"▶ Explorando zona ({lat:.5f}, {lng:.5f}), radio {radius_m} m")
-        extractor  = GoogleExtractor()
+        if commercial_only:
+            emit("   (filtro de tipos comerciales activo — se descartan parkings, ATMs, etc.)")
+        extractor = GoogleExtractor()
+        extractor.reset_counters()
         known      = registry.known_ids()
         businesses = extractor.search_nearby(
             lat, lng, radius_m,
             only_without_website=not include_with_web,
             max_results=max_results, skip_ids=known,
+            commercial_only=commercial_only,
         )
         emit(f"✓ {len(businesses)} candidatos en Google Places")
-        _run_pipeline(job_id, businesses, payload)
+        _run_pipeline(job_id, businesses, payload, extractor=extractor, emit=emit)
     except Exception as exc:
         with _lock:
             _jobs[job_id]["status"] = "error"
@@ -487,11 +593,18 @@ def discover():
 # Jobs
 # ---------------------------------------------------------------------------
 
+_MAX_JOBS_RETAINED = 50
+
+
 def _new_job() -> str:
     import time
     job_id = f"job_{int(time.time() * 1000)}"
     with _lock:
         _jobs[job_id] = {"status": "queued", "log": [], "generated": []}
+        # Purga jobs viejos para no crecer indefinidamente.
+        if len(_jobs) > _MAX_JOBS_RETAINED:
+            for old_id in sorted(_jobs.keys())[:-_MAX_JOBS_RETAINED]:
+                _jobs.pop(old_id, None)
     return job_id
 
 

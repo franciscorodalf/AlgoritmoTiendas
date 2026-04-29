@@ -65,29 +65,37 @@ def _save(data: dict) -> None:
 
 
 def _migrate(data: dict) -> dict:
-    """Convierte esquema v1 (place_ids) a v2 (businesses) si hace falta."""
+    """Convierte esquema v1 (place_ids) a v2 (businesses) si hace falta.
+
+    Las entradas migradas tienen address/phone/rating vacíos porque la
+    versión v1 no los persistía. Para enriquecerlas hay que llamar al
+    endpoint POST /api/businesses/<pid>/refresh que vuelve a pedir los
+    detalles a Google Places. Mientras tanto, el campo `needs_refresh`
+    se marca a True para que el frontend pueda destacarlas.
+    """
     if data.get("version") == 2:
         return data
     old = data.get("place_ids", {})
     new_businesses = {}
     for pid, entry in old.items():
         new_businesses[pid] = {
-            "place_id":     pid,
-            "name":         entry.get("name", ""),
-            "sector":       "",
-            "address":      "",
-            "phone":        None,
-            "rating":       None,
-            "review_count": 0,
-            "maps_url":     "",
-            "output_file":  entry.get("output_file", ""),
-            "processed_at": entry.get("processed_at", _now()),
-            "last_updated": _now(),
-            "status":       DEFAULT_STATUS,
-            "score":        0,
-            "notes":        "",
-            "social":       {"instagram": None, "facebook": None},
-            "outreach":     {"whatsapp": "", "email": ""},
+            "place_id":      pid,
+            "name":          entry.get("name", ""),
+            "sector":        "",
+            "address":       "",
+            "phone":         None,
+            "rating":        None,
+            "review_count":  0,
+            "maps_url":      "",
+            "output_file":   entry.get("output_file", ""),
+            "processed_at":  entry.get("processed_at", _now()),
+            "last_updated":  _now(),
+            "status":        DEFAULT_STATUS,
+            "score":         0,
+            "notes":         "",
+            "social":        {"instagram": None, "facebook": None, "tiktok": None},
+            "outreach":      {"whatsapp": "", "email": ""},
+            "needs_refresh": True,
         }
     return {"version": 2, "businesses": new_businesses}
 
@@ -142,7 +150,7 @@ def upsert(place_id: str, **fields) -> dict:
         "status":       DEFAULT_STATUS,
         "score":        0,
         "notes":        "",
-        "social":       {"instagram": None, "facebook": None},
+        "social":       {"instagram": None, "facebook": None, "tiktok": None},
         "outreach":     {"whatsapp": "", "email": ""},
     })
     entry.update(fields)
@@ -206,6 +214,7 @@ def stats() -> dict:
     count_with_score = 0
     with_instagram = 0
     with_facebook = 0
+    with_tiktok = 0
 
     for e in entries:
         by_status[e.get("status", DEFAULT_STATUS)] = \
@@ -219,6 +228,7 @@ def stats() -> dict:
         soc = e.get("social") or {}
         if soc.get("instagram"): with_instagram += 1
         if soc.get("facebook"):  with_facebook += 1
+        if soc.get("tiktok"):    with_tiktok += 1
 
     return {
         "total":            sum(by_status.values()),
@@ -227,6 +237,7 @@ def stats() -> dict:
         "avg_score":        round(total_score / count_with_score, 1) if count_with_score else 0,
         "with_instagram":   with_instagram,
         "with_facebook":    with_facebook,
+        "with_tiktok":      with_tiktok,
     }
 
 

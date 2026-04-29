@@ -28,7 +28,10 @@ _SECTOR_WEIGHTS: dict[str, float] = {
     "barberia":    0.80,
     "cafeteria":   0.70,
     "floristeria": 0.70,
-    "default":     0.55,
+    # default = 0 a propósito: si un lead cae aquí significa que no
+    # supimos clasificarlo (probablemente sea ruido tipo parking, ATM,
+    # ayuntamiento). No queremos darle puntuación de regalo.
+    "default":     0.0,
 }
 
 
