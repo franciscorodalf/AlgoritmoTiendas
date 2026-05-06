@@ -86,6 +86,22 @@ def index():
 
 
 # ---------------------------------------------------------------------------
+# Portfolio público (landing comercial)
+# ---------------------------------------------------------------------------
+
+@app.route("/portfolio")
+@app.route("/portfolio/")
+def portfolio_index():
+    return send_from_directory(str(STATIC / "portfolio"), "index.html")
+
+
+@app.route("/portfolio/<path:name>")
+def portfolio_static(name: str):
+    # Sirve los HTML de demos y assets dentro de /portfolio/
+    return send_from_directory(str(STATIC / "portfolio"), name)
+
+
+# ---------------------------------------------------------------------------
 # Prompts
 # ---------------------------------------------------------------------------
 
