@@ -666,15 +666,21 @@ function renderCrmPanel(e) {
       <textarea class="crm-notes" placeholder="Añade notas (seguimiento, respuesta del cliente, etc.)"
                 onblur="updateNotes('${e.place_id}', this.value)">${esc(e.notes||"")}</textarea>
     </div>
+    ${e.needs_refresh ? `<div class="crm-row" style="background:#2a1a05;border:1px solid #8a6a1a;padding:8px 10px;border-radius:6px;color:#f5c842;font-size:11.5px;margin-bottom:8px">
+      ⚠️ Datos incompletos (lead migrado de versión antigua).
+      <a onclick="refreshBusiness('${e.place_id}')" style="cursor:pointer;color:#f5c842;font-weight:700;margin-left:6px">🔄 Refrescar desde Google →</a>
+    </div>` : ""}
     <div class="ext-links">
       <a class="bolt" target="_blank" href="https://bolt.new/?prompt=${promptEnc}">⚡ Abrir en Bolt</a>
       <a class="v0"   target="_blank" href="https://v0.dev/chat?q=${promptEnc}">✨ Abrir en v0</a>
       ${e.maps_url ? `<a target="_blank" href="${esc(e.maps_url)}">📍 Maps</a>` : ""}
       ${soc.instagram ? `<a class="ig" target="_blank" href="${esc(soc.instagram)}">📸 Instagram</a>` : ""}
       ${soc.facebook  ? `<a class="fb" target="_blank" href="${esc(soc.facebook)}">📘 Facebook</a>` : ""}
+      ${soc.tiktok    ? `<a class="tt" target="_blank" href="${esc(soc.tiktok)}">🎵 TikTok</a>` : ""}
       ${waPhone && out.whatsapp ? `<a class="wa" target="_blank" href="https://wa.me/${waPhone}?text=${waMsg}">💬 WhatsApp</a>` : ""}
       <a onclick="detectSocial('${e.place_id}')" style="cursor:pointer">🔄 Buscar redes</a>
       <a onclick="regenerateOutreach('${e.place_id}')" style="cursor:pointer">🔄 Regenerar mensajes</a>
+      <a onclick="refreshBusiness('${e.place_id}')" style="cursor:pointer">🔃 Refrescar Google</a>
     </div>
     ${out.whatsapp ? `<div class="outreach-box" style="margin:10px 0 0 0">
       <h4>💬 Mensaje WhatsApp <button class="btn-ghost" onclick="copyText(\`${esc(out.whatsapp).replace(/`/g,'\\`')}\`)">Copiar</button></h4>
@@ -737,6 +743,16 @@ async function regenerateOutreach(pid) {
   showViewer(false);
   toast("✓ Mensajes regenerados");
 }
+async function refreshBusiness(pid) {
+  toast("🔃 Refrescando datos desde Google…");
+  const updated = await api(`/api/businesses/${pid}/refresh`, "POST");
+  if (updated.error) { toast("⚠ " + updated.error); return; }
+  if (activeEntry && activeEntry.place_id===pid) activeEntry = updated;
+  showViewer(false);
+  loadPrompts();
+  if (currentPage==="pipeline") loadPipeline();
+  toast("✓ Datos actualizados");
+}
 
 /* ═══ DELETE ═══ */
 function askDelete(name, bizName) {
@@ -781,14 +797,23 @@ async function loadPipeline() {
       <h3>${STATUS_LABELS[s]} <span class="count">${list.length}</span></h3>
       <div class="kbody">
         ${list.length===0 ? '<div style="padding:14px;color:var(--muted);font-size:11px;text-align:center;font-style:italic">vacío</div>' :
-          list.map(b => `<div class="kcard" onclick="openFromPipeline('${esc(b.output_file||"")}')">
-            <div class="kn">${esc(b.name)}</div>
+          list.map(b => {
+            const soc = b.social || {};
+            const socIcons = [
+              soc.instagram ? "📸" : "",
+              soc.facebook  ? "📘" : "",
+              soc.tiktok    ? "🎵" : "",
+            ].filter(Boolean).join(" ");
+            return `<div class="kcard" onclick="openFromPipeline('${esc(b.output_file||"")}')" title="${b.needs_refresh?"Datos incompletos — pulsa la ficha y refresca":""}">
+            <div class="kn">${b.needs_refresh?"⚠️ ":""}${esc(b.name)}</div>
             <div class="km">
               <span class="badge s-${b.sector||"default"}">${SECTOR_LABELS[b.sector]||"—"}</span>
               <span class="score-badge score-${b.score||0}">⭐${b.score||0}</span>
+              ${socIcons ? `<span style="font-size:11px;letter-spacing:2px">${socIcons}</span>` : ""}
             </div>
             ${b.notes ? `<div class="knote">${esc(b.notes)}</div>` : ""}
-          </div>`).join("")
+          </div>`;
+          }).join("")
         }
       </div>
     </div>`;
@@ -853,7 +878,7 @@ async function loadDashboard() {
     <div class="stat-card">
       <div class="label">Score promedio</div>
       <div class="value gold">${s.avg_score}</div>
-      <div class="sub">${s.with_instagram} con IG · ${s.with_facebook} con FB</div>
+      <div class="sub">${s.with_instagram||0} IG · ${s.with_facebook||0} FB · ${s.with_tiktok||0} TikTok</div>
     </div>
     <div class="chart-card">
       <h3>Embudo por estado</h3>

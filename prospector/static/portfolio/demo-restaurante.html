@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Casa Marea — Cocina mediterránea · Tenerife</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Lora:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root{--ink:#1a1714;--paper:#fbf6ee;--cream:#f5ead8;--accent:#7a3920;--olive:#5a6b3e;
+        --gold:#c8a462;--muted:#7a6f63;--border:#e3d8c4}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Lora',serif;background:var(--paper);color:var(--ink);line-height:1.7;font-size:16px}
+  a{color:inherit;text-decoration:none}
+  .container{max-width:1100px;margin:0 auto;padding:0 28px}
+
+  /* NAV */
+  nav{padding:20px 0;border-bottom:1px solid var(--border);background:rgba(251,246,238,0.95);
+      position:sticky;top:0;z-index:30;backdrop-filter:blur(8px)}
+  .nav-inner{display:flex;justify-content:space-between;align-items:center}
+  .logo{font-family:'Playfair Display',serif;font-size:24px;font-style:italic;font-weight:600;color:var(--accent)}
+  .nav-links{display:flex;gap:30px;font-size:14px;color:var(--muted)}
+  .nav-links a:hover{color:var(--accent)}
+  .reservar-btn{background:var(--accent);color:var(--paper);padding:10px 20px;font-size:13px;
+                font-weight:500;letter-spacing:.04em}
+  @media(max-width:680px){.nav-links{display:none}}
+
+  /* HERO */
+  .hero{padding:80px 0 100px;text-align:center}
+  .eyebrow{font-family:'Playfair Display',serif;font-style:italic;color:var(--gold);font-size:15px;
+           letter-spacing:.08em;margin-bottom:20px}
+  .hero h1{font-family:'Playfair Display',serif;font-size:clamp(40px,7vw,72px);font-weight:600;
+           line-height:1.1;color:var(--ink);max-width:780px;margin:0 auto 22px}
+  .hero h1 em{font-style:italic;color:var(--accent);font-weight:400}
+  .hero p{font-size:18px;color:var(--muted);font-weight:300;max-width:580px;margin:0 auto 36px}
+  .actions{display:flex;justify-content:center;gap:14px;flex-wrap:wrap}
+  .btn{padding:13px 28px;font-size:14px;font-weight:500;letter-spacing:.04em;cursor:pointer;
+       border:none;display:inline-block;font-family:'Lora',serif}
+  .btn-primary{background:var(--accent);color:var(--paper)}
+  .btn-primary:hover{background:#5e2a16}
+  .btn-ghost{border:1px solid var(--accent);color:var(--accent);background:transparent}
+  .btn-ghost:hover{background:var(--accent);color:var(--paper)}
+  .hero-divider{width:60px;height:1px;background:var(--gold);margin:42px auto 16px}
+  .hero-stats{display:flex;justify-content:center;gap:40px;font-size:13px;color:var(--muted);flex-wrap:wrap}
+  .hero-stats strong{font-family:'Playfair Display',serif;font-size:18px;color:var(--accent);
+                     font-weight:600;display:block}
+
+  /* SECTIONS */
+  section{padding:90px 0;border-top:1px solid var(--border)}
+  section.dark{background:var(--accent);color:var(--paper);border-color:var(--accent)}
+  section.dark h2{color:var(--paper)}
+  section.dark .stitle{color:var(--gold)}
+  .stitle{font-family:'Playfair Display',serif;font-style:italic;color:var(--accent);font-size:14px;
+          letter-spacing:.1em;margin-bottom:14px;text-align:center}
+  h2{font-family:'Playfair Display',serif;font-size:clamp(32px,5vw,48px);font-weight:600;
+     color:var(--ink);text-align:center;margin-bottom:54px;line-height:1.15}
+  h2 em{font-style:italic;color:var(--accent);font-weight:400}
+
+  /* CARTA */
+  .menu-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px}
+  @media(max-width:760px){.menu-grid{grid-template-columns:1fr;gap:36px}}
+  .menu-section h3{font-family:'Playfair Display',serif;font-size:22px;font-style:italic;
+                   color:var(--accent);margin-bottom:24px;text-align:left;font-weight:600}
+  .dish{padding:18px 0;border-bottom:1px dashed var(--border)}
+  .dish:last-child{border-bottom:0}
+  .dish-head{display:flex;justify-content:space-between;gap:16px;align-items:baseline;margin-bottom:4px}
+  .dish-name{font-family:'Playfair Display',serif;font-size:18px;font-weight:600;color:var(--ink)}
+  .dish-price{font-family:'Playfair Display',serif;font-size:18px;color:var(--accent);
+              font-weight:600;white-space:nowrap}
+  .dish-desc{font-size:14px;color:var(--muted);font-weight:300;line-height:1.6}
+
+  /* SOBRE NOSOTROS */
+  .about-grid{display:grid;grid-template-columns:1fr 1.2fr;gap:60px;align-items:center}
+  @media(max-width:780px){.about-grid{grid-template-columns:1fr}}
+  .about-img{aspect-ratio:4/5;background:linear-gradient(135deg,#c08960,#7a3920);position:relative}
+  .about-img::after{content:'';position:absolute;inset:14px;border:1px solid rgba(255,255,255,0.25)}
+  .about-text p{font-size:17px;color:var(--ink);font-weight:300;margin-bottom:18px;line-height:1.7}
+  .about-text p:first-letter{font-family:'Playfair Display',serif;font-size:38px;font-weight:600;
+                              color:var(--accent);float:left;line-height:.9;margin:5px 8px 0 0}
+  .signature{font-family:'Playfair Display',serif;font-style:italic;color:var(--accent);font-size:18px;
+             margin-top:18px}
+
+  /* RESEÑAS */
+  .reviews{display:grid;grid-template-columns:repeat(3,1fr);gap:30px}
+  @media(max-width:880px){.reviews{grid-template-columns:1fr}}
+  .review{padding:8px 4px;text-align:center}
+  .stars{color:var(--gold);font-size:14px;letter-spacing:3px;margin-bottom:14px}
+  .review p{font-style:italic;font-size:16px;color:rgba(251,246,238,0.92);font-weight:300;
+            line-height:1.7;margin-bottom:18px}
+  .review-author{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);font-weight:500}
+
+  /* CONTACTO */
+  .info-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:36px;margin-top:44px;text-align:center}
+  @media(max-width:680px){.info-grid{grid-template-columns:1fr}}
+  .info-item .lbl{font-family:'Playfair Display',serif;font-style:italic;font-size:14px;color:var(--gold);
+                  margin-bottom:8px}
+  .info-item .val{font-size:15px;color:var(--ink);font-weight:300;line-height:1.7}
+  .reservar-cta{text-align:center;margin-top:48px}
+
+  /* FOOTER */
+  footer{padding:32px 0;border-top:1px solid var(--border);text-align:center;font-size:13px;color:var(--muted)}
+  footer .signature{font-size:14px;color:var(--accent);margin:0 0 6px}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="container nav-inner">
+    <div class="logo">Casa Marea</div>
+    <div class="nav-links">
+      <a href="#carta">Carta</a>
+      <a href="#sobre">Casa</a>
+      <a href="#resenas">Reseñas</a>
+      <a href="#contacto">Reservas</a>
+    </div>
+    <a class="reservar-btn" href="#contacto">Reservar mesa</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="container">
+    <div class="eyebrow">Restaurante mediterráneo · Puerto de la Cruz</div>
+    <h1>Producto local, fuego lento y <em>vino honesto</em>.</h1>
+    <p>Cocina del Atlántico con raíces canarias, abierta desde 2009 frente al mar. Reservar es buena idea — el viernes y el sábado siempre llenamos.</p>
+    <div class="actions">
+      <a class="btn btn-primary" href="https://wa.me/34600000001?text=Quiero%20reservar%20mesa">Reservar mesa</a>
+      <a class="btn btn-ghost" href="#carta">Ver carta</a>
+    </div>
+    <div class="hero-divider"></div>
+    <div class="hero-stats">
+      <div><strong>4.7 ★</strong>342 reseñas Google</div>
+      <div><strong>15 años</strong>frente al mar</div>
+      <div><strong>Carta</strong>de mercado</div>
+    </div>
+  </div>
+</section>
+
+<section id="carta">
+  <div class="container">
+    <div class="stitle">— Carta —</div>
+    <h2>Lo de hoy, <em>cocinado despacio</em>.</h2>
+    <div class="menu-grid">
+
+      <div class="menu-section">
+        <h3>Para empezar</h3>
+        <div class="dish">
+          <div class="dish-head"><div class="dish-name">Boquerones en vinagre</div><div class="dish-price">9,50 €</div></div>
+          <div class="dish-desc">Marinados 24 h con ajo y perejil de la huerta</div>
+        </div>
+        <div class="dish">
+          <div class="dish-head"><div class="dish-name">Pulpo a la brasa</div><div class="dish-price">16 €</div></div>
+          <div class="dish-desc">Con papas arrugadas y mojo verde</div>
+        </div>
+        <div class="dish">
+          <div class="dish-head"><div class="dish-name">Tartar de atún rojo</div><div class="dish-price">18 €</div></div>
+          <div class="dish-desc">Aguacate, lima, sésamo tostado</div>
+        </div>
+        <div class="dish">
+          <div class="dish-head"><div class="dish-name">Croquetas de carne mechada</div><div class="dish-price">8 €</div></div>
+          <div class="dish-desc">Receta de la abuela. Seis unidades</div>
+        </div>
+      </div>
+
+      <div class="menu-section">
+        <h3>Principales</h3>
+        <div class="dish">
+          <div class="dish-head"><div class="dish-name">Lomo alto madurado 30 días</div><div class="dish-price">26 €</div></div>
+          <div class="dish-desc">A la brasa de carbón canario, sal en escama</div>
+        </div>
+        <div class="dish">
+          <div class="dish-head"><div class="dish-name">Bocinegro al horno</div><div class="dish-price">22 €</div></div>
+          <div class="dish-desc">Pieza entera para 1-2 personas, papas y verduras</div>
+        </div>
+        <div class="dish">
+          <div class="dish-head"><div class="dish-name">Arroz caldoso de bogavante</div><div class="dish-price">28 € · 2 pax</div></div>
+          <div class="dish-desc">Mínimo dos personas. 35 minutos de cocción</div>
+        </div>
+        <div class="dish">
+          <div class="dish-head"><div class="dish-name">Cabra guisada</div><div class="dish-price">17 €</div></div>
+          <div class="dish-desc">Receta tradicional canaria, papas y mojo</div>
+        </div>
+      </div>
+
+    </div>
+    <p style="text-align:center;font-style:italic;color:var(--muted);margin-top:48px;font-size:14px">
+      La carta cambia con la pesca y el mercado. Pregunta por las sugerencias del día.
+    </p>
+  </div>
+</section>
+
+<section id="sobre">
+  <div class="container">
+    <div class="stitle">— La casa —</div>
+    <h2>Quince años <em>cocinando lo nuestro</em>.</h2>
+    <div class="about-grid">
+      <div class="about-img"></div>
+      <div class="about-text">
+        <p>Abrimos en 2009 con una idea simple: tratar bien el producto y a quien viene a comerlo. Nada de modas, nada de cartas eternas. Lo que hay es lo que hay, pero está bueno.</p>
+        <p>El pescado lo trae Pedro cada mañana del muelle, las verduras vienen de la huerta de mi suegra en La Orotava y el vino lo elegimos nosotros, bodega por bodega. Si vienes te vamos a tratar como tratamos a quien lleva quince años viniendo.</p>
+        <div class="signature">— Marisa &amp; Toni, anfitriones</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark" id="resenas">
+  <div class="container">
+    <div class="stitle">— Lo que dicen —</div>
+    <h2>Más de 340 reseñas <em>en Google</em>.</h2>
+    <div class="reviews">
+      <div class="review">
+        <div class="stars">★★★★★</div>
+        <p>"El bocinegro al horno es de las mejores cosas que he comido en Tenerife. Y el trato de Marisa, una maravilla."</p>
+        <div class="review-author">— Lucía F.</div>
+      </div>
+      <div class="review">
+        <div class="stars">★★★★★</div>
+        <p>"Vamos siempre que volvemos a la isla. Lleno asegurado, hay que reservar. La cabra guisada es brutal."</p>
+        <div class="review-author">— Miguel & Ana</div>
+      </div>
+      <div class="review">
+        <div class="stars">★★★★★</div>
+        <p>"Producto fresco, vinos canarios bien escogidos y precio justo. No es el más barato pero merece cada euro."</p>
+        <div class="review-author">— Javier T.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="contacto">
+  <div class="container">
+    <div class="stitle">— Reservas —</div>
+    <h2>Pasa cuando <em>tengas hambre</em>.</h2>
+    <div class="info-grid">
+      <div class="info-item">
+        <div class="lbl">Dónde</div>
+        <div class="val">Avda. Marqués de Villanueva, 14<br>Puerto de la Cruz</div>
+      </div>
+      <div class="info-item">
+        <div class="lbl">Cuándo</div>
+        <div class="val">Mar-Sáb · 13-16 h y 20-23 h<br>Domingo · solo mediodía</div>
+      </div>
+      <div class="info-item">
+        <div class="lbl">Reservas</div>
+        <div class="val">+34 600 000 001<br>reservas@casamarea.es</div>
+      </div>
+    </div>
+    <div class="reservar-cta">
+      <a class="btn btn-primary" href="https://wa.me/34600000001?text=Quiero%20reservar%20mesa">💬 Reservar por WhatsApp</a>
+      <a class="btn btn-ghost" style="margin-left:10px" href="https://www.thefork.es">Reservar en TheFork</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="signature">Casa Marea</div>
+    © 2026 · Puerto de la Cruz · Web demo
+  </div>
+</footer>
+
+</body>
+</html>

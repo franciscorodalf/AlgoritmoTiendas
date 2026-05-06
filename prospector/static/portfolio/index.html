@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Servicios Web Tenerife — Webs para negocios locales</title>
+<meta name="description" content="Webs hechas a medida para negocios locales de Tenerife. Diseño rápido, mantenimiento incluido, desde 299 €.">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,300&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink:#0f0f0f; --paper:#faf8f4; --accent:#1a3a5c; --gold:#c8a96e;
+    --muted:#6b6b6b; --border:#e2ddd6; --light:#f0ece4; --soft:#ffffff;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);font-size:16px;line-height:1.65}
+  a{color:inherit;text-decoration:none}
+
+  /* Nav */
+  .nav{position:sticky;top:0;background:rgba(250,248,244,0.92);backdrop-filter:blur(10px);
+       border-bottom:1px solid var(--border);z-index:50;padding:14px 32px;
+       display:flex;justify-content:space-between;align-items:center}
+  .brand{font-family:'Fraunces',serif;font-size:18px;font-weight:600;color:var(--accent)}
+  .brand .dot{color:var(--gold)}
+  .nav-links{display:flex;gap:28px;font-size:13px}
+  .nav-links a{color:var(--muted);font-weight:500;letter-spacing:.02em}
+  .nav-links a:hover{color:var(--accent)}
+  .nav-cta{background:var(--accent);color:#fff;padding:9px 18px;font-size:13px;font-weight:500;
+           border-radius:2px;letter-spacing:.03em}
+  .nav-cta:hover{background:#0d2540}
+  @media(max-width:780px){.nav{padding:12px 16px}.nav-links{display:none}}
+
+  /* Hero */
+  .hero{padding:80px 32px 60px;max-width:980px;margin:0 auto;text-align:center;position:relative}
+  .hero-tag{display:inline-block;background:rgba(200,169,110,0.15);color:var(--gold);
+            font-size:11px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;
+            padding:6px 14px;border-radius:2px;margin-bottom:28px}
+  .hero h1{font-family:'Fraunces',serif;font-size:clamp(34px,6vw,58px);font-weight:600;
+           line-height:1.1;color:var(--ink);max-width:820px;margin:0 auto 22px}
+  .hero h1 em{color:var(--accent);font-style:italic;font-weight:400}
+  .hero h1 .gold{color:var(--gold);font-style:italic;font-weight:300}
+  .hero-sub{font-size:18px;color:var(--muted);font-weight:300;max-width:640px;margin:0 auto 36px}
+  .hero-actions{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+  .btn-primary{background:var(--accent);color:#fff;padding:14px 28px;font-size:14px;
+               font-weight:500;letter-spacing:.04em;border:none;cursor:pointer;border-radius:2px}
+  .btn-primary:hover{background:#0d2540}
+  .btn-ghost{border:1px solid var(--border);padding:14px 28px;font-size:14px;font-weight:500;
+             letter-spacing:.04em;color:var(--ink);background:#fff;border-radius:2px}
+  .btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
+
+  .hero-meta{display:flex;justify-content:center;gap:28px;margin-top:48px;flex-wrap:wrap;
+             font-size:13px;color:var(--muted)}
+  .hero-meta span{display:inline-flex;align-items:center;gap:8px}
+  .hero-meta span::before{content:'';width:6px;height:6px;background:var(--gold);border-radius:50%}
+
+  /* Trust band */
+  .trust{background:var(--accent);color:#fff;padding:36px 32px;text-align:center}
+  .trust-grid{max-width:980px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:32px}
+  .trust-item .num{font-family:'Fraunces',serif;font-size:32px;color:var(--gold);font-weight:600}
+  .trust-item .lbl{font-size:12px;color:rgba(255,255,255,0.65);letter-spacing:.08em;
+                   text-transform:uppercase;margin-top:4px;font-weight:500}
+  @media(max-width:780px){.trust-grid{grid-template-columns:repeat(2,1fr);gap:24px}}
+
+  /* Section base */
+  .section{padding:80px 32px;max-width:1180px;margin:0 auto}
+  .section-tag{font-size:11px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;
+               color:var(--gold);margin-bottom:14px}
+  .section h2{font-family:'Fraunces',serif;font-size:clamp(28px,4vw,42px);font-weight:600;
+              color:var(--ink);line-height:1.2;margin-bottom:18px;max-width:780px}
+  .section h2 em{color:var(--accent);font-style:italic;font-weight:400}
+  .section-intro{font-size:17px;color:var(--muted);font-weight:300;max-width:680px;margin-bottom:48px}
+
+  /* Portfolio grid */
+  .work-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:28px}
+  @media(max-width:880px){.work-grid{grid-template-columns:1fr}}
+  .work-card{background:#fff;border:1px solid var(--border);border-radius:4px;overflow:hidden;
+             transition:transform .25s ease,box-shadow .25s ease;cursor:pointer;display:flex;
+             flex-direction:column}
+  .work-card:hover{transform:translateY(-4px);box-shadow:0 18px 40px rgba(15,15,15,0.08);
+                   border-color:var(--gold)}
+  .work-frame-wrap{position:relative;width:100%;padding-top:62%;background:var(--light);
+                   overflow:hidden;border-bottom:1px solid var(--border)}
+  .work-frame{position:absolute;inset:0;border:0;width:200%;height:200%;transform:scale(0.5);
+              transform-origin:top left;pointer-events:none}
+  .work-shade{position:absolute;inset:0;background:linear-gradient(180deg,transparent 60%,
+              rgba(15,15,15,0.04));pointer-events:none}
+  .work-info{padding:20px 22px 22px}
+  .work-sector{font-size:11px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;
+               color:var(--gold);margin-bottom:6px}
+  .work-info h3{font-family:'Fraunces',serif;font-size:21px;font-weight:600;color:var(--ink);
+                margin-bottom:6px}
+  .work-info p{color:var(--muted);font-size:14px;font-weight:300;line-height:1.6;margin-bottom:14px}
+  .work-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+  .work-tag{font-size:10.5px;font-weight:500;letter-spacing:.04em;color:var(--muted);
+            background:var(--light);padding:4px 10px;border-radius:2px}
+  .work-link{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:500;
+             color:var(--accent)}
+  .work-link::after{content:'→';transition:transform .2s ease}
+  .work-card:hover .work-link::after{transform:translateX(4px)}
+
+  /* Process */
+  .process-bg{background:var(--soft);border-top:1px solid var(--border);
+              border-bottom:1px solid var(--border)}
+  .process-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px}
+  @media(max-width:880px){.process-grid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:520px){.process-grid{grid-template-columns:1fr}}
+  .step-num{font-family:'Fraunces',serif;font-size:34px;color:var(--gold);font-weight:300;
+            line-height:1;margin-bottom:10px}
+  .step h4{font-family:'Fraunces',serif;font-size:18px;font-weight:600;color:var(--ink);
+           margin-bottom:8px}
+  .step p{font-size:14px;color:var(--muted);font-weight:300;line-height:1.6}
+
+  /* Pricing */
+  .planes{display:grid;grid-template-columns:repeat(2,1fr);gap:24px;max-width:880px;margin:0 auto}
+  @media(max-width:760px){.planes{grid-template-columns:1fr}}
+  .plan{background:#fff;border:1px solid var(--border);padding:36px 32px;border-radius:4px;
+        position:relative}
+  .plan.destacado{border:1px solid var(--gold);background:linear-gradient(180deg,#fff,var(--light))}
+  .plan-badge{position:absolute;top:-11px;left:50%;transform:translateX(-50%);
+              background:var(--gold);color:var(--ink);font-size:10px;font-weight:600;
+              letter-spacing:.18em;text-transform:uppercase;padding:5px 14px;border-radius:2px}
+  .plan-name{font-family:'Fraunces',serif;font-size:22px;font-weight:600;color:var(--accent);
+             margin-bottom:6px}
+  .plan-price{font-family:'Fraunces',serif;font-size:48px;font-weight:600;color:var(--ink);
+              line-height:1.1}
+  .plan-price sup{font-size:22px;font-weight:400;color:var(--muted);margin-right:2px}
+  .plan-monthly{font-size:13px;color:var(--muted);font-weight:300;margin-top:6px}
+  .plan-monthly strong{color:var(--accent);font-weight:600}
+  .plan-divider{width:42px;height:1px;background:var(--gold);margin:22px 0}
+  .plan-features{list-style:none}
+  .plan-features li{padding:7px 0;font-size:14px;color:var(--ink);font-weight:300;
+                    display:flex;gap:10px;align-items:flex-start}
+  .plan-features li::before{content:'—';color:var(--gold);flex-shrink:0;margin-top:2px}
+
+  .addon{max-width:880px;margin:18px auto 0;border:1px solid var(--border);
+         border-left:3px solid var(--gold);padding:18px 22px;display:flex;
+         justify-content:space-between;align-items:center;gap:18px;background:#fff}
+  .addon strong{display:block;font-size:13px;font-weight:600;margin-bottom:2px}
+  .addon span{font-size:12px;color:var(--muted);font-weight:300}
+  .addon-price{font-family:'Fraunces',serif;font-size:20px;font-weight:600;color:var(--accent);
+               white-space:nowrap}
+  .addon-price small{font-family:'DM Sans',sans-serif;font-size:11px;font-weight:300;color:var(--muted)}
+
+  /* Quote */
+  .quote-section{background:var(--accent);color:#fff;padding:80px 32px;text-align:center}
+  .quote-section .quote-mark{font-family:'Fraunces',serif;font-size:80px;color:var(--gold);
+                             opacity:.4;line-height:.6;margin-bottom:8px}
+  .quote-section blockquote{font-family:'Fraunces',serif;font-size:clamp(22px,3vw,30px);
+                            font-style:italic;font-weight:300;color:rgba(255,255,255,0.95);
+                            max-width:780px;margin:0 auto 22px;line-height:1.5}
+  .quote-author{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold)}
+
+  /* CTA */
+  .cta-final{padding:90px 32px;text-align:center;max-width:780px;margin:0 auto}
+  .cta-final h2{margin:0 auto 18px}
+  .cta-final p{font-size:17px;color:var(--muted);font-weight:300;margin-bottom:36px}
+  .cta-final .btn-primary{padding:18px 36px;font-size:15px}
+
+  /* Footer */
+  .footer{border-top:1px solid var(--border);padding:32px;background:#fff}
+  .footer-inner{max-width:1180px;margin:0 auto;display:flex;justify-content:space-between;
+                gap:24px;flex-wrap:wrap;font-size:13px;color:var(--muted);font-weight:300}
+  .footer-brand{font-family:'Fraunces',serif;font-size:16px;font-weight:600;color:var(--accent)}
+  .footer-cols{display:flex;gap:36px;flex-wrap:wrap}
+  .footer-cols a{color:var(--muted)}
+  .footer-cols a:hover{color:var(--accent)}
+
+  /* Lightbox modal para previews */
+  .lb{position:fixed;inset:0;background:rgba(15,15,15,0.85);display:none;align-items:center;
+      justify-content:center;z-index:100;padding:24px}
+  .lb.show{display:flex}
+  .lb-frame{width:min(1180px,95vw);height:min(86vh,820px);background:#fff;border-radius:4px;
+            overflow:hidden;position:relative;box-shadow:0 24px 60px rgba(0,0,0,0.4)}
+  .lb-close{position:absolute;top:12px;right:12px;background:rgba(15,15,15,0.85);color:#fff;
+            width:34px;height:34px;border-radius:50%;display:flex;align-items:center;
+            justify-content:center;cursor:pointer;font-size:18px;border:none;z-index:5}
+  .lb-frame iframe{width:100%;height:100%;border:0;display:block}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <a class="brand" href="#top">Servicios&nbsp;Web&nbsp;Tenerife<span class="dot">.</span></a>
+  <div class="nav-links">
+    <a href="#trabajos">Trabajos</a>
+    <a href="#proceso">Proceso</a>
+    <a href="#planes">Planes</a>
+    <a href="#contacto">Contacto</a>
+  </div>
+  <a class="nav-cta" href="https://wa.me/34600000000?text=Hola%2C%20quiero%20una%20web%20para%20mi%20negocio">Hablemos</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="top">
+  <div class="hero-tag">Webs para negocios locales · Tenerife</div>
+  <h1>Tu negocio merece una web <em>tan buena como tu trabajo</em>.<br><span class="gold">No genérica</span>. Hecha para ti.</h1>
+  <p class="hero-sub">
+    Diseñamos webs rápidas, claras y bonitas para barberías, restaurantes, clínicas y talleres de la isla. Llegamos contigo con un prototipo ya construido — no te vendemos una idea, te enseñamos el resultado.
+  </p>
+  <div class="hero-actions">
+    <a class="btn-primary" href="#trabajos">Ver trabajos</a>
+    <a class="btn-ghost" href="#planes">Ver planes desde 299&nbsp;€</a>
+  </div>
+  <div class="hero-meta">
+    <span>Hosting + dominio + SSL incluidos</span>
+    <span>Publicada en 7-10 días</span>
+    <span>Soporte real por WhatsApp</span>
+  </div>
+</section>
+
+<!-- TRUST -->
+<section class="trust">
+  <div class="trust-grid">
+    <div class="trust-item"><div class="num">7-10</div><div class="lbl">Días para publicar</div></div>
+    <div class="trust-item"><div class="num">299&nbsp;€</div><div class="lbl">Desde, sin sorpresas</div></div>
+    <div class="trust-item"><div class="num">100%</div><div class="lbl">Mobile-first</div></div>
+    <div class="trust-item"><div class="num">Tenerife</div><div class="lbl">Local, sin call centers</div></div>
+  </div>
+</section>
+
+<!-- PORTFOLIO -->
+<section class="section" id="trabajos">
+  <div class="section-tag">Trabajos · Demos</div>
+  <h2>Cuatro webs <em>de verdad</em> para sectores reales.</h2>
+  <p class="section-intro">
+    Estos son ejemplos del estilo que entregamos según el sector. Cada web está pensada
+    para el cliente que entra desde Google y necesita decidir en 10 segundos.
+  </p>
+
+  <div class="work-grid">
+
+    <article class="work-card" onclick="openDemo('demo-barberia.html')">
+      <div class="work-frame-wrap">
+        <iframe class="work-frame" src="demo-barberia.html" loading="lazy" tabindex="-1" aria-hidden="true"></iframe>
+        <div class="work-shade"></div>
+      </div>
+      <div class="work-info">
+        <div class="work-sector">Barbería</div>
+        <h3>El Rincón Barber Co.</h3>
+        <p>Estética industrial cálida, galería de cortes, reserva directa por WhatsApp y mapa.</p>
+        <div class="work-tags">
+          <span class="work-tag">Hero potente</span>
+          <span class="work-tag">Galería</span>
+          <span class="work-tag">Reserva WA</span>
+        </div>
+        <span class="work-link">Ver demo en grande</span>
+      </div>
+    </article>
+
+    <article class="work-card" onclick="openDemo('demo-restaurante.html')">
+      <div class="work-frame-wrap">
+        <iframe class="work-frame" src="demo-restaurante.html" loading="lazy" tabindex="-1" aria-hidden="true"></iframe>
+        <div class="work-shade"></div>
+      </div>
+      <div class="work-info">
+        <div class="work-sector">Restaurante</div>
+        <h3>Casa Marea</h3>
+        <p>Mediterráneo, cálido, con carta visible, reseñas reales y enlace directo a TheFork.</p>
+        <div class="work-tags">
+          <span class="work-tag">Carta</span>
+          <span class="work-tag">Reservas</span>
+          <span class="work-tag">Reseñas Google</span>
+        </div>
+        <span class="work-link">Ver demo en grande</span>
+      </div>
+    </article>
+
+    <article class="work-card" onclick="openDemo('demo-clinica.html')">
+      <div class="work-frame-wrap">
+        <iframe class="work-frame" src="demo-clinica.html" loading="lazy" tabindex="-1" aria-hidden="true"></iframe>
+        <div class="work-shade"></div>
+      </div>
+      <div class="work-info">
+        <div class="work-sector">Clínica dental</div>
+        <h3>Clínica Mar Azul</h3>
+        <p>Confianza profesional, equipo, tratamientos con precio orientativo y cita online.</p>
+        <div class="work-tags">
+          <span class="work-tag">Equipo</span>
+          <span class="work-tag">Tratamientos</span>
+          <span class="work-tag">Pedir cita</span>
+        </div>
+        <span class="work-link">Ver demo en grande</span>
+      </div>
+    </article>
+
+    <article class="work-card" onclick="openDemo('demo-taller.html')">
+      <div class="work-frame-wrap">
+        <iframe class="work-frame" src="demo-taller.html" loading="lazy" tabindex="-1" aria-hidden="true"></iframe>
+        <div class="work-shade"></div>
+      </div>
+      <div class="work-info">
+        <div class="work-sector">Taller mecánico</div>
+        <h3>Talleres Anaga</h3>
+        <p>Industrial y directo. Servicios con precio, formulario de presupuesto y mapa.</p>
+        <div class="work-tags">
+          <span class="work-tag">Servicios</span>
+          <span class="work-tag">Presupuesto</span>
+          <span class="work-tag">ITV</span>
+        </div>
+        <span class="work-link">Ver demo en grande</span>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<!-- PROCESO -->
+<section class="process-bg">
+  <div class="section" id="proceso">
+    <div class="section-tag">Cómo trabajamos</div>
+    <h2>De primera reunión a web publicada en <em>menos de dos semanas</em>.</h2>
+    <p class="section-intro">
+      Trabajamos con un proceso simple, sin reuniones eternas ni formularios infinitos.
+      Tú nos cuentas tu negocio una vez. Nosotros nos encargamos del resto.
+    </p>
+    <div class="process-grid">
+      <div class="step">
+        <div class="step-num">01</div>
+        <h4>Llamada inicial</h4>
+        <p>20 minutos por teléfono o WhatsApp. Nos cuentas qué haces y a quién quieres llegar. Te enseñamos un prototipo ya hecho.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <h4>Recogida de datos</h4>
+        <p>Un formulario corto: textos, fotos, redes, horario. Si te falta algo, te ayudamos a resolverlo.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <h4>Diseño y ajustes</h4>
+        <p>Te mandamos la web montada en 5-7 días. Hacemos dos rondas de cambios sin coste — color, fotos, copy, lo que haga falta.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">04</div>
+        <h4>Publicación + soporte</h4>
+        <p>Subimos la web, conectamos tu dominio, configuramos email y te explicamos cómo gestionarla. A partir de ahí, soporte real por WhatsApp.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="section" id="planes">
+  <div class="section-tag">Planes claros</div>
+  <h2>Sin sorpresas. <em>Pagas una vez</em> y un mantenimiento mensual fijo.</h2>
+  <p class="section-intro">
+    El precio incluye diseño, hosting, certificado SSL, copias de seguridad y soporte.
+    Tu único gasto extra es el dominio (~12 €/año). Nada más.
+  </p>
+
+  <div class="planes">
+    <div class="plan">
+      <div class="plan-name">Básico</div>
+      <div class="plan-price"><sup>€</sup>299</div>
+      <div class="plan-monthly">+ <strong>60 €</strong> / mes mantenimiento</div>
+      <div class="plan-divider"></div>
+      <ul class="plan-features">
+        <li>5 secciones (hero, servicios, sobre ti, contacto, mapa)</li>
+        <li>Formulario de contacto</li>
+        <li>100% adaptada a móvil</li>
+        <li>Hosting + SSL + dominio (1 año)</li>
+        <li>Publicación en 7 días</li>
+      </ul>
+    </div>
+    <div class="plan destacado">
+      <div class="plan-badge">Recomendado</div>
+      <div class="plan-name">Completo</div>
+      <div class="plan-price"><sup>€</sup>399</div>
+      <div class="plan-monthly">+ <strong>85 €</strong> / mes mantenimiento</div>
+      <div class="plan-divider"></div>
+      <ul class="plan-features">
+        <li>Todo lo del Básico</li>
+        <li>Galería de fotos profesional</li>
+        <li>Reseñas de Google integradas</li>
+        <li>Botón de reserva por WhatsApp</li>
+        <li>Versión en inglés (turistas)</li>
+        <li>SEO local básico (Google Maps)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="addon">
+    <div>
+      <strong>+ Gestión Google Maps</strong>
+      <span>Fotos mensuales, respuesta a reseñas, publicaciones — tu perfil siempre activo.</span>
+    </div>
+    <div class="addon-price">40&nbsp;€ <small>/mes</small></div>
+  </div>
+</section>
+
+<!-- QUOTE -->
+<section class="quote-section">
+  <div class="quote-mark">"</div>
+  <blockquote>
+    Mientras la competencia llega con un catálogo genérico, nosotros llegamos con tu
+    web ya construida. No te vendemos una idea — te mostramos el resultado.
+  </blockquote>
+  <div class="quote-author">— Servicios Web Tenerife</div>
+</section>
+
+<!-- CTA FINAL -->
+<section class="cta-final" id="contacto">
+  <div class="section-tag">Empezar</div>
+  <h2>¿Hablamos esta semana?</h2>
+  <p>Cuéntanos tu negocio en 20 minutos y te enseñamos un prototipo de tu web — antes de pagar nada.</p>
+  <a class="btn-primary" href="https://wa.me/34600000000?text=Hola%2C%20quiero%20una%20web%20para%20mi%20negocio">Escribir por WhatsApp →</a>
+  <p style="margin-top:18px;font-size:13px">o por correo: <a href="mailto:francuban1278@gmail.com" style="color:var(--accent);font-weight:500">francuban1278@gmail.com</a></p>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div>
+      <div class="footer-brand">Servicios Web Tenerife<span style="color:var(--gold)">.</span></div>
+      <div style="margin-top:6px">Webs para negocios locales · Santa Cruz de Tenerife</div>
+    </div>
+    <div class="footer-cols">
+      <a href="#trabajos">Trabajos</a>
+      <a href="#proceso">Proceso</a>
+      <a href="#planes">Planes</a>
+      <a href="mailto:francuban1278@gmail.com">Email</a>
+      <a href="https://wa.me/34600000000">WhatsApp</a>
+    </div>
+  </div>
+</footer>
+
+<!-- Lightbox -->
+<div class="lb" id="lb" onclick="if(event.target.id==='lb')closeDemo()">
+  <div class="lb-frame">
+    <button class="lb-close" onclick="closeDemo()" aria-label="Cerrar">×</button>
+    <iframe id="lb-iframe" src="" title="Demo"></iframe>
+  </div>
+</div>
+
+<script>
+  function openDemo(file) {
+    const lb = document.getElementById('lb');
+    const ifr = document.getElementById('lb-iframe');
+    ifr.src = file;
+    lb.classList.add('show');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeDemo() {
+    const lb = document.getElementById('lb');
+    document.getElementById('lb-iframe').src = '';
+    lb.classList.remove('show');
+    document.body.style.overflow = '';
+  }
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDemo(); });
+</script>
+
+</body>
+</html>
