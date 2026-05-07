@@ -381,13 +381,15 @@ def health():
     n_prompts = len([f for f in OUTPUT_DIR.glob("*.txt") if not f.name.startswith("_")]) \
                 if OUTPUT_DIR.exists() else 0
     return jsonify({
-        "google_api_key":   bool(os.getenv("GOOGLE_PLACES_API_KEY")),
-        "ollama":           analyzer.ping(),
-        "ollama_host":      analyzer.host,
-        "web_verifier":     web_verifier.available(),
-        "social_detector":  social_detector.available(),
-        "prompts_count":    n_prompts,
-        "registry_count":   registry.count(),
+        "google_api_key":      bool(os.getenv("GOOGLE_PLACES_API_KEY")),
+        "ollama":              analyzer.has_server(),  # dot del frontend
+        "ollama_model_ready":  analyzer.has_model(),    # info extra
+        "ollama_model":        analyzer.model,
+        "ollama_host":         analyzer.host,
+        "web_verifier":        web_verifier.available(),
+        "social_detector":     social_detector.available(),
+        "prompts_count":       n_prompts,
+        "registry_count":      registry.count(),
     })
 
 

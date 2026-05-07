@@ -557,6 +557,21 @@ async function loadHealth() {
     setDot("dot-goog",   h.google_api_key);
     setDot("dot-ollama", h.ollama);
     setDot("dot-ddgs",   h.web_verifier);
+    // Tooltip informativo en el chip de Ollama
+    const chip = document.getElementById("dot-ollama").parentElement;
+    if (h.ollama) {
+      chip.title = h.ollama_model_ready
+        ? `Servidor OK · modelo "${h.ollama_model}" listo`
+        : `⚠ Servidor OK pero el modelo "${h.ollama_model}" NO está descargado.\n` +
+          `Ejecuta:  ollama pull ${h.ollama_model}`;
+      // Avisa una sola vez si falta el modelo
+      if (!h.ollama_model_ready && !window._warnedNoModel) {
+        window._warnedNoModel = true;
+        toast(`⚠ Falta el modelo Ollama: ${h.ollama_model}`);
+      }
+    } else {
+      chip.title = `Ollama no responde en ${h.ollama_host || "localhost:11434"}`;
+    }
     document.getElementById("stat-prompts").innerHTML =
       `<b>${h.prompts_count}</b> prompts · <b>${h.registry_count}</b> leads`;
   } catch(_) {}

@@ -132,27 +132,51 @@ class ReviewAnalyzer:
         return self._to_insights(data)
 
     def ping(self) -> bool:
-        """Comprueba que Ollama está corriendo Y el modelo descargado."""
-        try:
-            resp = self.client.list()
-            models = resp.get("models", []) if isinstance(resp, dict) else []
-            # Acepta nombre exacto o tag base (ej. 'llama3.1' matchea 'llama3.1:8b')
-            target_base = self.model.split(":")[0]
-            for m in models:
-                name = (m.get("name") or m.get("model") or "") if isinstance(m, dict) else str(m)
-                if name == self.model or name.startswith(target_base + ":"):
-                    return True
-            return False
-        except Exception:
-            return False
+        """Comprueba que Ollama está corriendo. Mantiene la semántica
+        original (compatibilidad con código existente que usa esto como
+        gating del job)."""
+        return self.has_server()
 
     def has_server(self) -> bool:
-        """Solo comprueba que Ollama responde (sin verificar el modelo)."""
+        """Solo comprueba que el servidor Ollama responde."""
         try:
             self.client.list()
             return True
         except Exception:
             return False
+
+    def has_model(self) -> bool:
+        """True si el modelo configurado está descargado en Ollama.
+        Tolera tanto la respuesta dict (clientes viejos) como objeto
+        Pydantic (clientes >=0.4)."""
+        try:
+            resp = self.client.list()
+        except Exception:
+            return False
+
+        # Normaliza a lista de strings con el nombre del modelo
+        models_raw = []
+        if isinstance(resp, dict):
+            models_raw = resp.get("models", []) or []
+        else:
+            # Pydantic ListResponse → tiene atributo .models
+            models_raw = getattr(resp, "models", []) or []
+
+        target = self.model
+        target_base = target.split(":")[0]
+        for m in models_raw:
+            # Cada item puede ser dict {name|model: "..."} o un objeto
+            # con atributo .model / .name
+            name = ""
+            if isinstance(m, dict):
+                name = m.get("name") or m.get("model") or ""
+            else:
+                name = getattr(m, "model", None) or getattr(m, "name", None) or ""
+            if not name:
+                continue
+            if name == target or name.startswith(target_base + ":") or name.startswith(target_base):
+                return True
+        return False
 
     # ---------------- helpers internos ----------------
 
