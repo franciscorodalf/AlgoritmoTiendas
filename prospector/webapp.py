@@ -46,7 +46,7 @@ from pathlib import Path
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8")
 
-from flask import Flask, jsonify, request, send_from_directory, Response
+from flask import Flask, jsonify, request, send_from_directory, Response, redirect
 
 sys.path.insert(0, str(Path(__file__).parent))
 
@@ -90,6 +90,13 @@ def index():
 # ---------------------------------------------------------------------------
 
 @app.route("/portfolio")
+def portfolio_redirect():
+    # Sin trailing slash, el navegador resuelve los enlaces relativos del
+    # HTML (iframes, demos) contra la raíz "/" y dan 404. Redirigir a
+    # "/portfolio/" arregla todos los relativos de golpe.
+    return redirect("/portfolio/", code=302)
+
+
 @app.route("/portfolio/")
 def portfolio_index():
     return send_from_directory(str(STATIC / "portfolio"), "index.html")
