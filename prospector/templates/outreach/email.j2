@@ -4,16 +4,30 @@
   "clinica":     "Presencia digital profesional para " ~ name,
   "default":     "Propuesta de web para " ~ name,
 } -%}
-Asunto: {{ subj_by_sector.get(sector, subj_by_sector["default"]) }}
+{%- set subj_by_web = {
+  "social_only":  "Una web propia para " ~ name ~ " (más allá de Instagram)",
+  "free_builder": "Sacar a " ~ name ~ " de Wix/plantilla gratuita",
+  "obsolete":     "Modernizar la web de " ~ name,
+} -%}
+Asunto: {{ subj_by_web.get(web_category, subj_by_sector.get(sector, subj_by_sector["default"])) }}
 
 Buenos días,
 
 Me presento: soy Fran, desarrollador web especializado en negocios locales de Tenerife.
 
-Encontré **{{ name }}**{% if city %} en {{ city }}{% endif %} mientras buscaba negocios con buena reputación en Google{% if review_count and review_count >= 20 %} ({{ review_count }} reseñas, {{ rating }} de valoración media — muy buen trabajo){% endif %}, y me llamó la atención que todavía no tenéis una página web propia.
-
-En 2026 eso supone un problema silencioso: clientes potenciales que os buscan terminan en Google Maps, TripAdvisor o redes sociales, sin poder ver vuestro servicio con detalle, reservar directamente o simplemente entender qué os diferencia.
-
+Encontré **{{ name }}**{% if city %} en {{ city }}{% endif %} mientras buscaba negocios con buena reputación en Google{% if review_count and review_count >= 20 %} ({{ review_count }} reseñas, {{ rating }} de valoración media — muy buen trabajo){% endif %}.
+{% if selling_points %}
+Lo que más se repite en las reseñas de vuestros clientes es *"{{ selling_points[0] }}"*{% if selling_points|length > 1 %}, junto a "{{ selling_points[1] }}"{% endif %}. Eso es exactamente lo que una web debería contar de un vistazo.
+{% endif %}
+{% if web_category == "social_only" %}
+He visto que tenéis presencia en redes pero no web propia. Eso supone depender al 100% de Google Maps y de algoritmos de redes sociales — una web vuestra os asegura el canal de captación a largo plazo.
+{% elif web_category == "free_builder" %}
+He visto que la web está montada sobre una plataforma gratuita (tipo Wix). Funciona pero supone una suscripción mensual creciente, anuncios y limitaciones de SEO. Os puedo migrar a una web propia con vuestro dominio sin cuota a Wix.
+{% elif web_category == "obsolete" %}
+He visto que tenéis web pero está desactualizada (sin SSL o sin versión móvil correcta). Hoy más del 70% de los clientes os miran desde el teléfono — podemos modernizarla manteniendo lo que tiene buen contenido.
+{% else %}
+En 2026 no tener una web propia supone un problema silencioso: clientes potenciales que os buscan terminan en Google Maps, TripAdvisor o redes sociales, sin poder ver vuestro servicio con detalle, reservar directamente o entender qué os diferencia.
+{% endif %}
 He preparado una **propuesta de diseño inicial** para {{ name }}, basada en vuestras propias fotos y reseñas reales de clientes. La puedo tener montada y funcionando en **24-48 horas**, sin que tengáis que hacer nada.
 
 Si os parece interesante, os envío la vista previa por WhatsApp o email sin compromiso. Desde ahí hablamos con calma.

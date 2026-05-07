@@ -11,11 +11,20 @@
   "estetica":    "Sin web propia el cliente que busca tratamientos concretos no te encuentra. Una web con servicios, precios y reservas online sube conversión desde Google.",
   "default":     "Sin web propia en 2026 muchos clientes potenciales se pierden antes de llegar a ti — van al siguiente resultado que sí tenga web.",
 } -%}
+{%- set hook_by_web = {
+  "social_only":  "Vi que tienes Instagram/Facebook pero no web propia. Eso significa que dependes de algoritmos que no controlas (un cambio de Meta y se cae todo). Una web tuya te asegura el canal.",
+  "free_builder": "Vi que tu web está montada en una plataforma gratuita (tipo Wix/WordPress.com). Funciona pero te limita: dominio raro, anuncios y suscripción que sube cada año. Te podemos pasar a una web propia con tu dominio y todo bajo control.",
+  "obsolete":     "Vi que tienes web pero parece de hace unos años (sin SSL o sin versión móvil). Hoy más de 70% de tus clientes te miran desde el móvil — la podemos modernizar manteniendo tu identidad.",
+} -%}
 ¡Hola! Soy Fran, desarrollador web en Tenerife 👋
 
 Vi **{{ name }}**{% if city %} en {{ city }}{% endif %} en Google{% if review_count and review_count >= 20 %} — {{ review_count }} reseñas con {{ rating }}★ ✨ (muy buena pinta){% endif %}.
-
-{{ pitch_by_sector.get(sector, pitch_by_sector["default"]) }}
+{% if selling_points %}
+Lo que más se repite en lo que dicen tus clientes: *"{{ selling_points[0] }}"*{% if keywords %} — palabras como **{{ keywords | join(', ') }}** salen una y otra vez.{% endif %}
+{% elif keywords %}
+Tus clientes mencionan mucho **{{ keywords | join(', ') }}** en las reseñas — se nota que cuidas eso.
+{% endif %}
+{{ hook_by_web.get(web_category, pitch_by_sector.get(sector, pitch_by_sector["default"])) }}
 
 Te he preparado una propuesta de diseño base usando tus fotos y las reseñas reales de tus clientes. En 24-48h la tengo montada, funcionando y lista para enseñarte.
 
