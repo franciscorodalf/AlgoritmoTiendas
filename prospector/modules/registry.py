@@ -50,6 +50,21 @@ def _now() -> str:
     return time.strftime("%Y-%m-%d %H:%M:%S")
 
 
+def is_mobile_phone(phone: str | None) -> bool:
+    """Heurística rápida: en España los móviles empiezan por 6 o 7 (con o
+    sin prefijo internacional). Solo eso justifica el botón directo a
+    wa.me en el frontend — un fijo no puede recibir WhatsApp."""
+    if not phone:
+        return False
+    digits = "".join(c for c in phone if c.isdigit())
+    # quita prefijo 34 (España) si está
+    if digits.startswith("0034"):
+        digits = digits[4:]
+    elif digits.startswith("34") and len(digits) == 11:
+        digits = digits[2:]
+    return len(digits) == 9 and digits[0] in ("6", "7")
+
+
 def _load_raw() -> dict:
     if _PATH.exists():
         try:
@@ -117,8 +132,14 @@ def is_known(place_id: str) -> bool:
     return place_id in _load()["businesses"]
 
 
-def known_ids() -> set[str]:
-    return set(_load()["businesses"].keys())
+def known_ids(*, exclude_rejected: bool = True) -> set[str]:
+    """IDs ya procesados. Por defecto excluye los `rejected` para que un
+    lead descartado hace meses pueda volver a entrar al pipeline si su
+    circunstancia ha cambiado (más reseñas, nueva web obsoleta, etc.)."""
+    bizs = _load()["businesses"]
+    if exclude_rejected:
+        return {pid for pid, e in bizs.items() if e.get("status") != "rejected"}
+    return set(bizs.keys())
 
 
 def count() -> int:
@@ -155,6 +176,8 @@ def upsert(place_id: str, **fields) -> dict:
     })
     entry.update(fields)
     entry["last_updated"] = _now()
+    # Derivado: ¿el teléfono soporta WhatsApp directo?
+    entry["whatsapp_capable"] = is_mobile_phone(entry.get("phone"))
     data["businesses"][place_id] = entry
     _save(data)
     return entry
@@ -246,4 +269,5 @@ __all__ = [
     "is_known", "known_ids", "count", "all_entries", "get",
     "upsert", "register", "update_status", "update_notes",
     "delete", "find_by_output_file", "stats",
+    "is_mobile_phone",
 ]

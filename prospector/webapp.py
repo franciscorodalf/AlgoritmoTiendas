@@ -55,7 +55,7 @@ from modules.review_analyzer import ReviewAnalyzer
 from modules.prompt_builder import PromptBuilder
 from modules.outreach import OutreachBuilder
 from modules.typography_rules import get_profile
-from modules import registry, web_verifier, social_detector, scoring
+from modules import registry, web_verifier, social_detector, scoring, activity, web_auditor
 from main import process_business, _slugify, _write_skeleton, OUTPUT_DIR
 
 BASE   = Path(__file__).resolve().parent
@@ -213,11 +213,51 @@ def patch_business(pid: str):
     return jsonify(updated)
 
 
+@app.route("/api/businesses/<pid>/outreach_message", methods=["GET"])
+def outreach_message(pid: str):
+    """Renderiza un mensaje concreto por etapa y canal sin tocar el registry.
+    Query params:
+      - channel: 'whatsapp' | 'email'  (default: whatsapp)
+      - stage:   'first_contact' | 'follow_up_1' | 'follow_up_2' |
+                 'proposal' | 'closing'  (default: derivado de status)
+    """
+    from modules.outreach import STAGES, STATUS_TO_STAGE, DEFAULT_STAGE
+    entry = registry.get(pid)
+    if not entry:
+        return jsonify({"error": "not found"}), 404
+    channel = (request.args.get("channel") or "whatsapp").strip()
+    if channel not in ("whatsapp", "email"):
+        return jsonify({"error": "channel inválido"}), 400
+    stage = (request.args.get("stage") or "").strip()
+    if not stage:
+        stage = STATUS_TO_STAGE.get(entry.get("status", "found"), DEFAULT_STAGE)
+    if stage not in STAGES:
+        return jsonify({"error": "stage inválido"}), 400
+
+    ins = entry.get("insights") or {}
+    audit = entry.get("web_audit") or {}
+    ctx = _outreach_builder.context(
+        name=entry.get("name", ""),
+        address=entry.get("address", ""),
+        phone=entry.get("phone"),
+        rating=entry.get("rating"),
+        review_count=entry.get("review_count", 0),
+        sector=entry.get("sector", "default"),
+        keywords=ins.get("keywords") or [],
+        selling_points=ins.get("selling_points") or [],
+        web_category=audit.get("category", "none"),
+    )
+    msg = _outreach_builder.render(channel, stage, ctx)
+    return jsonify({"channel": channel, "stage": stage, "message": msg})
+
+
 @app.route("/api/businesses/<pid>/regenerate_outreach", methods=["POST"])
 def regenerate_outreach(pid: str):
     entry = registry.get(pid)
     if not entry:
         return jsonify({"error": "not found"}), 404
+    ins = entry.get("insights") or {}
+    audit = entry.get("web_audit") or {}
     msgs = _outreach_builder.build(
         name=entry.get("name", ""),
         address=entry.get("address", ""),
@@ -225,6 +265,9 @@ def regenerate_outreach(pid: str):
         rating=entry.get("rating"),
         review_count=entry.get("review_count", 0),
         sector=entry.get("sector", "default"),
+        keywords=ins.get("keywords") or [],
+        selling_points=ins.get("selling_points") or [],
+        web_category=audit.get("category", "none"),
     )
     updated = registry.upsert(pid, outreach=msgs)
     return jsonify(updated)
@@ -419,16 +462,35 @@ def _run_pipeline(
             emit(f"[{i}/{len(fresh)}] {biz.name}")
             try:
                 # Generar prompt
+                insights = None
                 if skip_ollama:
                     _write_skeleton(biz, builder)
                     out_name = f"{_slugify(biz.name)}.txt"
                 else:
-                    path = process_business(biz, extractor, analyzer, builder)
+                    path, insights = process_business(
+                        biz, extractor, analyzer, builder, return_insights=True,
+                    )
                     out_name = path.name
 
                 # Resolver sector real
                 profile = get_profile(biz.categories_all or biz.category, name=biz.name)
                 sector  = profile.sector
+
+                # Actividad (fresca, dormida, velocidad)
+                act = activity.compute(biz.reviews, biz.review_count or 0)
+                if act.is_dormant:
+                    emit(f"   ⏭ negocio dormido (última reseña hace {act.last_review_days} días) — descartado")
+                    continue
+                if act.is_fresh:
+                    emit(f"   ✨ negocio activo (última reseña hace {act.last_review_days} días)")
+
+                # Auditor de web (solo si tenía URL en Google)
+                audit = web_auditor.audit(biz.website) if biz.website else web_auditor.audit(None)
+                if not audit.is_target:
+                    emit(f"   ⏭ web propia OK ({audit.final_url}) — descartado")
+                    continue
+                if audit.category != "none":
+                    emit(f"   🔍 presencia: {audit.category}")
 
                 # Score
                 score = scoring.calculate(
@@ -438,13 +500,20 @@ def _run_pipeline(
                     has_phone=bool(biz.phone),
                     has_photos=bool(biz.photo_references),
                     confirmed_no_web=(not skip_verify) and web_verifier.available(),
+                    last_review_days=act.last_review_days,
+                    is_dormant=act.is_dormant,
+                    is_fresh=act.is_fresh,
+                    web_category=audit.category,
                 )
 
-                # Outreach
+                # Outreach (personalizado con keywords/selling_points si hay)
                 outreach = _outreach_builder.build(
                     name=biz.name, address=biz.address,
                     phone=biz.phone, rating=biz.rating,
                     review_count=biz.review_count or 0, sector=sector,
+                    keywords=insights.keywords if insights else [],
+                    selling_points=insights.selling_points if insights else [],
+                    web_category=audit.category,
                 )
 
                 # Social media (opcional, lento)
@@ -465,6 +534,10 @@ def _run_pipeline(
                     maps_url=biz.maps_url, output_file=out_name,
                     score=score, outreach=outreach, social=social,
                     status=registry.DEFAULT_STATUS,
+                    activity=act.to_dict(),
+                    web_audit=audit.to_dict(),
+                    business_status=biz.business_status,
+                    insights=(insights.to_dict() if insights else None),
                 )
                 generated.append(out_name)
                 emit(f"   ✓ {out_name} (score {score}/10)")
@@ -603,6 +676,107 @@ def discover():
     job_id = _new_job()
     threading.Thread(target=_run_discover, args=(job_id, payload), daemon=True).start()
     return jsonify({"job_id": job_id})
+
+
+# ---------------------------------------------------------------------------
+# /api/sweep — barrido multi-sector × multi-zona en un solo job
+# ---------------------------------------------------------------------------
+
+# Sectores reconocibles (nombre interno → keywords para Google Places)
+_SWEEP_SECTORS: dict[str, list[str]] = {
+    "barberia":    ["barbería", "barber shop"],
+    "peluqueria":  ["peluquería", "salón de belleza"],
+    "restaurante": ["restaurante"],
+    "cafeteria":   ["cafetería", "café"],
+    "clinica":     ["clínica dental", "dentista", "fisioterapia"],
+    "taller":      ["taller mecánico"],
+    "tienda_ropa": ["tienda de ropa", "boutique"],
+    "gimnasio":    ["gimnasio", "crossfit"],
+    "floristeria": ["floristería"],
+    "estetica":    ["centro de estética", "spa"],
+}
+
+# Zonas predefinidas de Tenerife (coords aproximadas si quisieras nearby)
+_SWEEP_ZONES: list[str] = [
+    "Santa Cruz de Tenerife", "La Laguna", "Adeje", "Arona",
+    "Los Cristianos", "Las Américas", "Costa Adeje", "Puerto de la Cruz",
+    "La Orotava", "Garachico", "Icod de los Vinos", "Tacoronte",
+    "Candelaria", "Güímar", "Granadilla de Abona", "El Médano",
+    "San Isidro", "Buenavista del Norte", "El Sauzal", "Tegueste",
+]
+
+
+def _run_sweep(job_id: str, payload: dict) -> None:
+    log: list[str] = []
+    def emit(msg: str) -> None:
+        log.append(msg)
+        with _lock: _jobs[job_id]["log"] = list(log)
+    try:
+        sectors_in: list[str] = payload.get("sectors") or []
+        zones_in:   list[str] = payload.get("zones") or []
+        max_per          = int(payload.get("max_per", 5))
+        include_with_web = bool(payload.get("include_with_website", False))
+
+        sectors = [s for s in sectors_in if s in _SWEEP_SECTORS]
+        zones   = [z for z in zones_in if z]
+        if not sectors or not zones:
+            raise ValueError("Necesitas al menos un sector y una zona.")
+
+        combos = [(s, z) for s in sectors for z in zones]
+        emit(f"▶ Barriendo {len(sectors)} sectores × {len(zones)} zonas = {len(combos)} búsquedas")
+
+        extractor = GoogleExtractor()
+        extractor.reset_counters()
+        known = registry.known_ids()
+        all_business: list = []
+        seen: set[str] = set()
+        for i, (sec, zone) in enumerate(combos, 1):
+            kw = _SWEEP_SECTORS[sec][0]
+            query = f"{kw} en {zone}"
+            emit(f"[{i}/{len(combos)}] {query}")
+            try:
+                businesses = extractor.search(
+                    query, max_results=max_per,
+                    only_without_website=not include_with_web,
+                    skip_ids=known | seen,
+                )
+            except Exception as exc:
+                emit(f"   ✗ {exc}")
+                continue
+            for b in businesses:
+                if b.place_id not in seen:
+                    seen.add(b.place_id)
+                    all_business.append(b)
+            emit(f"   ✓ {len(businesses)} candidatos (acumulado {len(all_business)})")
+
+        emit(f"✓ Total candidatos únicos: {len(all_business)}")
+        _run_pipeline(job_id, all_business, payload, extractor=extractor, emit=emit)
+    except Exception as exc:
+        with _lock:
+            _jobs[job_id]["status"] = "error"
+            _jobs[job_id]["error"] = str(exc)
+        emit(f"✗ ERROR: {exc}")
+        emit(traceback.format_exc())
+
+
+@app.route("/api/sweep", methods=["POST"])
+def sweep():
+    payload = request.get_json(force=True) or {}
+    if not payload.get("sectors") or not payload.get("zones"):
+        return jsonify({"error": "sectors y zones requeridos"}), 400
+    job_id = _new_job()
+    threading.Thread(target=_run_sweep, args=(job_id, payload), daemon=True).start()
+    return jsonify({"job_id": job_id})
+
+
+@app.route("/api/sweep/options")
+def sweep_options():
+    """Devuelve los sectores y zonas predefinidos para que el frontend
+    los pinte en el selector."""
+    return jsonify({
+        "sectors": [{"key": k, "label": v[0].title()} for k, v in _SWEEP_SECTORS.items()],
+        "zones":   _SWEEP_ZONES,
+    })
 
 
 # ---------------------------------------------------------------------------

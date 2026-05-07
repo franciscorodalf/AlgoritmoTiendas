@@ -42,6 +42,29 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
 
 /* Page: búsqueda (3 cols) */
 #page-search{grid-template-columns:350px 1fr 1fr}
+#page-sweep{grid-template-columns:1fr;padding:24px;overflow:auto}
+.sweep-wrap{max-width:980px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media(max-width:880px){.sweep-wrap{grid-template-columns:1fr}}
+.sweep-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:18px}
+.sweep-card h3{font-size:13px;font-weight:600;color:var(--gold);margin-bottom:12px;letter-spacing:.04em}
+.sweep-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}
+.sweep-grid label{display:flex;align-items:center;gap:8px;font-size:12px;padding:6px 8px;
+                  border-radius:5px;cursor:pointer;color:var(--text)}
+.sweep-grid label:hover{background:var(--surface2)}
+.sweep-grid input[type=checkbox]{accent-color:var(--gold)}
+.sweep-actions{margin-top:18px;display:flex;justify-content:space-between;align-items:center;gap:12px;
+               max-width:980px;margin-left:auto;margin-right:auto;padding:0 0}
+.sweep-summary{font-size:12px;color:var(--muted)}
+.sweep-summary b{color:var(--gold);font-weight:700}
+#sweep-log-wrap{max-width:980px;margin:18px auto 0;background:var(--surface);
+                border:1px solid var(--border);border-radius:8px;padding:16px;display:none}
+#sweep-log-wrap.active{display:block}
+#sweep-log-lines{font-family:ui-monospace,monospace;font-size:11.5px;color:var(--text);
+                 max-height:280px;overflow-y:auto;line-height:1.65}
+#sweep-log-lines .ok{color:var(--green)}
+#sweep-log-lines .err{color:var(--red)}
+#sweep-log-lines .info{color:var(--blue)}
+#sweep-log-lines .skip{color:var(--muted)}
 /* Page: pipeline (kanban full width) */
 #page-pipeline{grid-template-columns:1fr}
 /* Page: dashboard */
@@ -141,6 +164,18 @@ textarea{resize:vertical;min-height:70px;font-family:inherit}
 .st-quoted    {background:#2a1a0a;color:#d4a44c}
 .st-closed    {background:#0a2015;color:#3ecf8e}
 .st-rejected  {background:#1a0a0a;color:#f06060}
+
+/* Web category & activity pills */
+.web-pill{font-size:9px;font-weight:700;padding:2px 7px;border-radius:10px;
+          text-transform:uppercase;letter-spacing:.3px}
+.w-none        {background:#0a1a2a;color:#5b8def}
+.w-social_only {background:#2a1a05;color:#f5a542}
+.w-free_builder{background:#1a0a2a;color:#b57bee}
+.w-obsolete    {background:#1a0a0a;color:#f06060}
+.w-good        {background:var(--surface3);color:var(--muted)}
+.w-unknown     {background:var(--surface3);color:var(--muted)}
+.act-fresh{font-size:10px;color:#3ecf8e;font-weight:600}
+.act-old  {font-size:10px;color:#f5a542;font-weight:600}
 
 /* Sector badge */
 .badge{font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;
@@ -269,6 +304,7 @@ textarea{resize:vertical;min-height:70px;font-family:inherit}
   <div class="logo">Prospector <span>Tenerife</span></div>
   <div class="mainTabs">
     <div class="mainTab active" onclick="switchPage('search')">🔍 Buscar</div>
+    <div class="mainTab"        onclick="switchPage('sweep')">🧹 Barrer</div>
     <div class="mainTab"        onclick="switchPage('pipeline')">📋 Pipeline</div>
     <div class="mainTab"        onclick="switchPage('dashboard')">📊 Dashboard</div>
   </div>
@@ -277,6 +313,7 @@ textarea{resize:vertical;min-height:70px;font-family:inherit}
     <div class="hchip"><div class="dot" id="dot-ollama"></div>Ollama</div>
     <div class="hchip"><div class="dot" id="dot-ddgs"></div>DDG</div>
     <div class="stat" id="stat-prompts"></div>
+    <a href="/portfolio" target="_blank" class="hchip" style="text-decoration:none;background:linear-gradient(135deg,#1a3a5c,#2a4a6c);color:#c8a96e;border-color:#c8a96e;font-weight:600;letter-spacing:.04em" title="Ver portfolio público">🌐 Portfolio</a>
   </div>
 </div>
 
@@ -363,6 +400,48 @@ textarea{resize:vertical;min-height:70px;font-family:inherit}
   </div>
 </div><!-- /page-search -->
 
+<!-- ══════════ PAGE: SWEEP ══════════ -->
+<div id="page-sweep" class="page">
+  <div class="sweep-wrap">
+    <div class="sweep-card">
+      <h3>🏷️ Sectores</h3>
+      <div class="sweep-grid" id="sweep-sectors"></div>
+      <div style="margin-top:10px;font-size:11px;color:var(--muted)">
+        <a onclick="sweepToggleAll('sectors',true)" style="cursor:pointer;color:var(--gold)">Marcar todos</a>
+        ·
+        <a onclick="sweepToggleAll('sectors',false)" style="cursor:pointer;color:var(--muted)">Limpiar</a>
+      </div>
+    </div>
+
+    <div class="sweep-card">
+      <h3>📍 Zonas de Tenerife</h3>
+      <div class="sweep-grid" id="sweep-zones"></div>
+      <div style="margin-top:10px;font-size:11px;color:var(--muted)">
+        <a onclick="sweepToggleAll('zones',true)" style="cursor:pointer;color:var(--gold)">Marcar todas</a>
+        ·
+        <a onclick="sweepToggleAll('zones',false)" style="cursor:pointer;color:var(--muted)">Limpiar</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="sweep-actions">
+    <div class="sweep-summary" id="sweep-summary">Selecciona sectores y zonas para empezar.</div>
+    <div style="display:flex;gap:10px;align-items:center">
+      <label style="font-size:11.5px;color:var(--muted)">Máx. por combinación
+        <input id="sweep-max" type="number" value="5" min="1" max="20" style="width:54px;margin-left:4px"/>
+      </label>
+      <label class="chk" style="font-size:11.5px"><input id="sweep-skipv" type="checkbox" checked/> ddg</label>
+      <label class="chk" style="font-size:11.5px"><input id="sweep-skipo" type="checkbox"/> Omitir Ollama</label>
+      <button id="sweep-go" class="btn btn-gold" onclick="doSweep()">▶ Lanzar barrido</button>
+    </div>
+  </div>
+
+  <div id="sweep-log-wrap">
+    <div style="font-size:12px;font-weight:600;margin-bottom:10px;color:var(--gold)">Log del barrido</div>
+    <div id="sweep-log-lines"></div>
+  </div>
+</div><!-- /page-sweep -->
+
 
 <!-- ══════════ PAGE: PIPELINE ══════════ -->
 <div id="page-pipeline" class="page">
@@ -438,15 +517,27 @@ const SECTOR_LABELS = {
   estetica:"Estética",default:"—",
 };
 
+const WEB_LABELS = {
+  none:         "Sin web",
+  social_only:  "Solo redes",
+  free_builder: "Wix/free",
+  obsolete:     "Web vieja",
+  good:         "Web OK",
+  unknown:      "?",
+};
+
 /* ═══ NAVEGACIÓN ═══ */
+const PAGE_KEYS = ["search","sweep","pipeline","dashboard"];
 function switchPage(p) {
   currentPage = p;
   document.querySelectorAll(".mainTab").forEach((el,i) => {
-    el.classList.toggle("active", ["search","pipeline","dashboard"][i]===p);
+    el.classList.toggle("active", PAGE_KEYS[i]===p);
   });
-  ["search","pipeline","dashboard"].forEach(k => {
-    document.getElementById("page-"+k).classList.toggle("active", k===p);
+  PAGE_KEYS.forEach(k => {
+    const el = document.getElementById("page-"+k);
+    if (el) el.classList.toggle("active", k===p);
   });
+  if (p === "sweep") loadSweepOptions();
   if (p==="pipeline")  loadPipeline();
   if (p==="dashboard") loadDashboard();
 }
@@ -660,6 +751,13 @@ function renderCrmPanel(e) {
       <label>Estado:</label>
       <select onchange="updateStatus('${e.place_id}', this.value)">${statusOpts}</select>
       <span class="score-badge score-${e.score}">⭐ Score ${e.score}/10</span>
+      ${e.web_audit && e.web_audit.category
+        ? `<span class="web-pill w-${e.web_audit.category}" title="${esc(e.web_audit.final_url||'')}">${WEB_LABELS[e.web_audit.category]||e.web_audit.category}</span>`
+        : ""}
+      ${e.activity && e.activity.is_fresh
+        ? `<span class="act-fresh">● activo (${e.activity.last_review_days}d)</span>`
+        : (e.activity && e.activity.last_review_days != null && e.activity.last_review_days > 180
+            ? `<span class="act-old">● ${e.activity.last_review_days}d sin reseñas</span>` : "")}
     </div>
     <div class="crm-row">
       <label>Notas:</label>
@@ -690,6 +788,25 @@ function renderCrmPanel(e) {
       <h4>✉️ Email <button class="btn-ghost" onclick="copyText(\`${esc(out.email).replace(/`/g,'\\`')}\`)">Copiar</button></h4>
       <pre>${esc(out.email)}</pre>
     </div>` : ""}
+
+    <div class="outreach-box" style="margin:14px 0 0 0">
+      <h4 style="margin-bottom:8px">🎯 Mensaje por etapa
+        <span style="font-size:11px;font-weight:400;color:var(--muted);margin-left:8px">según el estado del lead</span>
+      </h4>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">
+        <button class="btn-ghost" onclick="showStageMessage('${e.place_id}','first_contact','whatsapp')">📨 1er contacto · WA</button>
+        <button class="btn-ghost" onclick="showStageMessage('${e.place_id}','follow_up_1','whatsapp')">🔔 Follow-up 1 · WA</button>
+        <button class="btn-ghost" onclick="showStageMessage('${e.place_id}','follow_up_2','whatsapp')">🔔 Follow-up 2 · WA</button>
+        <button class="btn-ghost" onclick="showStageMessage('${e.place_id}','proposal','whatsapp')">💰 Propuesta · WA</button>
+        <button class="btn-ghost" onclick="showStageMessage('${e.place_id}','closing','whatsapp')">✅ Cierre · WA</button>
+        <button class="btn-ghost" onclick="showStageMessage('${e.place_id}','proposal','email')">💰 Propuesta · email</button>
+        <button class="btn-ghost" onclick="showStageMessage('${e.place_id}','closing','email')">✅ Cierre · email</button>
+      </div>
+      <textarea id="stage-msg" rows="10" readonly placeholder="Pulsa una etapa para generar el mensaje correspondiente…" style="width:100%;font-family:ui-monospace,monospace;font-size:12px;padding:10px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:5px;resize:vertical"></textarea>
+      <div style="margin-top:6px;display:flex;justify-content:flex-end">
+        <button class="btn-ghost" onclick="copyStageMessage()">📋 Copiar mensaje</button>
+      </div>
+    </div>
   </div>`;
 }
 
@@ -804,13 +921,24 @@ async function loadPipeline() {
               soc.facebook  ? "📘" : "",
               soc.tiktok    ? "🎵" : "",
             ].filter(Boolean).join(" ");
+            const wcat = (b.web_audit || {}).category;
+            const webPill = wcat
+              ? `<span class="web-pill w-${wcat}">${WEB_LABELS[wcat]||wcat}</span>` : "";
+            const act = b.activity || {};
+            const actBadge = act.is_fresh
+              ? `<span class="act-fresh">● activo</span>`
+              : (act.last_review_days != null && act.last_review_days > 180
+                  ? `<span class="act-old">● ${act.last_review_days}d sin reseñas</span>`
+                  : "");
             return `<div class="kcard" onclick="openFromPipeline('${esc(b.output_file||"")}')" title="${b.needs_refresh?"Datos incompletos — pulsa la ficha y refresca":""}">
             <div class="kn">${b.needs_refresh?"⚠️ ":""}${esc(b.name)}</div>
             <div class="km">
               <span class="badge s-${b.sector||"default"}">${SECTOR_LABELS[b.sector]||"—"}</span>
               <span class="score-badge score-${b.score||0}">⭐${b.score||0}</span>
+              ${webPill}
               ${socIcons ? `<span style="font-size:11px;letter-spacing:2px">${socIcons}</span>` : ""}
             </div>
+            ${actBadge ? `<div style="margin-top:5px">${actBadge}</div>` : ""}
             ${b.notes ? `<div class="knote">${esc(b.notes)}</div>` : ""}
           </div>`;
           }).join("")
@@ -906,6 +1034,103 @@ function toast(msg) {
   t.classList.add("show");
   clearTimeout(t._timeout);
   t._timeout = setTimeout(()=>t.classList.remove("show"), 2000);
+}
+
+/* ═══ SWEEP ═══ */
+let _sweepOpts = null;
+async function loadSweepOptions() {
+  if (_sweepOpts) return;
+  _sweepOpts = await api("/api/sweep/options");
+  const sg = document.getElementById("sweep-sectors");
+  sg.innerHTML = _sweepOpts.sectors.map(s =>
+    `<label><input type="checkbox" value="${s.key}" onchange="updateSweepSummary()"/>${s.label}</label>`
+  ).join("");
+  const zg = document.getElementById("sweep-zones");
+  zg.innerHTML = _sweepOpts.zones.map(z =>
+    `<label><input type="checkbox" value="${esc(z)}" onchange="updateSweepSummary()"/>${esc(z)}</label>`
+  ).join("");
+  updateSweepSummary();
+}
+function sweepToggleAll(group, on) {
+  const id = group === "sectors" ? "sweep-sectors" : "sweep-zones";
+  document.querySelectorAll("#"+id+" input").forEach(el => el.checked = on);
+  updateSweepSummary();
+}
+function _sweepGetSelections() {
+  const sectors = [...document.querySelectorAll("#sweep-sectors input:checked")].map(el => el.value);
+  const zones   = [...document.querySelectorAll("#sweep-zones   input:checked")].map(el => el.value);
+  return {sectors, zones};
+}
+function updateSweepSummary() {
+  const {sectors, zones} = _sweepGetSelections();
+  const max = +document.getElementById("sweep-max").value || 5;
+  const combos = sectors.length * zones.length;
+  const cap = combos * max;
+  const el = document.getElementById("sweep-summary");
+  if (!combos) {
+    el.innerHTML = "Selecciona sectores y zonas para empezar.";
+    document.getElementById("sweep-go").disabled = true;
+    return;
+  }
+  el.innerHTML = `<b>${sectors.length}</b> sectores × <b>${zones.length}</b> zonas = <b>${combos}</b> búsquedas (hasta <b>${cap}</b> candidatos)`;
+  document.getElementById("sweep-go").disabled = false;
+}
+async function doSweep() {
+  const {sectors, zones} = _sweepGetSelections();
+  if (!sectors.length || !zones.length) { toast("Selecciona sectores y zonas"); return; }
+  const btn = document.getElementById("sweep-go");
+  btn.disabled = true; btn.textContent = "⏳ Barriendo…";
+  document.getElementById("sweep-log-wrap").classList.add("active");
+  document.getElementById("sweep-log-lines").innerHTML = "";
+
+  const payload = {
+    sectors, zones,
+    max_per: +document.getElementById("sweep-max").value || 5,
+    skip_verify: !document.getElementById("sweep-skipv").checked,  // checkbox = "usar ddg"
+    skip_ollama: document.getElementById("sweep-skipo").checked,
+  };
+  const {job_id, error} = await api("/api/sweep", "POST", payload);
+  if (error) { toast("⚠ "+error); btn.disabled=false; btn.textContent="▶ Lanzar barrido"; return; }
+  if (pollInterval) clearInterval(pollInterval);
+  pollInterval = setInterval(async () => {
+    const j = await api("/api/jobs/"+job_id);
+    const el = document.getElementById("sweep-log-lines");
+    el.innerHTML = (j.log || []).map(l => {
+      const c = l.includes("✓")?"ok":l.includes("✗")||l.includes("ERROR")?"err":
+                l.startsWith("▶")||l.startsWith("[")?"info":
+                l.startsWith("⏭")?"skip":"";
+      return `<div class="${c}">${esc(l)}</div>`;
+    }).join("");
+    el.scrollTop = el.scrollHeight;
+    if (j.status === "done" || j.status === "error") {
+      clearInterval(pollInterval);
+      btn.disabled = false; btn.textContent = "▶ Lanzar barrido";
+      loadPrompts(); loadHealth();
+      toast(j.status === "done" ? "✓ Barrido completado" : "✗ Error en barrido");
+    }
+  }, 1000);
+}
+
+/* ═══ STAGE-BASED OUTREACH ═══ */
+const STAGE_LABELS = {
+  first_contact: "📨 Primer contacto",
+  follow_up_1:   "🔔 Recordatorio (3-5 días)",
+  follow_up_2:   "🔔 Último intento (7-10 días)",
+  proposal:      "💰 Propuesta detallada",
+  closing:       "✅ Cierre",
+};
+async function showStageMessage(pid, stage, channel) {
+  const data = await api(`/api/businesses/${pid}/outreach_message?stage=${stage}&channel=${channel}`);
+  if (data.error) { toast("⚠ "+data.error); return; }
+  if (!data.message) { toast("Plantilla no disponible"); return; }
+  const ta = document.getElementById("stage-msg");
+  if (ta) ta.value = data.message;
+  toast(`${STAGE_LABELS[stage]||stage} (${channel})`);
+}
+
+function copyStageMessage() {
+  const ta = document.getElementById("stage-msg");
+  if (ta && ta.value) copyText(ta.value);
 }
 
 /* ═══ INIT ═══ */

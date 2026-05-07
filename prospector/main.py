@@ -60,15 +60,19 @@ def process_business(
     extractor: GoogleExtractor,
     analyzer: ReviewAnalyzer,
     builder: PromptBuilder,
-) -> Path:
-    """Procesa un negocio completo y devuelve la ruta del prompt generado."""
+    *,
+    return_insights: bool = False,
+):
+    """Procesa un negocio completo y devuelve la ruta del prompt generado.
+
+    Si `return_insights=True` devuelve `(path, insights)` para que el caller
+    pueda enriquecer el outreach con las palabras clave / selling points.
+    """
 
     # 1. Paleta a partir de la primera foto disponible
     palette = _get_palette(biz, extractor)
 
     # 2. Perfil visual (tipografía + vibe) por sector.
-    #    Pasamos el nombre para que override categorías ambiguas
-    #    (ej. "Bobe Barber Shop" tagged como hair_care → fuerza barbería).
     profile = get_profile(biz.categories_all or biz.category, name=biz.name)
 
     # 3. Insights de reseñas via Ollama (local)
@@ -88,6 +92,8 @@ def process_business(
 
     out_path = OUTPUT_DIR / f"{_slugify(biz.name)}.txt"
     builder.save(prompt, out_path)
+    if return_insights:
+        return out_path, insights
     return out_path
 
 

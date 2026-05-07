@@ -51,9 +51,47 @@ class Business:
     location: dict                     # {"lat": ..., "lng": ...}
     maps_url: str
     price_level: int | None
+    business_status: str = "OPERATIONAL"  # OPERATIONAL | CLOSED_TEMPORARILY | CLOSED_PERMANENTLY
 
     def to_dict(self) -> dict:
         return asdict(self)
+
+
+# ---------------------------------------------------------------------------
+# Detección de "website" basura (redes sociales como sitio del negocio)
+# ---------------------------------------------------------------------------
+#
+# Google a veces reporta como `website` la URL de Facebook/Instagram porque
+# es lo único que el dueño llenó. Esos NO son competencia para nosotros —
+# son leads premium ("tienen presencia social pero no web propia").
+
+_NON_WEB_HOSTS: frozenset[str] = frozenset({
+    "facebook.com", "m.facebook.com", "fb.com", "fb.me",
+    "instagram.com", "linktr.ee", "lnk.bio",
+    "twitter.com", "x.com", "t.co",
+    "tiktok.com", "youtube.com", "youtu.be",
+    "wa.me", "whatsapp.com", "chat.whatsapp.com",
+    "google.com", "maps.google.com", "g.page", "goo.gl",
+    "tripadvisor.com", "tripadvisor.es", "yelp.com", "yelp.es",
+    "thefork.es", "thefork.com",
+    "paginasamarillas.es", "yellow.es",
+})
+
+
+def _website_host(url: str | None) -> str | None:
+    if not url:
+        return None
+    import re
+    return re.sub(r"^https?://", "", url).split("/")[0].lower().lstrip("www.")
+
+
+def is_real_website(url: str | None) -> bool:
+    """True si la URL parece una web propia del negocio (no una red social
+    ni un directorio). Si no hay URL, False."""
+    host = _website_host(url)
+    if not host:
+        return False
+    return not any(host == h or host.endswith("." + h) for h in _NON_WEB_HOSTS)
 
 
 # ---------------------------------------------------------------------------
@@ -143,6 +181,7 @@ class GoogleExtractor:
         "geometry/location",
         "url",
         "price_level",
+        "business_status",  # OPERATIONAL | CLOSED_TEMPORARILY | CLOSED_PERMANENTLY
     ]
 
     def __init__(self, api_key: str | None = None, language: str | None = None):
@@ -218,8 +257,10 @@ class GoogleExtractor:
                 print(f"[google_extractor] error en {pid}: {exc}")
                 continue
 
-            if only_without_website and biz.website:
-                continue  # ya tiene web → no es nuestro target
+            if biz.business_status == "CLOSED_PERMANENTLY":
+                continue  # negocio fantasma — descartar
+            if only_without_website and is_real_website(biz.website):
+                continue  # ya tiene web propia (no red social) → no es target
 
             businesses.append(biz)
             time.sleep(throttle)
@@ -284,7 +325,9 @@ class GoogleExtractor:
             except Exception as exc:
                 print(f"[google_extractor] error en {pid}: {exc}")
                 continue
-            if only_without_website and biz.website:
+            if biz.business_status == "CLOSED_PERMANENTLY":
+                continue
+            if only_without_website and is_real_website(biz.website):
                 continue
             businesses.append(biz)
             time.sleep(throttle)
@@ -436,21 +479,41 @@ class GoogleExtractor:
             location={"lat": loc.get("lat"), "lng": loc.get("lng")},
             maps_url=r.get("url", ""),
             price_level=r.get("price_level"),
+            business_status=r.get("business_status", "OPERATIONAL"),
         )
 
     # ---------------- utilidades ----------------
 
     def download_photo(self, photo_reference: str, max_width: int = 800) -> bytes:
         """
-        Descarga el binario de una foto de Google Places.
-        Se usa más adelante por image_analyzer.py para extraer paleta.
+        Descarga el binario de una foto de Google Places (con caché en disco).
+        Cada llamada cuesta ~7 $/1000, así que cacheamos por photo_reference
+        + max_width — re-procesar un negocio no vuelve a cobrar.
         """
+        from pathlib import Path
+        import hashlib
+        cache_dir = Path(__file__).resolve().parent.parent / "output" / ".cache" / "photos"
+        cache_dir.mkdir(parents=True, exist_ok=True)
+        # photo_reference es un string largo, nombre de archivo seguro:
+        key = hashlib.sha1(f"{photo_reference}|{max_width}".encode()).hexdigest()
+        cache_path = cache_dir / f"{key}.bin"
+        if cache_path.exists():
+            try:
+                return cache_path.read_bytes()
+            except Exception:
+                pass  # cache corrupto → seguimos a descarga
+
         result = self.client.places_photo(
             photo_reference=photo_reference,
             max_width=max_width,
         )
         self.calls_photo += 1
-        return b"".join(chunk for chunk in result if chunk)
+        data = b"".join(chunk for chunk in result if chunk)
+        try:
+            cache_path.write_bytes(data)
+        except Exception:
+            pass  # disco lleno / sin permisos — se ignora
+        return data
 
 
 __all__ = ["GoogleExtractor", "Business"]
