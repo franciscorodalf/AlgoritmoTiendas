@@ -1,6 +1,7 @@
-{% from '_base.j2' import identity_block, business_block, insights_block, tech_block with context %}
-Crea una web elegante y luminosa para "{{ business.name }}", un salón de
-peluquería en {{ business.address }}. Estética cuidada, femenina, sofisticada.
+{% from '_base.j2' import identity_block, business_block, insights_block, conversion_block, tech_block with context %}
+Crea una web elegante, luminosa y comercial para "{{ business.name }}", un salon
+de peluqueria en {{ business.address }}. Debe transmitir estilo, cuidado y confianza
+desde el primer vistazo.
 
 {{ identity_block() }}
 
@@ -9,18 +10,21 @@ peluquería en {{ business.address }}. Estética cuidada, femenina, sofisticada.
 {{ insights_block() }}
 
 SECCIONES:
-  1. Hero con foto editorial del salón o un look signature
-  2. Servicios (corte, color, tratamientos, novias...) con precios orientativos
-  3. Galería de trabajos realizados (rejilla tipo Instagram)
-  4. Sobre el equipo (foto + especialidad de cada estilista)
-  5. Reseñas destacadas
-  6. Reserva online + WhatsApp
-  7. Ubicación y horario
+  1. Hero editorial con look signature, claim aspiracional y CTA "Pedir cita".
+  2. Indicadores de confianza: valoracion, resenas, especialistas, ubicacion.
+  3. Servicios por categoria sin importes: corte, color, tratamientos, novias y asesoramiento.
+  4. Galeria de trabajos realizados tipo lookbook, con transiciones suaves y captions.
+  5. Equipo: estilistas, especialidad y enfoque personal.
+  6. Productos y marcas usadas si procede, sin inventar marcas si no hay informacion.
+  7. Resenas destacadas con foco en trato, resultado y confianza.
+  8. Reserva online/WhatsApp con seleccion de servicio y horario preferido.
+  9. Ubicacion, horario, mapa y FAQ de citas, cambios, duracion y cuidados posteriores.
 
 DETALLES:
-  - Fotografía luminosa, mucho espacio en blanco
-  - Paleta suave que complemente la del logo
-  - Formulario de reserva con selección de servicio y estilista
-  - Espacio para hablar de productos usados (L'Oréal, Kérastase, etc.) si procede
+  - Mucha luz, espacio en blanco, ritmo editorial y detalles de color de marca.
+  - Animaciones sutiles en galeria, tarjetas y aparicion de secciones.
+  - No mostrar importes orientativos; usar "Consultar servicio" o "Pedir asesoramiento".
+
+{{ conversion_block() }}
 
 {{ tech_block() }}

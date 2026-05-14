@@ -1,7 +1,7 @@
-{% from '_base.j2' import identity_block, business_block, insights_block, tech_block with context %}
-Crea una web cálida y apetitosa para "{{ business.name }}", un restaurante
-ubicado en {{ business.address }}. La web debe transmitir el sabor del sitio
-antes de que el cliente entre por la puerta.
+{% from '_base.j2' import identity_block, business_block, insights_block, conversion_block, tech_block with context %}
+Crea una web calida, apetecible y lista para reservas para "{{ business.name }}",
+un restaurante ubicado en {{ business.address }}. Debe transmitir sabor, ambiente
+y confianza antes de que el cliente entre por la puerta.
 
 {{ identity_block() }}
 
@@ -9,21 +9,24 @@ antes de que el cliente entre por la puerta.
 
 {{ insights_block() }}
 
-SECCIONES (en este orden):
-  1. Hero a pantalla completa con foto apetitosa de un plato estrella
-     y reserva inmediata por WhatsApp
-  2. Nuestra historia (tono cercano, raíces, tradición)
-  3. Carta destacada (platos principales con fotos grandes y precio)
-  4. Galería del local y ambiente
-  5. Reseñas de Google destacadas
-  6. Reserva: WhatsApp directo, teléfono, formulario corto
-  7. Cómo llegar: mapa + dirección + horario visible
+SECCIONES:
+  1. Hero inmersivo con fotografia gastronomica, claim memorable y CTA "Reservar por WhatsApp".
+  2. Banda inmediata con horario de hoy, valoracion, ubicacion y boton de llamada.
+  3. Experiencia del restaurante: cocina, ambiente, especialidad y para que ocasiones encaja.
+  4. Carta destacada sin importes visibles: platos estrella, descripcion breve, alergenos si procede y CTA "Consultar carta".
+  5. Modulo de menu digital con QR: tarjeta escaneable para descargar/abrir PDF de carta, boton "Descargar menu" y texto de actualizacion.
+  6. Galeria editorial del local, platos y equipo, con transiciones suaves al hacer scroll.
+  7. Resenas de Google seleccionadas con formato elegante y prueba social.
+  8. Reserva simple: WhatsApp, telefono y formulario corto para fecha, hora y personas.
+  9. Como llegar: mapa, direccion, aparcamiento/transporte si aplica y horario visible.
+  10. FAQ: reservas, grupos, intolerancias, comida para llevar y metodos de contacto.
 
-DETALLES IMPORTANTES:
-  - Usa fotografía de comida generosa y a pantalla completa
-  - Menú descargable en PDF si se ofrece
-  - Integración directa con WhatsApp Business para reservas
-  - Highlight de alergenos e información dietética si procede
-  - Instagram feed embebido si tienen cuenta activa
+DETALLES:
+  - Usa imagenes generosas, luz natural y composicion visual con apetito.
+  - Animaciones sobrias: aparicion por secciones, hover en platos, CTA sticky en movil.
+  - Si hay PDF de carta, generar un QR real que apunte a ese archivo o URL. Si no existe, preparar el bloque para conectarlo facilmente.
+  - No inventes importes. Si hace falta, usa "Consultar carta" o "Preguntar disponibilidad".
+
+{{ conversion_block() }}
 
 {{ tech_block() }}

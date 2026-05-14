@@ -15,11 +15,15 @@ __pycache__/
 .mypy_cache/
 .ruff_cache/
 
+# Frontend
+node_modules/
+dist/
+
 # Output generado
 prospector/output/*
 !prospector/output/.gitkeep
 
-# Cachés de imágenes descargadas
+# Caches de imagenes descargadas
 prospector/cache/
 *.log
 

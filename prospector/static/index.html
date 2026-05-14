@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Prospector · Tenerife</title>
+<title>Prospector Local</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
@@ -167,7 +167,7 @@ input:focus{border-color:var(--gold)}
 
 <!-- ═══ HEADER ═══ -->
 <div id="header">
-  <div class="logo">Prospector <span>Tenerife</span></div>
+  <div class="logo">Prospector <span>Local</span></div>
   <div class="hrow">
     <div class="hchip"><div class="dot" id="dot-goog"></div>Google API</div>
     <div class="hchip"><div class="dot" id="dot-ollama"></div>Ollama</div>
@@ -193,7 +193,7 @@ input:focus{border-color:var(--gold)}
         <label class="lbl">Búsqueda (sector, zona o nombre)</label>
         <input id="q" type="text" placeholder="ej: barberías en La Laguna"/>
         <label class="lbl">Región (opcional)</label>
-        <input id="region" type="text" placeholder="Tenerife, España"/>
+        <input id="region" type="text" placeholder="Ciudad, España"/>
         <label class="lbl">Máx. resultados</label>
         <input id="max-txt" type="number" value="5" min="1" max="30"/>
         <label class="chk"><input id="incl-txt" type="checkbox"/> Incluir negocios ya con web</label>
@@ -323,14 +323,14 @@ function initMap() {
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{
     attribution:"© OpenStreetMap", maxZoom:18
   }).addTo(leafletMap);
-  // Bounding box Tenerife
+  // Bounding box de la zona configurada
   L.rectangle([[27.97,-16.95],[28.60,-16.08]],{
     color:"#d4a44c",weight:1,dashArray:"4 4",fillOpacity:0,interactive:false
   }).addTo(leafletMap);
   leafletMap.on("click", e => {
     const {lat,lng} = e.latlng;
     if (lat<27.97||lat>28.60||lng<-16.95||lng>-16.08) {
-      document.getElementById("map-info").textContent="⚠ Punto fuera de Tenerife";
+      document.getElementById("map-info").textContent="⚠ Punto fuera de la zona configurada";
       return;
     }
     setPin(lat,lng);

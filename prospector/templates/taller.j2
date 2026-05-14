@@ -1,7 +1,7 @@
-{% from '_base.j2' import identity_block, business_block, insights_block, tech_block with context %}
-Crea una web robusta y directa para "{{ business.name }}", un taller
-mecánico en {{ business.address }}. Estética industrial, honesta, sin
-florituras. El cliente busca fiabilidad y un precio claro.
+{% from '_base.j2' import identity_block, business_block, insights_block, conversion_block, tech_block with context %}
+Crea una web robusta, directa y profesional para "{{ business.name }}", un taller
+mecanico en {{ business.address }}. El cliente busca fiabilidad, rapidez y claridad
+antes de dejar su vehiculo.
 
 {{ identity_block() }}
 
@@ -10,18 +10,21 @@ florituras. El cliente busca fiabilidad y un precio claro.
 {{ insights_block() }}
 
 SECCIONES:
-  1. Hero con CTA "Pide presupuesto por WhatsApp"
-  2. Servicios (mecánica general, ITV, neumáticos, electricidad, aire acondicionado, etc.)
-  3. Marcas con las que trabajamos (logos)
-  4. Por qué elegirnos (años de experiencia, garantía, etc.)
-  5. Reseñas reales de clientes
-  6. Presupuesto rápido por WhatsApp
-  7. Ubicación + horario
+  1. Hero con foto realista de taller, claim de confianza y CTA "Solicitar presupuesto".
+  2. Barra de contacto rapido: telefono, WhatsApp, horario, ubicacion y valoracion.
+  3. Servicios principales: mecanica, ITV, neumaticos, diagnosis, electricidad, aire acondicionado, etc.
+  4. Por que elegirnos: garantia, experiencia, diagnosis clara, trato honesto y plazos.
+  5. Proceso: cuenta el problema, revision, presupuesto, reparacion y entrega.
+  6. Marcas/vehiculos con los que trabajan si procede, como modulo visual discreto.
+  7. Resenas reales con foco en confianza, rapidez y transparencia.
+  8. Solicitud de presupuesto: formulario para matricula opcional, modelo, problema y contacto.
+  9. Ubicacion, mapa, horario y CTA final.
 
 DETALLES:
-  - Fotografía del taller real, no stock
-  - Iconografía industrial (llaves, engranajes) usada con mesura
-  - CTA "Presupuesto sin compromiso" muy visible
-  - Teléfono directo en el header en móvil
+  - Estetica industrial limpia, no descuidada.
+  - Iconografia tecnica con mesura y microinteracciones en servicios.
+  - No mostrar importes; usar "Solicitar presupuesto" o "Consultar reparacion".
+
+{{ conversion_block() }}
 
 {{ tech_block() }}

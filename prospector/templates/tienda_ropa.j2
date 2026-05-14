@@ -1,7 +1,7 @@
-{% from '_base.j2' import identity_block, business_block, insights_block, tech_block with context %}
-Crea una web fresca y editorial para "{{ business.name }}", una tienda de
-ropa en {{ business.address }}. Estética tipo revista de moda, dinámica,
-con espacio para que las imágenes respiren.
+{% from '_base.j2' import identity_block, business_block, insights_block, conversion_block, tech_block with context %}
+Crea una web fresca, editorial y comercial para "{{ business.name }}", una tienda
+de ropa en {{ business.address }}. Debe parecer una experiencia de marca, no un
+catalogo basico.
 
 {{ identity_block() }}
 
@@ -10,18 +10,21 @@ con espacio para que las imágenes respiren.
 {{ insights_block() }}
 
 SECCIONES:
-  1. Hero con foto editorial de la nueva temporada
-  2. Colecciones destacadas (rejilla generosa)
-  3. Marcas que trabajamos
-  4. Lookbook del mes
-  5. Instagram feed embebido
-  6. Encuéntranos: ubicación, horario, probadores, devoluciones
-  7. Newsletter (opcional)
+  1. Hero editorial de nueva temporada con CTA "Ver coleccion" y "Escribir por WhatsApp".
+  2. Banda de confianza: ubicacion, horario, valoracion y atencion personalizada.
+  3. Colecciones destacadas: mujer/hombre/accesorios u otras categorias relevantes.
+  4. Lookbook del mes con composiciones visuales y sugerencias de uso.
+  5. Marcas que trabajan si procede, sin inventar.
+  6. Compra/contacto: catalogo, Instagram, WhatsApp o visita a tienda segun corresponda.
+  7. Resenas o prueba social sobre trato, asesoramiento y calidad.
+  8. Informacion practica: probadores, cambios/devoluciones si procede, horario y mapa.
+  9. Newsletter o avisos de novedades como modulo opcional.
 
 DETALLES:
-  - Fotografía grande y editorial, mucha respiración
-  - Animaciones sutiles al hacer scroll
-  - Si venden online, enlazar a catálogo; si no, CTA a Instagram/WhatsApp
-  - Tipografía editorial, nada de estilo "tienda de barrio"
+  - Imagenes grandes, ritmo editorial y mucho cuidado en espaciado.
+  - Animaciones suaves: hover en prendas, transiciones de lookbook y reveal al scroll.
+  - No mostrar importes si no se proporcionan; usar "Consultar disponibilidad".
+
+{{ conversion_block() }}
 
 {{ tech_block() }}

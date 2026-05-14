@@ -1,7 +1,7 @@
 """
 webapp.py
 ---------
-Servidor Flask: API REST + frontend de Prospector Tenerife.
+Servidor Flask: API REST + frontend de Prospector Local.
 
 Endpoints
 ─────────

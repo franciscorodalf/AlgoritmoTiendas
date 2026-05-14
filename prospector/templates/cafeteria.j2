@@ -1,7 +1,7 @@
-{% from '_base.j2' import identity_block, business_block, insights_block, tech_block with context %}
-Crea una web acogedora y artesanal para "{{ business.name }}", una cafetería
-en {{ business.address }}. Transmite aroma a café recién hecho y ambiente
-de barrio donde uno quiere quedarse.
+{% from '_base.j2' import identity_block, business_block, insights_block, conversion_block, tech_block with context %}
+Crea una web acogedora, artesanal y profesional para "{{ business.name }}", una
+cafeteria en {{ business.address }}. La web debe transmitir aroma, cercania y ganas
+de visitar el local.
 
 {{ identity_block() }}
 
@@ -10,17 +10,23 @@ de barrio donde uno quiere quedarse.
 {{ insights_block() }}
 
 SECCIONES:
-  1. Hero con foto cálida del local o de un café/bollería
-  2. Lo que ofrecemos (cafés, desayunos, brunchs, meriendas...)
-  3. Productos de temporada (si los hay)
-  4. Ambiente: galería generosa del interior
-  5. Opiniones de clientes
-  6. Horario + mapa + cómo llegar
-  7. Sigue-nos en Instagram
+  1. Hero calido con cafe/producto/local, claim cercano y CTA "Como llegar" o "Reservar".
+  2. Banda de confianza con horario, valoracion, ubicacion y contacto rapido.
+  3. Especialidades: cafes, desayunos, brunch, dulces o producto artesanal con descripciones.
+  4. Ambiente del local: galeria generosa y bloque "ideal para..." si procede.
+  5. Productos de temporada o destacados sin importes visibles.
+  6. Menu digital con QR para mesa/barra/escaparate: abrir o descargar PDF de carta, con boton alternativo visible.
+  7. Resenas de clientes con foco en trato, calidad y ambiente.
+  8. Instagram/galeria social si aplica, presentada como modulo opcional.
+  9. Contacto: mapa, horario, telefono, WhatsApp y como llegar.
+  10. FAQ: reservas, pedidos, opciones sin gluten/vegetales y horarios especiales.
 
 DETALLES:
-  - Fotografía natural, luz cálida, nada de stock frío
-  - CTA para "Pide por WhatsApp" o "Reserva mesa"
-  - Resalta productos artesanos/de cosecha propia si los tienen
+  - Fotografia natural, luz calida y texturas; evitar apariencia de stock frio.
+  - Hover suave en productos y revelado de secciones al scroll.
+  - El QR debe apuntar a la carta PDF o URL de menu real. Si no hay carta aun, dejar el componente preparado y facil de reemplazar.
+  - No listar importes; usar "Consultar opciones" o "Pedir por WhatsApp".
+
+{{ conversion_block() }}
 
 {{ tech_block() }}

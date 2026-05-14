@@ -1,7 +1,7 @@
-{% from '_base.j2' import identity_block, business_block, insights_block, tech_block with context %}
-Crea una web enérgica y motivadora para "{{ business.name }}", un centro
-deportivo en {{ business.address }}. Estética potente, atlética, con
-contrastes marcados.
+{% from '_base.j2' import identity_block, business_block, insights_block, conversion_block, tech_block with context %}
+Crea una web energica, clara y orientada a conversion para "{{ business.name }}",
+un centro deportivo en {{ business.address }}. Debe motivar sin parecer agresiva
+ni caotica.
 
 {{ identity_block() }}
 
@@ -10,19 +10,21 @@ contrastes marcados.
 {{ insights_block() }}
 
 SECCIONES:
-  1. Hero a pantalla completa con vídeo/foto potente y CTA "Prueba una clase gratis"
-  2. Clases y actividades (parrilla semanal)
-  3. Instalaciones (fotos grandes)
-  4. Entrenadores (foto + especialidad)
-  5. Tarifas (claras y simples, sin letra pequeña)
-  6. Testimonios transformación antes/después si proceden
-  7. Contacto: WhatsApp + formulario para prueba gratuita
-  8. Ubicación + horario de apertura
+  1. Hero potente con imagen/video deportivo, claim y CTA "Probar una clase".
+  2. Barra de confianza: valoracion, horario, ubicacion y contacto rapido.
+  3. Actividades/clases con beneficios, nivel recomendado y CTA por actividad.
+  4. Parrilla semanal visual si procede, sin saturar la vista movil.
+  5. Instalaciones: galeria de salas, material, vestuarios y ambiente.
+  6. Entrenadores: foto, especialidad y enfoque de acompanamiento.
+  7. Historias/testimonios de alumnos, cuidando privacidad y realismo.
+  8. Formulario de prueba: objetivo, disponibilidad, telefono y WhatsApp.
+  9. Ubicacion, horario, FAQ y CTA final.
 
 DETALLES:
-  - Fotografía con energía, gente en movimiento, nada estático
-  - Tipografía condensada bold
-  - Paleta oscura con acentos vibrantes
-  - CTA "Primera clase gratis" siempre visible
+  - Paleta potente con acentos vibrantes, pero UI limpia y legible.
+  - Animaciones de entrada y hover con energia controlada.
+  - No mostrar importes; usar "Consultar plan" o "Probar una clase".
+
+{{ conversion_block() }}
 
 {{ tech_block() }}

@@ -1,7 +1,7 @@
-{% from '_base.j2' import identity_block, business_block, insights_block, tech_block with context %}
-Crea una web delicada y botánica para "{{ business.name }}", una floristería
-en {{ business.address }}. La web debe oler a flor recién cortada: natural,
-luminosa, con la flor siempre como protagonista.
+{% from '_base.j2' import identity_block, business_block, insights_block, conversion_block, tech_block with context %}
+Crea una web delicada, botanica y comercial para "{{ business.name }}", una
+floristeria en {{ business.address }}. La flor debe ser protagonista y la compra
+o encargo debe sentirse facil.
 
 {{ identity_block() }}
 
@@ -10,23 +10,21 @@ luminosa, con la flor siempre como protagonista.
 {{ insights_block() }}
 
 SECCIONES:
-  1. Hero con foto macro de un ramo signature y CTA "Encarga tu ramo por WhatsApp"
-  2. Ramos y arreglos destacados (bodas, cumpleaños, condolencias, eventos)
-  3. Flor del mes / temporada (con historia breve de cada flor)
-  4. Servicios especiales:
-     · Envío a domicilio en Tenerife
-     · Decoración de eventos y bodas
-     · Suscripción semanal (si la ofrecen)
-  5. Galería de trabajos realizados (rejilla tipo Instagram)
-  6. Reseñas de clientes
-  7. Encargos urgentes por WhatsApp + formulario detallado
-  8. Ubicación, horario y envíos
+  1. Hero luminoso con ramo protagonista y CTA "Encargar por WhatsApp".
+  2. Banda practica: envios/recogida si procede, horario, ubicacion y valoracion.
+  3. Ramos y arreglos por ocasion: cumpleanos, bodas, condolencias, eventos y detalle.
+  4. Flor de temporada con historia breve y recomendacion de uso.
+  5. Servicios especiales: eventos, bodas, decoracion, suscripciones o encargos a medida.
+  6. Galeria de trabajos reales con rejilla elegante y transiciones suaves.
+  7. Resenas de clientes con foco en cuidado, puntualidad y belleza del resultado.
+  8. Formulario de encargo: ocasion, fecha, preferencias, entrega/recogida y contacto.
+  9. Ubicacion, horario, mapa y FAQ de encargos urgentes.
 
 DETALLES:
-  - Fotografía macro, luz natural, nada de stock artificial
-  - Tonos verdes, pasteles, crema — mucho espacio en blanco
-  - Tipografía serif delicada combinada con sans limpia
-  - Iconografía floral sutil como decoración
-  - Opción de filtrar ramos por ocasión y por presupuesto
+  - Luz natural, mucho aire, tonos verdes y acentos de marca.
+  - Animaciones sutiles de aparicion y hover en tarjetas de ocasion.
+  - No filtrar por presupuesto visible; usar "Encargo a medida" o "Consultar opciones".
+
+{{ conversion_block() }}
 
 {{ tech_block() }}
