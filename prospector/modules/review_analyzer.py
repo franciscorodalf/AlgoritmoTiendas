@@ -52,6 +52,7 @@ class ReviewInsights:
 
 _DEFAULT_MODEL = os.getenv("OLLAMA_MODEL", "llama3.1:8b")
 _DEFAULT_HOST = os.getenv("OLLAMA_HOST", "http://localhost:11434")
+_DEFAULT_TIMEOUT = float(os.getenv("OLLAMA_TIMEOUT", "60"))
 
 _SYSTEM_PROMPT = """Eres un analista de marketing especializado en negocios locales españoles.
 Analizas reseñas de Google y extraes insights accionables para construir una web que venda.
@@ -79,10 +80,17 @@ Devuelve un JSON con esta estructura exacta (sin markdown, sin explicaciones):
 
 
 class ReviewAnalyzer:
-    def __init__(self, model: str | None = None, host: str | None = None):
+    def __init__(self, model: str | None = None, host: str | None = None,
+                 timeout: float | None = None):
         self.model = model or _DEFAULT_MODEL
         self.host = host or _DEFAULT_HOST
-        self.client = ollama.Client(host=self.host)
+        self.timeout = timeout if timeout is not None else _DEFAULT_TIMEOUT
+        # Algunas versiones del cliente ollama no aceptan `timeout=` en el
+        # constructor — caemos al default si así es.
+        try:
+            self.client = ollama.Client(host=self.host, timeout=self.timeout)
+        except TypeError:
+            self.client = ollama.Client(host=self.host)
 
     # ---------------- API pública ----------------
 
@@ -124,7 +132,22 @@ class ReviewAnalyzer:
         return self._to_insights(data)
 
     def ping(self) -> bool:
-        """Comprueba que Ollama está corriendo y el modelo disponible."""
+        """Comprueba que Ollama está corriendo Y el modelo descargado."""
+        try:
+            resp = self.client.list()
+            models = resp.get("models", []) if isinstance(resp, dict) else []
+            # Acepta nombre exacto o tag base (ej. 'llama3.1' matchea 'llama3.1:8b')
+            target_base = self.model.split(":")[0]
+            for m in models:
+                name = (m.get("name") or m.get("model") or "") if isinstance(m, dict) else str(m)
+                if name == self.model or name.startswith(target_base + ":"):
+                    return True
+            return False
+        except Exception:
+            return False
+
+    def has_server(self) -> bool:
+        """Solo comprueba que Ollama responde (sin verificar el modelo)."""
         try:
             self.client.list()
             return True

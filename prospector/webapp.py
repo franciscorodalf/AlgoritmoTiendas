@@ -1,24 +1,42 @@
 """
 webapp.py
 ---------
-Servidor Flask: API REST + frontend de Prospector Local.
+Servidor Flask: API REST + frontend de Prospector Local (CRM completo).
 
 Endpoints
 ─────────
-GET    /                           → frontend
-GET    /api/health                 → estado completo (Ollama, API key, stats)
-GET    /api/prompts                → lista de prompts
-GET    /api/prompts/<name>         → contenido de un prompt
-PUT    /api/prompts/<name>         → guardar edición
-DELETE /api/prompts/<name>         → eliminar prompt
-GET    /api/registry               → negocios ya procesados
-POST   /api/generate               → búsqueda por texto
-POST   /api/discover               → búsqueda por zona (lat/lng/radius)
-GET    /api/jobs/<id>              → estado de un job
+Prompts
+  GET    /api/prompts                 lista de prompts generados
+  GET    /api/prompts/<name>          contenido de un prompt
+  PUT    /api/prompts/<name>          guardar edición
+  DELETE /api/prompts/<name>          eliminar prompt
+
+Negocios (CRM)
+  GET    /api/businesses              lista completa con status/score/social
+  GET    /api/businesses/<pid>        ficha individual
+  PATCH  /api/businesses/<pid>        actualizar status/notes/score
+  POST   /api/businesses/<pid>/refresh
+                                      re-pedir datos a Google Places (útil
+                                      para entradas migradas de v1)
+  POST   /api/businesses/<pid>/regenerate_outreach
+                                      regenerar mensajes WhatsApp/email
+  POST   /api/businesses/<pid>/detect_social
+                                      buscar redes sociales (IG/FB/TikTok)
+
+Stats & export
+  GET    /api/stats                   dashboard stats
+  GET    /api/export/csv              exportar todo a CSV
+
+Búsquedas
+  POST   /api/generate                búsqueda por texto
+  POST   /api/discover                búsqueda por zona
+  GET    /api/jobs/<id>               estado de un job
 """
 
 from __future__ import annotations
 
+import csv
+import io
 import os
 import sys
 import threading
@@ -28,15 +46,16 @@ from pathlib import Path
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8")
 
-from flask import Flask, jsonify, request, send_from_directory
+from flask import Flask, jsonify, request, send_from_directory, Response, redirect
 
 sys.path.insert(0, str(Path(__file__).parent))
 
 from modules.google_extractor import GoogleExtractor
 from modules.review_analyzer import ReviewAnalyzer
 from modules.prompt_builder import PromptBuilder
-from modules import registry
-from modules import web_verifier
+from modules.outreach import OutreachBuilder
+from modules.typography_rules import get_profile
+from modules import registry, web_verifier, social_detector, scoring, activity, web_auditor
 from main import process_business, _slugify, _write_skeleton, OUTPUT_DIR
 
 BASE   = Path(__file__).resolve().parent
@@ -49,6 +68,8 @@ _lock = threading.Lock()
 
 _TENERIFE_BOUNDS = dict(lat_min=27.97, lat_max=28.60, lng_min=-16.95, lng_max=-16.08)
 
+_outreach_builder = OutreachBuilder()
+
 
 def _in_tenerife(lat: float, lng: float) -> bool:
     b = _TENERIFE_BOUNDS
@@ -56,7 +77,7 @@ def _in_tenerife(lat: float, lng: float) -> bool:
 
 
 # ---------------------------------------------------------------------------
-# Frontend
+# Static
 # ---------------------------------------------------------------------------
 
 @app.route("/")
@@ -65,28 +86,78 @@ def index():
 
 
 # ---------------------------------------------------------------------------
+# Portfolio público (landing comercial)
+# ---------------------------------------------------------------------------
+
+@app.route("/portfolio")
+def portfolio_redirect():
+    # Sin trailing slash, el navegador resuelve los enlaces relativos del
+    # HTML (iframes, demos) contra la raíz "/" y dan 404. Redirigir a
+    # "/portfolio/" arregla todos los relativos de golpe.
+    return redirect("/portfolio/", code=302)
+
+
+@app.route("/portfolio/")
+def portfolio_index():
+    return send_from_directory(str(STATIC / "portfolio"), "index.html")
+
+
+@app.route("/portfolio/<path:name>")
+def portfolio_static(name: str):
+    # Sirve los HTML de demos y assets dentro de /portfolio/
+    return send_from_directory(str(STATIC / "portfolio"), name)
+
+
+# ---------------------------------------------------------------------------
 # Prompts
 # ---------------------------------------------------------------------------
 
 @app.route("/api/prompts")
 def list_prompts():
+    """Lista de prompts generados (.txt en disco) enriquecidos con datos
+    del registry. El registry sigue siendo la fuente de verdad para CRM
+    (vía /api/businesses), aquí solo listamos lo que tiene archivo."""
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+
+    # Índice O(1) output_file → entry, en una pasada al registry
+    by_file: dict[str, dict] = {}
+    for entry in registry.all_entries().values():
+        ofile = entry.get("output_file")
+        if ofile:
+            by_file[ofile] = entry
+
     files = sorted(
         [f for f in OUTPUT_DIR.glob("*.txt") if not f.name.startswith("_")],
-        key=lambda p: p.stat().st_mtime,
-        reverse=True,
+        key=lambda p: p.stat().st_mtime, reverse=True,
     )
-    reg = registry.all_entries()
-    result = []
+    result: list[dict] = []
     for f in files:
-        entry = next((v for v in reg.values() if v.get("output_file") == f.name), None)
-        result.append({
-            "name":          f.name,
-            "size":          f.stat().st_size,
-            "modified":      f.stat().st_mtime,
-            "business_name": entry["name"] if entry else f.name.replace(".txt","").replace("_"," ").title(),
-            "processed_at":  entry["processed_at"] if entry else None,
-        })
+        entry = by_file.get(f.name)
+        if entry:
+            outreach = entry.get("outreach") or {}
+            result.append({
+                "name":          f.name,
+                "size":          f.stat().st_size,
+                "business_name": entry.get("name") or f.name,
+                "sector":        entry.get("sector") or "",
+                "status":        entry.get("status", "found"),
+                "score":         entry.get("score", 0),
+                "processed_at":  entry.get("processed_at"),
+                "place_id":      entry.get("place_id"),
+                "has_outreach":  bool(outreach.get("whatsapp") or outreach.get("email")),
+            })
+        else:
+            result.append({
+                "name":          f.name,
+                "size":          f.stat().st_size,
+                "business_name": f.name.replace(".txt","").replace("_"," ").title(),
+                "sector":        "",
+                "status":        "found",
+                "score":         0,
+                "processed_at":  None,
+                "place_id":      None,
+                "has_outreach":  False,
+            })
     return jsonify(result)
 
 
@@ -101,30 +172,203 @@ def read_prompt(name: str):
 @app.route("/api/prompts/<path:name>", methods=["PUT"])
 def update_prompt(name: str):
     target = OUTPUT_DIR / name
-    if not target.exists() or not target.is_file():
+    if not target.is_file():
         return jsonify({"error": "not found"}), 404
     payload = request.get_json(force=True) or {}
-    content = payload.get("content", "")
-    target.write_text(content, encoding="utf-8")
+    target.write_text(payload.get("content", ""), encoding="utf-8")
     return jsonify({"ok": True})
 
 
 @app.route("/api/prompts/<path:name>", methods=["DELETE"])
 def delete_prompt(name: str):
     target = OUTPUT_DIR / name
-    if not target.exists() or not target.is_file():
-        return jsonify({"error": "not found"}), 404
-    target.unlink()
+    if target.exists():
+        target.unlink()
+    entry = registry.find_by_output_file(name)
+    if entry and request.args.get("purge") == "1":
+        registry.delete(entry["place_id"])
     return jsonify({"ok": True})
 
 
 # ---------------------------------------------------------------------------
-# Registry
+# Businesses (CRM)
 # ---------------------------------------------------------------------------
 
-@app.route("/api/registry")
-def get_registry():
-    return jsonify({"count": registry.count(), "entries": registry.all_entries()})
+@app.route("/api/businesses")
+def list_businesses():
+    return jsonify(list(registry.all_entries().values()))
+
+
+@app.route("/api/businesses/<pid>")
+def get_business(pid: str):
+    entry = registry.get(pid)
+    if not entry:
+        return jsonify({"error": "not found"}), 404
+    return jsonify(entry)
+
+
+@app.route("/api/businesses/<pid>", methods=["PATCH"])
+def patch_business(pid: str):
+    if not registry.get(pid):
+        return jsonify({"error": "not found"}), 404
+    payload = request.get_json(force=True) or {}
+    allowed = {"status", "notes", "score"}
+    fields = {k: v for k, v in payload.items() if k in allowed}
+    if "status" in fields and fields["status"] not in registry.STATUSES:
+        return jsonify({"error": "status inválido"}), 400
+    updated = registry.upsert(pid, **fields)
+    return jsonify(updated)
+
+
+@app.route("/api/businesses/<pid>/outreach_message", methods=["GET"])
+def outreach_message(pid: str):
+    """Renderiza un mensaje concreto por etapa y canal sin tocar el registry.
+    Query params:
+      - channel: 'whatsapp' | 'email'  (default: whatsapp)
+      - stage:   'first_contact' | 'follow_up_1' | 'follow_up_2' |
+                 'proposal' | 'closing'  (default: derivado de status)
+    """
+    from modules.outreach import STAGES, STATUS_TO_STAGE, DEFAULT_STAGE
+    entry = registry.get(pid)
+    if not entry:
+        return jsonify({"error": "not found"}), 404
+    channel = (request.args.get("channel") or "whatsapp").strip()
+    if channel not in ("whatsapp", "email"):
+        return jsonify({"error": "channel inválido"}), 400
+    stage = (request.args.get("stage") or "").strip()
+    if not stage:
+        stage = STATUS_TO_STAGE.get(entry.get("status", "found"), DEFAULT_STAGE)
+    if stage not in STAGES:
+        return jsonify({"error": "stage inválido"}), 400
+
+    ins = entry.get("insights") or {}
+    audit = entry.get("web_audit") or {}
+    ctx = _outreach_builder.context(
+        name=entry.get("name", ""),
+        address=entry.get("address", ""),
+        phone=entry.get("phone"),
+        rating=entry.get("rating"),
+        review_count=entry.get("review_count", 0),
+        sector=entry.get("sector", "default"),
+        keywords=ins.get("keywords") or [],
+        selling_points=ins.get("selling_points") or [],
+        web_category=audit.get("category", "none"),
+    )
+    msg = _outreach_builder.render(channel, stage, ctx)
+    return jsonify({"channel": channel, "stage": stage, "message": msg})
+
+
+@app.route("/api/businesses/<pid>/regenerate_outreach", methods=["POST"])
+def regenerate_outreach(pid: str):
+    entry = registry.get(pid)
+    if not entry:
+        return jsonify({"error": "not found"}), 404
+    ins = entry.get("insights") or {}
+    audit = entry.get("web_audit") or {}
+    msgs = _outreach_builder.build(
+        name=entry.get("name", ""),
+        address=entry.get("address", ""),
+        phone=entry.get("phone"),
+        rating=entry.get("rating"),
+        review_count=entry.get("review_count", 0),
+        sector=entry.get("sector", "default"),
+        keywords=ins.get("keywords") or [],
+        selling_points=ins.get("selling_points") or [],
+        web_category=audit.get("category", "none"),
+    )
+    updated = registry.upsert(pid, outreach=msgs)
+    return jsonify(updated)
+
+
+@app.route("/api/businesses/<pid>/refresh", methods=["POST"])
+def api_refresh_business(pid: str):
+    """Re-pide datos del negocio a Google Places y los persiste.
+    Útil para enriquecer entradas migradas de v1 (sin address/phone/rating)
+    sin tener que rehacer la búsqueda completa."""
+    entry = registry.get(pid)
+    if not entry:
+        return jsonify({"error": "not found"}), 404
+    try:
+        extractor = GoogleExtractor()
+        biz = extractor._fetch_details(pid)  # type: ignore[attr-defined]
+    except Exception as exc:
+        return jsonify({"error": f"google places: {exc}"}), 502
+
+    # Enriquece sin pisar campos de CRM (status, notes, score, social, outreach)
+    fields = {
+        "name":         biz.name or entry.get("name",""),
+        "address":      biz.address or entry.get("address",""),
+        "phone":        biz.phone if biz.phone is not None else entry.get("phone"),
+        "rating":       biz.rating if biz.rating is not None else entry.get("rating"),
+        "review_count": biz.review_count or entry.get("review_count", 0),
+        "maps_url":     biz.maps_url or entry.get("maps_url",""),
+    }
+    if not entry.get("sector"):
+        from modules.typography_rules import get_profile
+        fields["sector"] = get_profile(
+            biz.categories_all or biz.category, name=biz.name
+        ).sector
+    fields["needs_refresh"] = False
+    updated = registry.upsert(pid, **fields)
+    return jsonify(updated)
+
+
+@app.route("/api/businesses/<pid>/detect_social", methods=["POST"])
+def api_detect_social(pid: str):
+    entry = registry.get(pid)
+    if not entry:
+        return jsonify({"error": "not found"}), 404
+    if not social_detector.available():
+        return jsonify({"error": "ddgs no disponible"}), 503
+    found = social_detector.detect(entry.get("name", ""), entry.get("address", ""))
+    # Merge no destructivo: si DDG falla y devuelve None para una red
+    # ya detectada antes, conservamos el valor previo.
+    prev = entry.get("social") or {}
+    merged = {
+        "instagram": found.get("instagram") or prev.get("instagram"),
+        "facebook":  found.get("facebook")  or prev.get("facebook"),
+        "tiktok":    found.get("tiktok")    or prev.get("tiktok"),
+    }
+    updated = registry.upsert(pid, social=merged)
+    return jsonify(updated)
+
+
+# ---------------------------------------------------------------------------
+# Stats & CSV
+# ---------------------------------------------------------------------------
+
+@app.route("/api/stats")
+def api_stats():
+    return jsonify(registry.stats())
+
+
+@app.route("/api/export/csv")
+def export_csv():
+    buf = io.StringIO()
+    writer = csv.writer(buf, lineterminator="\n")
+    writer.writerow([
+        "place_id", "name", "sector", "status", "score",
+        "address", "phone", "rating", "review_count",
+        "instagram", "facebook", "tiktok", "maps_url",
+        "output_file", "processed_at", "notes",
+    ])
+    for e in registry.all_entries().values():
+        soc = e.get("social") or {}
+        writer.writerow([
+            e.get("place_id",""), e.get("name",""), e.get("sector",""),
+            e.get("status",""), e.get("score",0),
+            e.get("address",""), e.get("phone","") or "",
+            e.get("rating","") or "", e.get("review_count",0),
+            soc.get("instagram","") or "", soc.get("facebook","") or "",
+            soc.get("tiktok","") or "",
+            e.get("maps_url",""), e.get("output_file",""),
+            e.get("processed_at",""), (e.get("notes","") or "").replace("\n"," | "),
+        ])
+    return Response(
+        buf.getvalue(),
+        mimetype="text/csv; charset=utf-8",
+        headers={"Content-Disposition": 'attachment; filename="prospector_leads.csv"'},
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -133,48 +377,58 @@ def get_registry():
 
 @app.route("/api/health")
 def health():
-    has_key  = bool(os.getenv("GOOGLE_PLACES_API_KEY"))
     analyzer = ReviewAnalyzer()
-    ollama   = analyzer.ping()
     n_prompts = len([f for f in OUTPUT_DIR.glob("*.txt") if not f.name.startswith("_")]) \
                 if OUTPUT_DIR.exists() else 0
     return jsonify({
-        "google_api_key":   has_key,
-        "ollama":           ollama,
+        "google_api_key":   bool(os.getenv("GOOGLE_PLACES_API_KEY")),
+        "ollama":           analyzer.ping(),
         "ollama_host":      analyzer.host,
         "web_verifier":     web_verifier.available(),
+        "social_detector":  social_detector.available(),
         "prompts_count":    n_prompts,
         "registry_count":   registry.count(),
     })
 
 
 # ---------------------------------------------------------------------------
-# Core pipeline
+# Pipeline (compartido)
 # ---------------------------------------------------------------------------
 
-def _run_pipeline(job_id: str, businesses: list, payload: dict) -> None:
-    log: list[str] = []
-
-    def emit(msg: str) -> None:
-        log.append(msg)
-        with _lock:
-            _jobs[job_id]["log"] = list(log)
+def _run_pipeline(
+    job_id: str,
+    businesses: list,
+    payload: dict,
+    *,
+    extractor: GoogleExtractor | None = None,
+    emit=None,
+) -> None:
+    """Si `extractor` viene del caller, lo reutilizamos (comparte contadores
+    de uso de la API y evita instanciar dos clientes). Si `emit` viene del
+    caller, los logs van al mismo flujo del job."""
+    if emit is None:
+        log: list[str] = []
+        def emit(msg: str) -> None:  # type: ignore[misc]
+            log.append(msg)
+            with _lock:
+                _jobs[job_id]["log"] = list(log)
 
     try:
         with _lock:
             _jobs[job_id]["status"] = "running"
 
-        skip_ollama  = bool(payload.get("skip_ollama", False))
-        skip_verify  = bool(payload.get("skip_verify", False))
+        skip_ollama   = bool(payload.get("skip_ollama", False))
+        skip_verify   = bool(payload.get("skip_verify", False))
+        skip_social   = bool(payload.get("skip_social", False))
 
-        # 1. Deduplicar con registro
+        # 1. Dedup
         known = registry.known_ids()
         fresh = [b for b in businesses if b.place_id not in known]
         dupes = len(businesses) - len(fresh)
         if dupes:
-            emit(f"⏭ {dupes} ya procesados anteriormente — omitidos")
+            emit(f"⏭ {dupes} ya procesados — omitidos")
         if not fresh:
-            emit("✓ Todos los negocios encontrados ya estaban procesados")
+            emit("✓ Nada nuevo que procesar")
             with _lock:
                 _jobs[job_id]["status"] = "done"
                 _jobs[job_id]["generated"] = []
@@ -182,50 +436,133 @@ def _run_pipeline(job_id: str, businesses: list, payload: dict) -> None:
 
         emit(f"🔎 {len(fresh)} candidatos nuevos")
 
-        # 2. Verificación secundaria (DuckDuckGo) para descartar falsos positivos
+        # 2. Verificación de web (secundaria)
         if not skip_verify:
-            emit("🌐 Verificando en la web (filtrando falsos positivos)…")
-            fresh = web_verifier.filter_no_website(fresh, log_fn=emit)
-            emit(f"✓ {len(fresh)} confirmados sin web propia")
+            if web_verifier.available():
+                emit("🌐 Verificando webs ocultas (anti-falsos-positivos)…")
+                fresh = web_verifier.filter_no_website(fresh, log_fn=emit)
+                emit(f"✓ {len(fresh)} confirmados sin web")
+            else:
+                emit("⚠ ddgs no disponible — verificación web omitida (pip install ddgs)")
         else:
-            emit("⚡ Verificación web omitida (skip_verify)")
+            emit("⚡ Verificación web omitida")
 
         if not fresh:
-            emit("✓ Ninguno pasó la verificación — todos tienen web")
             with _lock:
                 _jobs[job_id]["status"] = "done"
                 _jobs[job_id]["generated"] = []
             return
 
-        # 3. Pipeline IA
-        analyzer = ReviewAnalyzer()
-        builder  = PromptBuilder()
+        # 3. IA + enriquecimiento + persistencia
+        analyzer  = ReviewAnalyzer()
+        builder   = PromptBuilder()
+        if extractor is None:
+            extractor = GoogleExtractor()
+            extractor.reset_counters()
         OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
         if not skip_ollama and not analyzer.ping():
             raise RuntimeError(f"Ollama no responde en {analyzer.host}")
 
-        extractor  = GoogleExtractor()
         generated: list[str] = []
-
         for i, biz in enumerate(fresh, 1):
             emit(f"[{i}/{len(fresh)}] {biz.name}")
             try:
+                # Generar prompt
+                insights = None
                 if skip_ollama:
                     _write_skeleton(biz, builder)
                     out_name = f"{_slugify(biz.name)}.txt"
                 else:
-                    path = process_business(biz, extractor, analyzer, builder)
+                    path, insights = process_business(
+                        biz, extractor, analyzer, builder, return_insights=True,
+                    )
                     out_name = path.name
-                registry.register(biz.place_id, biz.name, out_name)
+
+                # Resolver sector real
+                profile = get_profile(biz.categories_all or biz.category, name=biz.name)
+                sector  = profile.sector
+
+                # Actividad (fresca, dormida, velocidad)
+                act = activity.compute(biz.reviews, biz.review_count or 0)
+                if act.is_dormant:
+                    emit(f"   ⏭ negocio dormido (última reseña hace {act.last_review_days} días) — descartado")
+                    continue
+                if act.is_fresh:
+                    emit(f"   ✨ negocio activo (última reseña hace {act.last_review_days} días)")
+
+                # Auditor de web (solo si tenía URL en Google)
+                audit = web_auditor.audit(biz.website) if biz.website else web_auditor.audit(None)
+                if not audit.is_target:
+                    emit(f"   ⏭ web propia OK ({audit.final_url}) — descartado")
+                    continue
+                if audit.category != "none":
+                    emit(f"   🔍 presencia: {audit.category}")
+
+                # Score
+                score = scoring.calculate(
+                    review_count=biz.review_count or 0,
+                    rating=biz.rating,
+                    sector=sector,
+                    has_phone=bool(biz.phone),
+                    has_photos=bool(biz.photo_references),
+                    confirmed_no_web=(not skip_verify) and web_verifier.available(),
+                    last_review_days=act.last_review_days,
+                    is_dormant=act.is_dormant,
+                    is_fresh=act.is_fresh,
+                    web_category=audit.category,
+                )
+
+                # Outreach (personalizado con keywords/selling_points si hay)
+                outreach = _outreach_builder.build(
+                    name=biz.name, address=biz.address,
+                    phone=biz.phone, rating=biz.rating,
+                    review_count=biz.review_count or 0, sector=sector,
+                    keywords=insights.keywords if insights else [],
+                    selling_points=insights.selling_points if insights else [],
+                    web_category=audit.category,
+                )
+
+                # Social media (opcional, lento)
+                social = social_detector.empty_result()
+                if not skip_social and social_detector.available():
+                    emit(f"   🔍 buscando redes sociales…")
+                    social = social_detector.detect(biz.name, biz.address)
+                    if social.get("instagram"): emit(f"   📸 Instagram: {social['instagram']}")
+                    if social.get("facebook"):  emit(f"   📘 Facebook: {social['facebook']}")
+                    if social.get("tiktok"):    emit(f"   🎵 TikTok: {social['tiktok']}")
+
+                # Guardar todo en el registro
+                registry.upsert(
+                    biz.place_id,
+                    name=biz.name, sector=sector,
+                    address=biz.address, phone=biz.phone,
+                    rating=biz.rating, review_count=biz.review_count or 0,
+                    maps_url=biz.maps_url, output_file=out_name,
+                    score=score, outreach=outreach, social=social,
+                    status=registry.DEFAULT_STATUS,
+                    activity=act.to_dict(),
+                    web_audit=audit.to_dict(),
+                    business_status=biz.business_status,
+                    insights=(insights.to_dict() if insights else None),
+                )
                 generated.append(out_name)
-                emit(f"   ✓ {out_name}")
+                emit(f"   ✓ {out_name} (score {score}/10)")
             except Exception as exc:
                 emit(f"   ✗ {exc}")
+
+        # Resumen de uso de Google Places (auditoría de coste)
+        if extractor is not None:
+            u = extractor.usage()
+            emit(f"📊 Google API: text_search={u['text_search']} "
+                 f"nearby={u['nearby']} place_details={u['place_details']} "
+                 f"photo={u['photo']} (total {u['total']})")
 
         with _lock:
             _jobs[job_id]["status"] = "done"
             _jobs[job_id]["generated"] = generated
+            if extractor is not None:
+                _jobs[job_id]["usage"] = extractor.usage()
 
     except Exception as exc:
         with _lock:
@@ -241,27 +578,43 @@ def _run_pipeline(job_id: str, businesses: list, payload: dict) -> None:
 
 def _run_generate(job_id: str, payload: dict) -> None:
     log: list[str] = []
-
     def emit(msg: str) -> None:
         log.append(msg)
-        with _lock:
-            _jobs[job_id]["log"] = list(log)
-
+        with _lock: _jobs[job_id]["log"] = list(log)
     try:
-        query              = payload["query"].strip()
-        max_results        = int(payload.get("max", 5))
-        region             = payload.get("region") or None
-        include_with_web   = bool(payload.get("include_with_website", False))
+        query             = payload["query"].strip()
+        max_results       = int(payload.get("max", 5))
+        region            = payload.get("region") or None
+        include_with_web  = bool(payload.get("include_with_website", False))
+        restrict_tenerife = bool(payload.get("restrict_tenerife", True))
 
         emit(f"▶ Buscando: {query}")
-        extractor   = GoogleExtractor()
-        businesses  = extractor.search_many(
+        extractor = GoogleExtractor()
+        extractor.reset_counters()
+        known = registry.known_ids()
+        businesses = extractor.search_many(
             [query], region=region, max_results=max_results,
             only_without_website=not include_with_web,
+            skip_ids=known,  # no malgastar place_details en ya conocidos
         )
         emit(f"✓ {len(businesses)} candidatos en Google Places")
-        _run_pipeline(job_id, businesses, payload)
 
+        # Filtrar por bounding box de Tenerife si se pidió
+        if restrict_tenerife and businesses:
+            in_box: list = []
+            out_box = 0
+            for b in businesses:
+                lat = (b.location or {}).get("lat")
+                lng = (b.location or {}).get("lng")
+                if lat is None or lng is None or _in_tenerife(lat, lng):
+                    in_box.append(b)
+                else:
+                    out_box += 1
+            if out_box:
+                emit(f"⏭ {out_box} fuera de Tenerife — descartados")
+            businesses = in_box
+
+        _run_pipeline(job_id, businesses, payload, extractor=extractor, emit=emit)
     except Exception as exc:
         with _lock:
             _jobs[job_id]["status"] = "error"
@@ -286,34 +639,34 @@ def generate():
 
 def _run_discover(job_id: str, payload: dict) -> None:
     log: list[str] = []
-
     def emit(msg: str) -> None:
         log.append(msg)
-        with _lock:
-            _jobs[job_id]["log"] = list(log)
-
+        with _lock: _jobs[job_id]["log"] = list(log)
     try:
-        lat            = float(payload["lat"])
-        lng            = float(payload["lng"])
-        radius_m       = int(payload.get("radius_m", 2000))
-        max_results    = int(payload.get("max", 20))
+        lat              = float(payload["lat"])
+        lng              = float(payload["lng"])
+        radius_m         = int(payload.get("radius_m", 2000))
+        max_results      = int(payload.get("max", 20))
         include_with_web = bool(payload.get("include_with_website", False))
+        commercial_only  = bool(payload.get("commercial_only", True))
 
         if not _in_tenerife(lat, lng):
             raise ValueError(f"Coordenadas ({lat:.4f}, {lng:.4f}) fuera de Tenerife.")
 
         emit(f"▶ Explorando zona ({lat:.5f}, {lng:.5f}), radio {radius_m} m")
-        extractor  = GoogleExtractor()
+        if commercial_only:
+            emit("   (filtro de tipos comerciales activo — se descartan parkings, ATMs, etc.)")
+        extractor = GoogleExtractor()
+        extractor.reset_counters()
         known      = registry.known_ids()
         businesses = extractor.search_nearby(
             lat, lng, radius_m,
             only_without_website=not include_with_web,
-            max_results=max_results,
-            skip_ids=known,
+            max_results=max_results, skip_ids=known,
+            commercial_only=commercial_only,
         )
         emit(f"✓ {len(businesses)} candidatos en Google Places")
-        _run_pipeline(job_id, businesses, payload)
-
+        _run_pipeline(job_id, businesses, payload, extractor=extractor, emit=emit)
     except Exception as exc:
         with _lock:
             _jobs[job_id]["status"] = "error"
@@ -333,14 +686,122 @@ def discover():
 
 
 # ---------------------------------------------------------------------------
+# /api/sweep — barrido multi-sector × multi-zona en un solo job
+# ---------------------------------------------------------------------------
+
+# Sectores reconocibles (nombre interno → keywords para Google Places)
+_SWEEP_SECTORS: dict[str, list[str]] = {
+    "barberia":    ["barbería", "barber shop"],
+    "peluqueria":  ["peluquería", "salón de belleza"],
+    "restaurante": ["restaurante"],
+    "cafeteria":   ["cafetería", "café"],
+    "clinica":     ["clínica dental", "dentista", "fisioterapia"],
+    "taller":      ["taller mecánico"],
+    "tienda_ropa": ["tienda de ropa", "boutique"],
+    "gimnasio":    ["gimnasio", "crossfit"],
+    "floristeria": ["floristería"],
+    "estetica":    ["centro de estética", "spa"],
+}
+
+# Zonas predefinidas de Tenerife (coords aproximadas si quisieras nearby)
+_SWEEP_ZONES: list[str] = [
+    "Santa Cruz de Tenerife", "La Laguna", "Adeje", "Arona",
+    "Los Cristianos", "Las Américas", "Costa Adeje", "Puerto de la Cruz",
+    "La Orotava", "Garachico", "Icod de los Vinos", "Tacoronte",
+    "Candelaria", "Güímar", "Granadilla de Abona", "El Médano",
+    "San Isidro", "Buenavista del Norte", "El Sauzal", "Tegueste",
+]
+
+
+def _run_sweep(job_id: str, payload: dict) -> None:
+    log: list[str] = []
+    def emit(msg: str) -> None:
+        log.append(msg)
+        with _lock: _jobs[job_id]["log"] = list(log)
+    try:
+        sectors_in: list[str] = payload.get("sectors") or []
+        zones_in:   list[str] = payload.get("zones") or []
+        max_per          = int(payload.get("max_per", 5))
+        include_with_web = bool(payload.get("include_with_website", False))
+
+        sectors = [s for s in sectors_in if s in _SWEEP_SECTORS]
+        zones   = [z for z in zones_in if z]
+        if not sectors or not zones:
+            raise ValueError("Necesitas al menos un sector y una zona.")
+
+        combos = [(s, z) for s in sectors for z in zones]
+        emit(f"▶ Barriendo {len(sectors)} sectores × {len(zones)} zonas = {len(combos)} búsquedas")
+
+        extractor = GoogleExtractor()
+        extractor.reset_counters()
+        known = registry.known_ids()
+        all_business: list = []
+        seen: set[str] = set()
+        for i, (sec, zone) in enumerate(combos, 1):
+            kw = _SWEEP_SECTORS[sec][0]
+            query = f"{kw} en {zone}"
+            emit(f"[{i}/{len(combos)}] {query}")
+            try:
+                businesses = extractor.search(
+                    query, max_results=max_per,
+                    only_without_website=not include_with_web,
+                    skip_ids=known | seen,
+                )
+            except Exception as exc:
+                emit(f"   ✗ {exc}")
+                continue
+            for b in businesses:
+                if b.place_id not in seen:
+                    seen.add(b.place_id)
+                    all_business.append(b)
+            emit(f"   ✓ {len(businesses)} candidatos (acumulado {len(all_business)})")
+
+        emit(f"✓ Total candidatos únicos: {len(all_business)}")
+        _run_pipeline(job_id, all_business, payload, extractor=extractor, emit=emit)
+    except Exception as exc:
+        with _lock:
+            _jobs[job_id]["status"] = "error"
+            _jobs[job_id]["error"] = str(exc)
+        emit(f"✗ ERROR: {exc}")
+        emit(traceback.format_exc())
+
+
+@app.route("/api/sweep", methods=["POST"])
+def sweep():
+    payload = request.get_json(force=True) or {}
+    if not payload.get("sectors") or not payload.get("zones"):
+        return jsonify({"error": "sectors y zones requeridos"}), 400
+    job_id = _new_job()
+    threading.Thread(target=_run_sweep, args=(job_id, payload), daemon=True).start()
+    return jsonify({"job_id": job_id})
+
+
+@app.route("/api/sweep/options")
+def sweep_options():
+    """Devuelve los sectores y zonas predefinidos para que el frontend
+    los pinte en el selector."""
+    return jsonify({
+        "sectors": [{"key": k, "label": v[0].title()} for k, v in _SWEEP_SECTORS.items()],
+        "zones":   _SWEEP_ZONES,
+    })
+
+
+# ---------------------------------------------------------------------------
 # Jobs
 # ---------------------------------------------------------------------------
+
+_MAX_JOBS_RETAINED = 50
+
 
 def _new_job() -> str:
     import time
     job_id = f"job_{int(time.time() * 1000)}"
     with _lock:
         _jobs[job_id] = {"status": "queued", "log": [], "generated": []}
+        # Purga jobs viejos para no crecer indefinidamente.
+        if len(_jobs) > _MAX_JOBS_RETAINED:
+            for old_id in sorted(_jobs.keys())[:-_MAX_JOBS_RETAINED]:
+                _jobs.pop(old_id, None)
     return job_id
 
 
