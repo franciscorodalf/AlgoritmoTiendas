@@ -206,7 +206,6 @@ function Portfolio() {
         <Service />
         <Templates />
         <Process />
-        <Trust />
         <Contact />
       </main>
       <footer className="border-t border-ink/10 py-8 text-sm text-muted">
@@ -495,24 +494,17 @@ function ExampleCard({ example }: { example: (typeof examples)[number] }) {
 }
 
 function Process() {
-  const steps = [
-    ["Diagnóstico", "Reviso cómo se presenta el negocio hoy: ficha de Google, redes, competencia y puntos fuertes."],
-    ["Propuesta visual y contenido", "Defino estructura, tono, secciones clave y llamadas a la acción antes de construir."],
-    ["Web lista para publicar", "Entrego una página responsive, clara y preparada para WhatsApp, teléfono, email o reservas."],
-  ];
+  const steps = ["Diagnóstico del negocio", "Propuesta visual y contenido", "Web lista para publicar"];
   return (
-    <section id="proceso" className="border-t border-ink/10 bg-white/36 py-16 sm:py-24">
-      <div className="mx-auto grid w-[min(1120px,calc(100%-28px))] gap-8 lg:grid-cols-[.85fr_1.15fr]">
-        <SectionHeading title="Proceso simple, sin marearte." text="Trabajo con información real del negocio para que la web no suene vacía ni parezca una plantilla cambiada de color." />
-        <div className="grid gap-4">
-          {steps.map(([title, text], index) => (
-            <MotionCard key={title} className="grid grid-cols-[44px_1fr] gap-4">
-              <span className="grid h-11 w-11 place-items-center rounded-xl bg-brand-50 font-black text-brand-700">{index + 1}</span>
-              <div>
-                <h3 className="text-lg font-black">{title}</h3>
-                <p className="mt-2 leading-7 text-muted">{text}</p>
-              </div>
-            </MotionCard>
+    <section id="proceso" className="border-t border-ink/10 bg-white/36 py-12 sm:py-16">
+      <div className="mx-auto w-[min(1120px,calc(100%-28px))]">
+        <h2 className="mb-8 text-2xl font-black text-ink">Así trabajamos</h2>
+        <div className="grid gap-3 sm:grid-cols-3">
+          {steps.map((title, index) => (
+            <div key={title} className="flex items-center gap-4 rounded-xl border border-ink/10 bg-white/78 px-5 py-4 shadow-soft">
+              <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-brand-50 font-black text-brand-700">{index + 1}</span>
+              <h3 className="font-black text-ink">{title}</h3>
+            </div>
           ))}
         </div>
       </div>
@@ -542,13 +534,28 @@ function Trust() {
 }
 
 function Contact() {
+  const trust = [
+    "Textos escritos para personas, no para rellenar espacio.",
+    "Propuesta a medida antes de empezar a construir.",
+    "Diseño sobrio, rápido y fácil de mantener.",
+    "Respuesta clara y sin compromiso.",
+  ];
   return (
     <section id="contacto" className="border-t border-ink/10 py-16 sm:py-24">
-      <div className="mx-auto grid w-[min(1120px,calc(100%-28px))] gap-8 lg:grid-cols-[1fr_.8fr] lg:items-center">
-        <SectionHeading title="Hablemos de la web que necesita tu negocio." text="Cuéntame qué vendes, dónde atiendes y qué quieres conseguir. Te respondo con una propuesta clara y sin compromiso." />
-        <MotionCard>
-          <p className="mb-5 leading-7 text-muted">Cambia estos enlaces por tu WhatsApp y email reales cuando quieras publicar.</p>
-          <div className="grid gap-3 sm:flex">
+      <div className="mx-auto grid w-[min(1120px,calc(100%-28px))] gap-10 lg:grid-cols-[1fr_.85fr] lg:items-start">
+        <div>
+          <SectionHeading title="Hablemos de la web que necesita tu negocio." text="Cuéntame qué vendes, dónde atiendes y qué quieres conseguir. Te respondo con una propuesta clara y sin compromiso." />
+          <div className="mt-2 grid gap-3">
+            {trust.map((item) => (
+              <div key={item} className="flex items-start gap-3 text-sm text-muted">
+                <span className="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-brand-50 text-brand-700"><Check className="h-3 w-3" /></span>
+                <span>{item}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+        <MotionCard className="lg:mt-2">
+          <div className="grid gap-3">
             <Button href="https://wa.me/34000000000" icon={<MessageCircle className="h-4 w-4" />}>WhatsApp</Button>
             <Button href="mailto:contacto@tudominio.com" variant="secondary">Email</Button>
           </div>
