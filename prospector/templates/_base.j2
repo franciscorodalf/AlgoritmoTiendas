@@ -2,14 +2,14 @@
 
 {%- macro identity_block() -%}
 IDENTIDAD VISUAL:
-  - Color primario: {{ palette.primary }} (extraído del logo/foto del negocio)
+  - Color primario: {{ palette.primary }} (extraido del logo/foto del negocio)
   - Color secundario: {{ palette.secondary }}
   - Color acento: {{ palette.accent }}
   - Color neutro: {{ palette.neutral }}
-  - Tipografía títulos: {{ profile.heading_font }}
-  - Tipografía cuerpo: {{ profile.body_font }}
-  - Vibe tipográfica: {{ profile.font_vibe }}
-  - Estética general: {{ profile.visual_vibe }}
+  - Tipografia titulos: {{ profile.heading_font }}
+  - Tipografia cuerpo: {{ profile.body_font }}
+  - Vibe tipografica: {{ profile.font_vibe }}
+  - Estetica general: {{ profile.visual_vibe }}
 {%- endmacro -%}
 
 {%- macro creative_direction_block() -%}
@@ -27,13 +27,13 @@ DIRECCIÓN CREATIVA OBLIGATORIA:
 {%- macro business_block() -%}
 DATOS DEL NEGOCIO:
   - Nombre: {{ business.name }}
-  - Dirección: {{ business.address }}
-  {% if business.phone %}- Teléfono: {{ business.phone }}
+  - Direccion: {{ business.address }}
+  {% if business.phone %}- Telefono: {{ business.phone }}
   {% endif -%}
-  {% if business.rating %}- Valoración: {{ business.rating }}/5 ({{ business.review_count }} reseñas en Google)
+  {% if business.rating %}- Valoracion: {{ business.rating }}/5 ({{ business.review_count }} resenas en Google)
   {% endif -%}
   {% if business.opening_hours %}- Horario:
-  {% for day in business.opening_hours %}    · {{ day }}
+  {% for day in business.opening_hours %}    - {{ day }}
   {% endfor -%}
   {% endif -%}
   {% if business.maps_url %}- Google Maps: {{ business.maps_url }}
@@ -41,7 +41,7 @@ DATOS DEL NEGOCIO:
 {%- endmacro -%}
 
 {%- macro insights_block() -%}
-{% if insights.selling_points %}LO QUE MÁS VALORAN SUS CLIENTES:
+{% if insights.selling_points %}LO QUE MAS VALORAN SUS CLIENTES:
 {% for sp in insights.selling_points %}  - {{ sp }}
 {% endfor %}{% endif -%}
 {% if insights.keywords %}
@@ -54,16 +54,36 @@ TONO DEL NEGOCIO: {{ insights.tone }}
 VIBE: {{ insights.vibe }}
 {% endif -%}
 {% if insights.target_audience %}
-PÚBLICO OBJETIVO: {{ insights.target_audience }}
+PUBLICO OBJETIVO: {{ insights.target_audience }}
 {% endif -%}
 {%- endmacro -%}
 
+{%- macro conversion_block() -%}
+OBJETIVO DE CONVERSION:
+  - Convertir visitas en contactos reales.
+  - Priorizar CTAs como "Pedir cita", "Reservar", "Escribir por WhatsApp", "Solicitar presupuesto" o "Consultar disponibilidad".
+  - Repetir CTA en hero, mitad de pagina y cierre.
+  - Cada seccion debe responder una duda del cliente: que ofrecen, por que confiar, como trabajan, donde estan y como contactar.
+  - El copy debe sonar humano, especifico y profesional; evita frases genericas como "somos los mejores".
+{%- endmacro -%}
+
 {%- macro tech_block() -%}
-REQUISITOS TÉCNICOS:
-  - Web responsive (mobile-first)
-  - Performance alta (Lighthouse 90+)
-  - SEO básico: title, meta description, schema.org LocalBusiness
-  - Botón flotante de WhatsApp visible en móvil
-  - Google Maps embebido en sección de contacto
-  - Idioma: español (España)
+REQUISITOS DE CALIDAD Y ACABADO:
+  - La web debe parecer lista para publicar, no un boceto ni una maqueta incompleta.
+  - Diseno responsive mobile-first con versiones cuidadas para movil, tablet y escritorio.
+  - Header sticky con navegacion clara, CTA principal visible y telefono/WhatsApp accesible en movil.
+  - Hero con imagen o composicion visual fuerte, titular comercial, subtitulo especifico y CTA primario/secundario.
+  - Secciones completas con contenido realista, jerarquia visual, espacios consistentes y componentes reutilizables.
+  - Microinteracciones suaves: aparicion al hacer scroll, hover en tarjetas/botones, transiciones de 180-300ms y movimiento sobrio.
+  - Respetar prefers-reduced-motion para usuarios que reduzcan animaciones.
+  - Nada de loaders falsos ni efectos exagerados. La animacion debe aportar fluidez y confianza.
+  - Formularios con campos utiles, estados focus/hover/error/success y textos de ayuda breves.
+  - Bloques de confianza: resenas, garantias, experiencia, proceso, preguntas frecuentes y senales de profesionalidad.
+  - No mostrar importes salvo que el negocio los proporcione explicitamente. Usar "Solicitar presupuesto" o "Consultar disponibilidad".
+  - Performance alta: imagenes optimizadas, CSS limpio, sin dependencias innecesarias.
+  - SEO local: title, meta description, schema.org LocalBusiness, Open Graph y contenido semantico.
+  - Boton flotante de WhatsApp visible en movil, sin tapar contenido.
+  - Google Maps embebido o bloque de ubicacion claro con direccion, horario y como llegar.
+  - Accesibilidad: contraste AA, labels en formularios, foco visible, textos legibles y botones con area tactil suficiente.
+  - Idioma: espanol (Espana).
 {%- endmacro -%}

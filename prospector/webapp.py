@@ -1,7 +1,7 @@
 """
 webapp.py
 ---------
-Flask API + frontend Prospector Tenerife (CRM completo).
+Servidor Flask: API REST + frontend de Prospector Local (CRM completo).
 
 Endpoints
 ─────────
