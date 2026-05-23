@@ -236,35 +236,35 @@ h2{font-size:clamp(42px,7vw,88px)}
   width:96px;
   height:3px;
   border-radius:999px;
-  background:linear-gradient(90deg,var(--lava),var(--banana),var(--reef),var(--banana),var(--lava));
-  background-size:220% 100%;
+  background:linear-gradient(90deg,var(--lava),var(--banana),var(--reef));
   position:relative;
   overflow:visible;
-  animation:routeFlow 2.9s linear infinite;
-  box-shadow:0 0 22px rgba(255,212,71,.22);
+  opacity:.72;
+  transform-origin:left center;
+  box-shadow:0 0 18px rgba(255,212,71,.16);
 }
 .decision i::before{
   content:"";
   position:absolute;
-  inset:-7px 8px;
-  background:linear-gradient(90deg,transparent,rgba(255,250,240,.62),transparent);
-  filter:blur(4px);
-  transform:translateX(-55%);
-  animation:routeSweep 2.9s var(--ease) infinite;
+  inset:-5px -2px;
+  border-radius:999px;
+  background:linear-gradient(90deg,rgba(232,74,39,.18),rgba(255,212,71,.32),rgba(0,168,143,.18));
+  filter:blur(8px);
+  opacity:.55;
 }
 .decision i::after{
   content:"";
   position:absolute;
   top:50%;
-  right:-2px;
-  width:0;
-  height:0;
-  border-top:8px solid transparent;
-  border-bottom:8px solid transparent;
-  border-left:12px solid var(--reef);
-  transform:translate(100%,-50%);
-  filter:drop-shadow(0 0 10px rgba(0,168,143,.55));
+  right:1px;
+  width:12px;
+  height:12px;
+  border-right:3px solid var(--reef);
+  border-bottom:3px solid var(--reef);
+  transform:translateY(-50%) rotate(-45deg);
+  filter:drop-shadow(0 0 7px rgba(0,168,143,.42));
 }
+.decision.reveal.is-visible i{animation:routeDraw .8s var(--ease) both}
 .decision:hover div:first-child{transform:translateY(10px);background:rgba(245,239,226,.05)}
 .decision:hover .good{transform:translateY(-10px)}
 .facts{display:grid;gap:12px}
@@ -309,29 +309,29 @@ h2{font-size:clamp(42px,7vw,88px)}
   .decision{grid-template-columns:1fr}
   .decision i{
     width:3px;
-    height:72px;
+    height:78px;
     justify-self:center;
-    background:linear-gradient(180deg,var(--lava),var(--banana),var(--reef),var(--banana),var(--lava));
-    background-size:100% 220%;
-    animation:routeFlowVertical 2.9s linear infinite;
+    background:linear-gradient(180deg,var(--lava),var(--banana),var(--reef));
+    transform-origin:center top;
   }
   .decision i::before{
-    inset:8px -7px;
-    background:linear-gradient(180deg,transparent,rgba(255,250,240,.62),transparent);
-    transform:translateY(-55%);
-    animation:routeSweepVertical 2.9s var(--ease) infinite;
+    inset:-2px -5px;
+    background:linear-gradient(180deg,rgba(232,74,39,.18),rgba(255,212,71,.32),rgba(0,168,143,.18));
   }
   .decision i::after{
     top:auto;
     right:auto;
     left:50%;
-    bottom:-2px;
-    border-left:8px solid transparent;
-    border-right:8px solid transparent;
-    border-top:12px solid var(--reef);
-    border-bottom:0;
-    transform:translate(-50%,100%);
+    bottom:1px;
+    width:12px;
+    height:12px;
+    border-top:0;
+    border-left:0;
+    border-right:3px solid var(--reef);
+    border-bottom:3px solid var(--reef);
+    transform:translateX(-50%) rotate(45deg);
   }
+  .decision.reveal.is-visible i{animation:routeDrawVertical .8s var(--ease) both}
 }
 @media(prefers-reduced-motion:no-preference){
   .hero .kicker,
@@ -381,7 +381,5 @@ h2{font-size:clamp(42px,7vw,88px)}
 @keyframes metricWake{from{transform:translateX(-10px);opacity:.4}to{transform:none;opacity:1}}
 @keyframes floatGlow{from{transform:translate3d(0,0,0) scale(1)}to{transform:translate3d(-5vw,3vw,0) scale(1.12)}}
 @keyframes gridDrift{from{background-position:0 0,0 0}to{background-position:34px 34px,34px 34px}}
-@keyframes routeFlow{from{background-position:0 0}to{background-position:220% 0}}
-@keyframes routeFlowVertical{from{background-position:0 0}to{background-position:0 220%}}
-@keyframes routeSweep{0%,18%{transform:translateX(-65%);opacity:0}38%{opacity:.85}82%,100%{transform:translateX(65%);opacity:0}}
-@keyframes routeSweepVertical{0%,18%{transform:translateY(-65%);opacity:0}38%{opacity:.85}82%,100%{transform:translateY(65%);opacity:0}}
+@keyframes routeDraw{from{opacity:0;transform:scaleX(.2)}to{opacity:.72;transform:scaleX(1)}}
+@keyframes routeDrawVertical{from{opacity:0;transform:scaleY(.2)}to{opacity:.72;transform:scaleY(1)}}
