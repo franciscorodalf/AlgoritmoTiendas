@@ -1,9 +1,11 @@
-{% from '_base.j2' import identity_block, business_block, insights_block, tech_block with context %}
+{% from '_base.j2' import identity_block, creative_direction_block, business_block, insights_block, tech_block with context %}
 Crea una web robusta y directa para "{{ business.name }}", un taller
 mecánico en {{ business.address }}. Estética industrial, honesta, sin
 florituras. El cliente busca fiabilidad y un precio claro.
 
 {{ identity_block() }}
+
+{{ creative_direction_block() }}
 
 {{ business_block() }}
 

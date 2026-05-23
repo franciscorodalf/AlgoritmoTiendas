@@ -1,8 +1,10 @@
-{% from '_base.j2' import identity_block, business_block, insights_block, tech_block with context %}
+{% from '_base.j2' import identity_block, creative_direction_block, business_block, insights_block, tech_block with context %}
 Crea una web elegante y luminosa para "{{ business.name }}", un salón de
 peluquería en {{ business.address }}. Estética cuidada, femenina, sofisticada.
 
 {{ identity_block() }}
+
+{{ creative_direction_block() }}
 
 {{ business_block() }}
 

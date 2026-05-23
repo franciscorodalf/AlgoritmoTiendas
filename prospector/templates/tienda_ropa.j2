@@ -1,9 +1,11 @@
-{% from '_base.j2' import identity_block, business_block, insights_block, tech_block with context %}
+{% from '_base.j2' import identity_block, creative_direction_block, business_block, insights_block, tech_block with context %}
 Crea una web fresca y editorial para "{{ business.name }}", una tienda de
 ropa en {{ business.address }}. Estética tipo revista de moda, dinámica,
 con espacio para que las imágenes respiren.
 
 {{ identity_block() }}
+
+{{ creative_direction_block() }}
 
 {{ business_block() }}
 

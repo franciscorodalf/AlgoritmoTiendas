@@ -3,575 +3,1601 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Servicios Web Tenerife — Webs para negocios locales</title>
-<meta name="description" content="Webs hechas a medida para negocios locales de Tenerife. Diseño rápido, mantenimiento incluido, desde 299 €.">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,300&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<title>Fran Web Lab Tenerife - Demos para negocios locales</title>
+<meta name="description" content="Showroom de webs a medida para negocios de Tenerife: restaurantes, barberias, clinicas y talleres con demos reales, rapidas y enfocadas a reservas.">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
 <style>
-  :root,
-  :root[data-theme="light"] {
-    --ink:#0f0f0f; --paper:#faf8f4; --accent:#1a3a5c; --gold:#c8a96e;
-    --muted:#6b6b6b; --border:#e2ddd6; --light:#f0ece4; --soft:#ffffff;
-    --shadow:0 18px 40px rgba(15,15,15,0.08);
-    --nav-bg:rgba(250,248,244,0.92);
+  :root{
+    --lava:#e84a27;
+    --reef:#00a88f;
+    --banana:#ffd447;
+    --ink:#11110f;
+    --paper:#f5efe2;
+    --chalk:#fffaf0;
+    --graphite:#242424;
+    --muted:#6b675f;
+    --line:rgba(17,17,15,.18);
+    --line-dark:rgba(245,239,226,.18);
+    --shadow:0 22px 70px rgba(17,17,15,.18);
   }
-  :root[data-theme="dark"] {
-    --ink:#f0e9da; --paper:#0f1218; --accent:#c8a96e; --gold:#e0bd7b;
-    --muted:#94a0b3; --border:#222a36; --light:#1a2028; --soft:#161b22;
-    --shadow:0 18px 40px rgba(0,0,0,0.45);
-    --nav-bg:rgba(15,18,24,0.85);
-  }
-  *{margin:0;padding:0;box-sizing:border-box}
+  *{box-sizing:border-box;margin:0;padding:0}
   html{scroll-behavior:smooth}
-  body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);font-size:16px;line-height:1.65;
-       transition:background .35s ease,color .35s ease}
-  a{color:inherit;text-decoration:none;transition:color .2s ease}
-
-  /* Animaciones globales */
-  @keyframes fadeUp {
-    from { opacity:0; transform:translateY(28px) }
-    to   { opacity:1; transform:translateY(0) }
+  body{
+    background:
+      linear-gradient(90deg,rgba(17,17,15,.055) 1px,transparent 1px),
+      linear-gradient(rgba(17,17,15,.045) 1px,transparent 1px),
+      var(--paper);
+    background-size:44px 44px;
+    color:var(--ink);
+    font-family:Archivo,sans-serif;
+    font-size:16px;
+    line-height:1.5;
   }
-  @keyframes float {
-    0%,100% { transform:translateY(0) }
-    50%     { transform:translateY(-6px) }
+  body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    opacity:.35;
+    z-index:0;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='.13'/%3E%3C/svg%3E");
   }
-  @keyframes shimmer {
-    0%,100% { transform:scale(1); opacity:.55 }
-    50%     { transform:scale(1.06); opacity:.85 }
+  a{color:inherit;text-decoration:none}
+  button{font:inherit}
+  .page{position:relative;z-index:1;overflow:hidden}
+  .nav{
+    position:sticky;
+    top:0;
+    z-index:50;
+    min-height:66px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:24px;
+    padding:12px clamp(16px,4vw,42px);
+    background:rgba(245,239,226,.88);
+    border-bottom:1px solid var(--line);
+    backdrop-filter:blur(14px);
   }
-  .reveal { opacity:0; transform:translateY(28px); transition:opacity .7s ease, transform .7s ease }
-  .reveal.in { opacity:1; transform:translateY(0) }
-  .reveal.delay-1 { transition-delay:.08s }
-  .reveal.delay-2 { transition-delay:.16s }
-  .reveal.delay-3 { transition-delay:.24s }
-  @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after { animation:none !important; transition:none !important }
-    .reveal { opacity:1; transform:none }
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-size:13px;
+    font-weight:900;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+  }
+  .brand-mark{
+    display:grid;
+    place-items:center;
+    width:34px;
+    height:34px;
+    background:var(--ink);
+    color:var(--paper);
+    transform:rotate(-4deg);
+  }
+  .nav-links{display:flex;align-items:center;gap:22px;color:var(--muted);font-size:13px;font-weight:700}
+  .nav-links a:hover{color:var(--ink)}
+  .nav-cta{
+    background:var(--lava);
+    color:var(--chalk);
+    padding:11px 16px;
+    border:2px solid var(--ink);
+    box-shadow:4px 4px 0 var(--ink);
+    font-size:13px;
+    font-weight:900;
+    text-transform:uppercase;
+    transition:transform .18s ease,box-shadow .18s ease;
+  }
+  .nav-cta:hover{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--ink)}
+  @media(max-width:760px){
+    .nav{align-items:flex-start}
+    .nav-links{display:none}
   }
 
-  /* Nav */
-  .nav{position:sticky;top:0;background:var(--nav-bg);backdrop-filter:blur(10px);
-       border-bottom:1px solid var(--border);z-index:50;padding:14px 32px;
-       display:flex;justify-content:space-between;align-items:center;
-       transition:background .35s ease, border-color .35s ease}
-  .brand{font-family:'Fraunces',serif;font-size:18px;font-weight:600;color:var(--accent);
-         transition:color .35s ease}
-  .brand .dot{color:var(--gold)}
-  .nav-links{display:flex;gap:28px;font-size:13px}
-  .nav-links a{color:var(--muted);font-weight:500;letter-spacing:.02em;position:relative}
-  .nav-links a::after{content:"";position:absolute;left:0;bottom:-4px;width:0;height:1.5px;
-                       background:var(--accent);transition:width .25s ease}
-  .nav-links a:hover{color:var(--accent)}
-  .nav-links a:hover::after{width:100%}
-  .nav-right{display:flex;align-items:center;gap:14px}
-  .nav-cta{background:var(--accent);color:var(--paper);padding:9px 18px;font-size:13px;font-weight:500;
-           border-radius:2px;letter-spacing:.03em;transition:transform .15s ease, filter .2s ease}
-  .nav-cta:hover{filter:brightness(1.1);transform:translateY(-1px)}
+  .hero{
+    min-height:calc(100vh - 66px);
+    display:grid;
+    grid-template-columns:minmax(0,1.05fr) minmax(320px,.95fr);
+    gap:clamp(28px,5vw,76px);
+    align-items:end;
+    padding:clamp(34px,6vw,76px) clamp(16px,4vw,42px) clamp(24px,4vw,42px);
+    border-bottom:2px solid var(--ink);
+  }
+  .hero-copy{padding-bottom:clamp(16px,4vw,52px)}
+  .kicker{
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:22px;
+    color:var(--lava);
+    font-size:12px;
+    font-weight:900;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+  }
+  .kicker::before{content:"";width:34px;height:3px;background:var(--lava)}
+  h1{
+    max-width:930px;
+    font-family:"Instrument Serif",serif;
+    font-size:clamp(58px,11vw,150px);
+    font-weight:400;
+    line-height:.84;
+    letter-spacing:0;
+  }
+  h1 span{
+    display:inline-block;
+    font-family:Archivo,sans-serif;
+    font-size:.54em;
+    font-weight:900;
+    line-height:.9;
+    text-transform:uppercase;
+    color:var(--lava);
+  }
+  .hero-sub{
+    max-width:680px;
+    margin-top:30px;
+    color:#2f2d29;
+    font-size:clamp(18px,2vw,24px);
+    font-weight:600;
+  }
+  .hero-actions{display:flex;gap:14px;flex-wrap:wrap;margin-top:34px}
+  .hero-assurance{
+    max-width:720px;
+    margin-top:24px;
+    padding-top:18px;
+    border-top:1px solid var(--line);
+    color:#3d3933;
+    font-size:14px;
+    font-weight:800;
+    line-height:1.55;
+  }
+  .hero-assurance strong{color:var(--lava)}
+  .btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    min-height:48px;
+    padding:13px 18px;
+    border:2px solid var(--ink);
+    font-size:13px;
+    font-weight:900;
+    letter-spacing:.05em;
+    text-transform:uppercase;
+    cursor:pointer;
+    transition:transform .18s ease,box-shadow .18s ease,background .18s ease;
+  }
+  .btn-primary{background:var(--ink);color:var(--paper);box-shadow:5px 5px 0 var(--lava)}
+  .btn-secondary{background:var(--banana);color:var(--ink);box-shadow:5px 5px 0 var(--ink)}
+  .btn:hover{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--ink)}
+  .btn-primary:hover{box-shadow:2px 2px 0 var(--lava)}
 
-  /* Theme toggle */
-  .theme-btn{width:34px;height:34px;border:1px solid var(--border);background:transparent;
-             border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;
-             color:var(--muted);font-size:15px;transition:all .25s ease;line-height:1}
-  .theme-btn:hover{color:var(--gold);border-color:var(--gold);transform:rotate(20deg)}
-  .theme-btn .sun{display:none}
-  .theme-btn .moon{display:block}
-  :root[data-theme="dark"] .theme-btn .sun{display:block}
-  :root[data-theme="dark"] .theme-btn .moon{display:none}
+  .hero-showcase{
+    align-self:stretch;
+    min-height:560px;
+    position:relative;
+    background:#0f171d;
+    color:var(--paper);
+    border:2px solid var(--ink);
+    box-shadow:var(--shadow);
+    overflow:hidden;
+    padding:28px;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+  }
+  .hero-showcase::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:
+      linear-gradient(135deg,transparent 0 46%,rgba(232,74,39,.66) 46% 56%,transparent 56%),
+      radial-gradient(circle at 82% 16%,rgba(0,168,143,.5),transparent 31%),
+      linear-gradient(90deg,rgba(245,239,226,.08) 1px,transparent 1px),
+      linear-gradient(rgba(245,239,226,.06) 1px,transparent 1px);
+    background-size:100% 100%,100% 100%,32px 32px,32px 32px;
+  }
+  .showcase-brand,.showcase-message,.work-collage,.showcase-footer{position:relative;z-index:1}
+  .showcase-brand{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:14px;
+  }
+  .showcase-logo{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    font-size:12px;
+    font-weight:900;
+    letter-spacing:.13em;
+    text-transform:uppercase;
+  }
+  .showcase-logo-mark{
+    width:48px;
+    height:48px;
+    display:grid;
+    place-items:center;
+    color:var(--ink);
+    background:var(--banana);
+    border:2px solid var(--paper);
+    box-shadow:4px 4px 0 var(--lava);
+    transform:rotate(-5deg);
+    font-size:17px;
+  }
+  .showcase-pill{
+    padding:8px 10px;
+    border:1px solid var(--line-dark);
+    color:var(--banana);
+    font-size:11px;
+    font-weight:900;
+    letter-spacing:.11em;
+    text-transform:uppercase;
+  }
+  .showcase-message{max-width:600px;margin-top:30px}
+  .showcase-message h2{
+    color:var(--paper);
+    font-family:"Instrument Serif",serif;
+    font-size:clamp(42px,5.8vw,76px);
+    line-height:.9;
+    font-weight:400;
+  }
+  .showcase-message h2 span{color:var(--banana);font-style:italic}
+  .showcase-message p{
+    max-width:520px;
+    margin-top:18px;
+    color:#e4d8c5;
+    font-size:17px;
+    font-weight:700;
+  }
+  .work-collage{
+    min-height:330px;
+    margin:26px 0 20px;
+  }
+  .photo-card{
+    position:absolute;
+    overflow:hidden;
+    border:2px solid var(--paper);
+    background:var(--ink);
+    box-shadow:14px 14px 0 rgba(0,0,0,.28);
+  }
+  .photo-card img{
+    width:100%;
+    height:100%;
+    display:block;
+    object-fit:cover;
+    filter:saturate(.95) contrast(1.05);
+  }
+  .photo-card::after{
+    content:attr(data-label);
+    position:absolute;
+    left:12px;
+    bottom:10px;
+    padding:7px 9px;
+    background:rgba(17,17,15,.82);
+    color:var(--paper);
+    border:1px solid rgba(245,239,226,.4);
+    font-size:10px;
+    font-weight:900;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+  }
+  .photo-main{
+    left:0;
+    top:18px;
+    width:70%;
+    height:245px;
+    transform:rotate(-2deg);
+  }
+  .photo-side{
+    right:0;
+    top:0;
+    width:34%;
+    height:214px;
+    transform:rotate(3deg);
+  }
+  .site-preview{
+    position:absolute;
+    right:26px;
+    bottom:-4px;
+    width:min(68%,430px);
+    min-height:170px;
+    background:var(--chalk);
+    color:var(--ink);
+    border:2px solid var(--ink);
+    box-shadow:10px 10px 0 rgba(0,0,0,.34);
+    transform:rotate(1.5deg);
+    overflow:hidden;
+  }
+  .site-preview::before{
+    content:"";
+    display:block;
+    height:25px;
+    background:
+      radial-gradient(circle at 13px 13px,var(--lava) 0 4px,transparent 5px),
+      radial-gradient(circle at 29px 13px,var(--banana) 0 4px,transparent 5px),
+      radial-gradient(circle at 45px 13px,var(--reef) 0 4px,transparent 5px),
+      var(--ink);
+  }
+  .site-preview-body{
+    display:grid;
+    grid-template-columns:1fr 110px;
+    gap:14px;
+    padding:15px;
+    align-items:stretch;
+  }
+  .site-copy b{
+    display:block;
+    margin-bottom:7px;
+    font-size:12px;
+    font-weight:900;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+  }
+  .site-copy span{
+    display:block;
+    height:8px;
+    margin-top:7px;
+    background:#c8bfaf;
+  }
+  .site-copy span:nth-child(4){width:76%}
+  .site-copy em{
+    display:inline-block;
+    margin-top:14px;
+    padding:8px 10px;
+    background:var(--lava);
+    color:var(--paper);
+    font-style:normal;
+    font-size:10px;
+    font-weight:900;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+  }
+  .site-photo{
+    min-height:120px;
+    background:url("assets/hero-restaurante.jpg") center/cover;
+  }
+  .phone-proof{
+    position:absolute;
+    right:6px;
+    bottom:12px;
+    width:98px;
+    height:190px;
+    border:2px solid var(--paper);
+    border-radius:22px;
+    background:var(--ink);
+    box-shadow:8px 8px 0 rgba(0,0,0,.32);
+    overflow:hidden;
+    transform:rotate(-5deg);
+  }
+  .phone-proof img{
+    width:100%;
+    height:96px;
+    object-fit:cover;
+    display:block;
+  }
+  .phone-proof div{
+    padding:9px;
+    color:var(--paper);
+    font-size:9px;
+    font-weight:900;
+    line-height:1.25;
+    text-transform:uppercase;
+  }
+  .phone-proof span{
+    display:block;
+    margin-top:8px;
+    padding:7px 5px;
+    text-align:center;
+    background:var(--banana);
+    color:var(--ink);
+  }
+  .showcase-footer{
+    display:flex;
+    gap:12px;
+    align-items:center;
+    justify-content:space-between;
+    border-top:1px solid var(--line-dark);
+    padding-top:16px;
+  }
+  .showcase-point{
+    display:flex;
+    gap:9px;
+    align-items:flex-start;
+    max-width:170px;
+  }
+  .showcase-point b{display:block;color:var(--banana);font-size:14px;line-height:1}
+  .showcase-point span{display:block;color:#ddd1bd;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.06em}
+  .custom-note{
+    margin-top:18px;
+    display:inline-flex;
+    background:var(--paper);
+    color:var(--ink);
+    border:2px solid var(--ink);
+    padding:10px 12px;
+    box-shadow:4px 4px 0 var(--lava);
+    font-size:12px;
+    font-weight:900;
+    text-transform:uppercase;
+  }
 
-  @media(max-width:780px){.nav{padding:12px 16px}.nav-links{display:none}}
+  .strip{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    border-bottom:2px solid var(--ink);
+    background:var(--chalk);
+  }
+  .metric{
+    min-height:132px;
+    padding:22px clamp(16px,3vw,30px);
+    border-right:1px solid var(--line);
+  }
+  .metric:last-child{border-right:0}
+  .metric strong{display:block;font-family:"Instrument Serif",serif;font-size:clamp(36px,5vw,58px);font-weight:400;line-height:1;color:var(--lava)}
+  .metric span{display:block;margin-top:12px;color:#3d3933;font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.05em}
 
-  /* Hero */
-  .hero{padding:80px 32px 60px;max-width:980px;margin:0 auto;text-align:center;position:relative}
-  .hero{animation:fadeUp .9s ease both}
-  .hero::before{content:"";position:absolute;left:50%;top:-40px;transform:translateX(-50%);
-                width:520px;height:520px;background:radial-gradient(circle,
-                rgba(200,169,110,0.18) 0%,transparent 60%);
-                pointer-events:none;z-index:-1;animation:shimmer 6s ease-in-out infinite}
-  .hero-tag{display:inline-block;background:rgba(200,169,110,0.15);color:var(--gold);
-            font-size:11px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;
-            padding:6px 14px;border-radius:2px;margin-bottom:28px;animation:float 4s ease-in-out infinite}
-  .hero h1{font-family:'Fraunces',serif;font-size:clamp(34px,6vw,58px);font-weight:600;
-           line-height:1.1;color:var(--ink);max-width:820px;margin:0 auto 22px;
-           transition:color .35s ease}
-  .hero h1 em{color:var(--accent);font-style:italic;font-weight:400;transition:color .35s ease}
-  .hero h1 .gold{color:var(--gold);font-style:italic;font-weight:300}
-  .hero-sub{font-size:18px;color:var(--muted);font-weight:300;max-width:640px;margin:0 auto 36px}
-  .hero-actions{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
-  .btn-primary{background:var(--accent);color:var(--paper);padding:14px 28px;font-size:14px;
-               font-weight:500;letter-spacing:.04em;border:none;cursor:pointer;border-radius:2px;
-               transition:transform .15s ease, filter .2s ease, box-shadow .2s ease}
-  .btn-primary:hover{filter:brightness(1.12);transform:translateY(-2px);
-                     box-shadow:0 12px 24px rgba(26,58,92,0.25)}
-  .btn-ghost{border:1px solid var(--border);padding:14px 28px;font-size:14px;font-weight:500;
-             letter-spacing:.04em;color:var(--ink);background:var(--soft);border-radius:2px;
-             transition:all .2s ease}
-  .btn-ghost:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-2px)}
+  .section{padding:clamp(62px,8vw,112px) clamp(16px,4vw,42px);border-bottom:2px solid var(--ink)}
+  .section-head{display:grid;grid-template-columns:minmax(0,.9fr) minmax(280px,.55fr);gap:36px;align-items:end;margin-bottom:44px}
+  .section-label{color:var(--lava);font-size:12px;font-weight:900;letter-spacing:.16em;text-transform:uppercase;margin-bottom:12px}
+  h2{font-family:"Instrument Serif",serif;font-size:clamp(42px,7vw,92px);font-weight:400;line-height:.92;max-width:900px}
+  .section-copy{color:#3f3b35;font-size:18px;font-weight:600}
+  .trust-section{background:var(--chalk)}
+  .trust-grid{
+    display:grid;
+    grid-template-columns:1.15fr .85fr;
+    gap:24px;
+    align-items:stretch;
+  }
+  .trust-main{
+    padding:clamp(26px,4vw,44px);
+    background:var(--ink);
+    color:var(--paper);
+    border:2px solid var(--ink);
+    box-shadow:10px 10px 0 var(--lava);
+  }
+  .trust-main h3{
+    max-width:780px;
+    font-family:"Instrument Serif",serif;
+    font-size:clamp(40px,6vw,78px);
+    font-weight:400;
+    line-height:.92;
+  }
+  .trust-main p{max-width:760px;margin-top:22px;color:#ded2c0;font-size:19px;font-weight:650}
+  .trust-proof-list{display:grid;gap:12px;margin-top:30px}
+  .trust-proof{
+    display:grid;
+    grid-template-columns:96px 1fr;
+    gap:16px;
+    padding:15px 0;
+    border-top:1px solid var(--line-dark);
+  }
+  .trust-proof b{color:var(--banana);font-size:12px;font-weight:900;letter-spacing:.12em;text-transform:uppercase}
+  .trust-proof span{font-weight:700;color:#f0e4d0}
+  .trust-side{display:grid;gap:16px}
+  .trust-card{
+    padding:24px;
+    min-height:170px;
+    border:2px solid var(--ink);
+    background:var(--paper);
+    box-shadow:7px 7px 0 var(--ink);
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+  }
+  .trust-card:nth-child(2){background:var(--banana)}
+  .trust-card:nth-child(3){background:var(--reef);color:#071a17}
+  .trust-card strong{font-family:"Instrument Serif",serif;font-size:48px;font-weight:400;line-height:1}
+  .trust-card span{display:block;margin-top:12px;font-size:14px;font-weight:900;text-transform:uppercase;line-height:1.15}
+  .client-control{
+    margin-top:32px;
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:12px;
+  }
+  .control-chip{
+    padding:14px;
+    background:#fff8e9;
+    border:1px solid var(--line);
+    font-size:13px;
+    font-weight:900;
+    text-transform:uppercase;
+  }
+  .why-web{
+    background:var(--ink);
+    color:var(--paper);
+  }
+  .why-web .section-label{color:var(--banana)}
+  .why-web h2{color:var(--paper)}
+  .why-web .section-copy{color:#dfd4c1}
+  .stats-grid{
+    display:grid;
+    grid-template-columns:1.05fr .95fr;
+    gap:24px;
+    align-items:stretch;
+  }
+  .stat-stage{
+    min-height:0;
+    position:relative;
+    border:2px solid var(--paper);
+    background:
+      linear-gradient(90deg,rgba(245,239,226,.08) 1px,transparent 1px),
+      linear-gradient(rgba(245,239,226,.08) 1px,transparent 1px),
+      #152131;
+    background-size:34px 34px;
+    overflow:hidden;
+    box-shadow:12px 12px 0 var(--lava);
+    padding:clamp(18px,3vw,28px);
+    display:grid;
+    gap:18px;
+  }
+  .search-card{
+    padding:18px;
+    background:var(--chalk);
+    color:var(--ink);
+    border:2px solid var(--paper);
+    box-shadow:8px 8px 0 rgba(0,0,0,.36);
+  }
+  .search-bar{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:12px 14px;
+    background:#f1e8d8;
+    border:2px solid var(--ink);
+    font-weight:900;
+  }
+  .search-dot{width:12px;height:12px;border-radius:50%;background:var(--lava)}
+  .search-result{
+    display:grid;
+    grid-template-columns:1fr auto;
+    gap:14px;
+    margin-top:14px;
+    padding-top:14px;
+    border-top:1px solid var(--line);
+  }
+  .search-result b{display:block;font-size:18px;text-transform:uppercase}
+  .search-result span{display:block;color:var(--muted);font-size:13px;font-weight:700;margin-top:4px}
+  .decision-strip{
+    position:relative;
+    display:grid;
+    grid-template-columns:1fr auto 1fr;
+    align-items:center;
+    gap:14px;
+    min-height:72px;
+  }
+  .decision-strip::before{
+    content:"";
+    position:absolute;
+    left:12%;
+    right:12%;
+    top:50%;
+    height:4px;
+    background:linear-gradient(90deg,rgba(245,239,226,.28),var(--lava),var(--banana),var(--reef));
+    transform:translateY(-50%);
+  }
+  .decision-strip::after{
+    content:"";
+    position:absolute;
+    top:50%;
+    left:12%;
+    width:18px;
+    height:18px;
+    border-radius:50%;
+    background:var(--banana);
+    box-shadow:0 0 22px rgba(255,212,71,.75);
+    transform:translate(-50%,-50%);
+    animation:decisionMove 3s ease-in-out infinite;
+  }
+  @keyframes decisionMove{
+    0%,14%{left:12%;background:rgba(245,239,226,.75)}
+    54%{left:50%;background:var(--banana)}
+    86%,100%{left:88%;background:var(--reef)}
+  }
+  @keyframes decisionMoveMobile{
+    0%,14%{top:0;background:rgba(245,239,226,.75)}
+    54%{top:50%;background:var(--banana)}
+    86%,100%{top:100%;background:var(--reef)}
+  }
+  .decision-label{
+    position:relative;
+    z-index:1;
+    justify-self:center;
+    padding:10px 14px;
+    background:var(--banana);
+    color:var(--ink);
+    border:2px solid var(--ink);
+    box-shadow:5px 5px 0 var(--lava);
+    text-align:center;
+    font-size:12px;
+    font-weight:900;
+    text-transform:uppercase;
+    letter-spacing:.06em;
+  }
+  .decision-note{
+    position:relative;
+    z-index:1;
+    font-size:11px;
+    font-weight:900;
+    text-transform:uppercase;
+    letter-spacing:.08em;
+    color:#ded4c4;
+  }
+  .decision-note:last-child{text-align:right;color:var(--banana)}
+  .outcome-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:16px;
+  }
+  .outcome-card{
+    min-height:230px;
+    padding:18px;
+    border:2px solid var(--paper);
+    display:grid;
+    grid-template-rows:auto 1fr auto;
+    gap:18px;
+  }
+  .outcome-card.without{
+    background:#252525;
+    color:#ded6c9;
+  }
+  .outcome-card.with{
+    background:var(--banana);
+    color:var(--ink);
+  }
+  .outcome-card b{
+    display:block;
+    font-family:"Instrument Serif",serif;
+    font-size:clamp(44px,5vw,66px);
+    line-height:.86;
+    font-weight:400;
+  }
+  .outcome-card p{
+    max-width:270px;
+    font-size:14px;
+    font-weight:900;
+    line-height:1.2;
+    text-transform:uppercase;
+  }
+  .outcome-tag{
+    display:inline-flex;
+    align-self:end;
+    width:max-content;
+    padding:9px 10px;
+    border:2px solid currentColor;
+    font-size:11px;
+    font-weight:900;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+  }
+  .outcome-card.with .outcome-tag{
+    background:var(--ink);
+    color:var(--paper);
+    border-color:var(--ink);
+  }
+  .stat-cards{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .stat-card{
+    min-height:250px;
+    padding:18px;
+    background:rgba(245,239,226,.08);
+    border:1px solid var(--line-dark);
+    display:grid;
+    grid-template-rows:auto 1fr auto;
+    gap:14px;
+  }
+  .stat-card.wide{grid-column:1/-1;min-height:230px}
+  .stat-card strong{
+    display:block;
+    color:var(--banana);
+    font-family:"Instrument Serif",serif;
+    font-size:clamp(44px,5vw,66px);
+    font-weight:400;
+    line-height:.9;
+  }
+  .stat-card h3{font-size:15px;text-transform:uppercase;line-height:1.05}
+  .stat-source{
+    color:#bfb29d;
+    font-size:11px;
+    font-weight:900;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+  }
+  .stat-source a{color:var(--banana);text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px}
+  .chart-donut{
+    --p:96.4;
+    width:150px;
+    height:150px;
+    place-self:center;
+    border-radius:50%;
+    background:
+      conic-gradient(var(--banana) calc(var(--p)*1%),rgba(245,239,226,.15) 0);
+    position:relative;
+    animation:donutIn 1.1s ease both;
+  }
+  .chart-donut::before{
+    content:"";
+    position:absolute;
+    inset:18px;
+    border-radius:50%;
+    background:#1b2b3d;
+  }
+  .chart-donut::after{
+    content:attr(data-value);
+    position:absolute;
+    inset:0;
+    display:grid;
+    place-items:center;
+    color:var(--paper);
+    font-size:26px;
+    font-weight:900;
+  }
+  @keyframes donutIn{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
+  .visit-clock{
+    place-self:center;
+    width:170px;
+    height:170px;
+    border:2px solid var(--paper);
+    border-radius:50%;
+    position:relative;
+    background:radial-gradient(circle,rgba(255,212,71,.18),transparent 62%);
+  }
+  .visit-clock::before{
+    content:"";
+    position:absolute;
+    left:50%;
+    top:50%;
+    width:5px;
+    height:65px;
+    background:var(--banana);
+    transform-origin:50% 0;
+    animation:clockHand 2.6s ease-in-out infinite;
+  }
+  .visit-clock::after{
+    content:"24h";
+    position:absolute;
+    inset:0;
+    display:grid;
+    place-items:center;
+    color:var(--paper);
+    font-family:"Instrument Serif",serif;
+    font-size:56px;
+  }
+  @keyframes clockHand{0%{transform:rotate(-80deg)}70%,100%{transform:rotate(250deg)}}
+  .company-chart{
+    display:grid;
+    grid-template-columns:repeat(20,1fr);
+    gap:5px;
+    align-self:center;
+  }
+  .company-chart span{
+    aspect-ratio:1;
+    background:rgba(245,239,226,.16);
+    animation:dotRise .8s ease both;
+  }
+  .company-chart span.on{background:var(--reef)}
+  .company-chart span:nth-child(n){animation-delay:calc(var(--i,0)*.015s)}
+  @keyframes dotRise{from{transform:translateY(10px);opacity:0}to{transform:none;opacity:1}}
+  .ai-proof{
+    align-self:center;
+    display:grid;
+    grid-template-columns:1fr auto 1fr;
+    gap:12px;
+    align-items:stretch;
+  }
+  .ai-query,.ai-answer{
+    min-height:118px;
+    padding:14px;
+    border:1px solid var(--line-dark);
+    background:rgba(245,239,226,.08);
+  }
+  .ai-query b,.ai-answer b{
+    display:block;
+    color:var(--banana);
+    font-size:11px;
+    font-weight:900;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+  }
+  .ai-query span{
+    display:block;
+    margin-top:12px;
+    color:var(--paper);
+    font-size:15px;
+    font-weight:800;
+    line-height:1.2;
+  }
+  .ai-signals{
+    display:grid;
+    gap:6px;
+    align-content:center;
+    min-width:128px;
+  }
+  .ai-signals span{
+    display:block;
+    padding:8px 9px;
+    background:var(--paper);
+    color:var(--ink);
+    border:1px solid var(--ink);
+    font-size:10px;
+    font-weight:900;
+    text-align:center;
+    text-transform:uppercase;
+  }
+  .ai-answer{
+    background:var(--reef);
+    color:#071a17;
+  }
+  .ai-answer b{color:#071a17}
+  .ai-answer p{
+    margin-top:12px;
+    color:#071a17;
+    font-size:15px;
+    font-weight:900;
+    line-height:1.2;
+  }
+  .ai-answer em{
+    display:inline-block;
+    margin-top:12px;
+    padding:7px 9px;
+    background:var(--ink);
+    color:var(--paper);
+    font-style:normal;
+    font-size:10px;
+    font-weight:900;
+    text-transform:uppercase;
+  }
+  .micro-note{color:#ded4c4;font-size:13px;font-weight:700;line-height:1.3}
+  .device-toolbar{
+    display:inline-flex;
+    gap:8px;
+    flex-wrap:wrap;
+    padding:8px;
+    background:var(--ink);
+    border:2px solid var(--ink);
+  }
+  .device-toggle{
+    min-height:38px;
+    padding:9px 12px;
+    border:1px solid var(--line-dark);
+    background:transparent;
+    color:var(--paper);
+    cursor:pointer;
+    font-size:12px;
+    font-weight:900;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+  }
+  html[data-device="desktop"] .device-toggle[data-device="desktop"],
+  html[data-device="tablet"] .device-toggle[data-device="tablet"],
+  html[data-device="mobile"] .device-toggle[data-device="mobile"]{
+    background:var(--banana);
+    color:var(--ink);
+    border-color:var(--banana);
+  }
 
-  .hero-meta{display:flex;justify-content:center;gap:28px;margin-top:48px;flex-wrap:wrap;
-             font-size:13px;color:var(--muted)}
-  .hero-meta span{display:inline-flex;align-items:center;gap:8px}
-  .hero-meta span::before{content:'';width:6px;height:6px;background:var(--gold);border-radius:50%;
-                          animation:shimmer 2.5s ease-in-out infinite}
+  .demo-list{display:grid;gap:30px}
+  .demo{
+    display:grid;
+    grid-template-columns:minmax(0,1.08fr) minmax(300px,.72fr);
+    gap:0;
+    min-height:520px;
+    background:var(--chalk);
+    border:2px solid var(--ink);
+    box-shadow:10px 10px 0 var(--ink);
+    overflow:hidden;
+  }
+  .demo:nth-child(even){grid-template-columns:minmax(300px,.72fr) minmax(0,1.08fr)}
+  .demo:nth-child(even) .demo-preview{order:2}
+  .demo-preview{position:relative;background:#151515;border-right:2px solid var(--ink);overflow:hidden}
+  .demo-preview::before{
+    content:"Vista portatil";
+    position:absolute;
+    left:14px;
+    top:14px;
+    z-index:3;
+    background:var(--banana);
+    color:var(--ink);
+    border:2px solid var(--ink);
+    padding:7px 10px;
+    font-size:11px;
+    font-weight:900;
+    letter-spacing:.09em;
+    text-transform:uppercase;
+  }
+  .demo:nth-child(even) .demo-preview{border-right:0;border-left:2px solid var(--ink)}
+  .demo-frame{
+    position:absolute;
+    inset:0;
+    width:150%;
+    height:150%;
+    border:0;
+    transform:scale(.667);
+    transform-origin:top left;
+    pointer-events:none;
+    background:#fff;
+  }
+  html[data-device="tablet"] .demo-preview::before{content:"Vista tablet"}
+  html[data-device="mobile"] .demo-preview::before{content:"Vista movil"}
+  html[data-device="tablet"] .demo-frame{
+    width:820px;
+    height:1120px;
+    left:50%;
+    top:42px;
+    inset:auto auto auto 50%;
+    transform:translateX(-50%) scale(.43);
+    transform-origin:top center;
+    border:18px solid #090909;
+    border-radius:24px;
+    box-shadow:0 28px 70px rgba(0,0,0,.45);
+  }
+  html[data-device="mobile"] .demo-frame{
+    width:390px;
+    height:844px;
+    left:50%;
+    top:48px;
+    inset:auto auto auto 50%;
+    transform:translateX(-50%) scale(.48);
+    transform-origin:top center;
+    border:16px solid #090909;
+    border-radius:32px;
+    box-shadow:0 28px 70px rgba(0,0,0,.5);
+  }
+  .demo-info{display:flex;flex-direction:column;justify-content:space-between;gap:28px;padding:clamp(24px,4vw,42px)}
+  .demo-code{font-size:12px;font-weight:900;letter-spacing:.15em;text-transform:uppercase;color:var(--reef)}
+  .demo h3{font-family:"Instrument Serif",serif;font-size:clamp(38px,5vw,72px);font-weight:400;line-height:.92;margin-top:14px}
+  .demo p{margin-top:18px;color:#3e3931;font-size:17px;font-weight:600}
+  .proofs{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:26px}
+  .proof{border:1px solid var(--line);padding:12px;background:#fff8e9}
+  .proof b{display:block;font-size:18px;color:var(--lava)}
+  .proof span{display:block;margin-top:4px;color:var(--muted);font-size:12px;font-weight:800;text-transform:uppercase}
+  .demo-actions{display:flex;gap:12px;flex-wrap:wrap}
+  .demo-link{background:var(--ink);color:var(--paper)}
+  .demo-brief{background:transparent;color:var(--ink)}
 
-  /* Trust band */
-  .trust{background:var(--accent);color:var(--paper);padding:36px 32px;text-align:center;
-         transition:background .35s ease}
-  .trust-grid{max-width:980px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:32px}
-  .trust-item{transition:transform .25s ease}
-  .trust-item:hover{transform:translateY(-3px)}
-  .trust-item .num{font-family:'Fraunces',serif;font-size:32px;color:var(--gold);font-weight:600}
-  .trust-item .lbl{font-size:12px;color:rgba(255,255,255,0.7);letter-spacing:.08em;
-                   text-transform:uppercase;margin-top:4px;font-weight:500}
-  @media(max-width:780px){.trust-grid{grid-template-columns:repeat(2,1fr);gap:24px}}
+  .system-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px}
+  .system-item{
+    min-height:270px;
+    padding:24px;
+    background:var(--ink);
+    color:var(--paper);
+    border:2px solid var(--ink);
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+  }
+  .system-item:nth-child(2){background:var(--lava)}
+  .system-item:nth-child(3){background:var(--reef);color:#071a17}
+  .system-item .num{font-family:"Instrument Serif",serif;font-size:70px;line-height:1}
+  .system-item h3{font-size:21px;line-height:1.05;text-transform:uppercase}
+  .system-item p{margin-top:12px;font-weight:600;color:inherit;opacity:.82}
 
-  /* Section base */
-  .section{padding:80px 32px;max-width:1180px;margin:0 auto}
-  .section-tag{font-size:11px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;
-               color:var(--gold);margin-bottom:14px}
-  .section h2{font-family:'Fraunces',serif;font-size:clamp(28px,4vw,42px);font-weight:600;
-              color:var(--ink);line-height:1.2;margin-bottom:18px;max-width:780px}
-  .section h2 em{color:var(--accent);font-style:italic;font-weight:400}
-  .section-intro{font-size:17px;color:var(--muted);font-weight:300;max-width:680px;margin-bottom:48px}
+  .pricing-wrap{display:grid;grid-template-columns:.9fr 1.1fr;gap:24px;align-items:start}
+  .price-panel{
+    padding:28px;
+    background:var(--chalk);
+    border:2px solid var(--ink);
+    box-shadow:8px 8px 0 var(--ink);
+  }
+  .price-panel.featured{background:var(--banana)}
+  .price-panel h3{font-size:18px;text-transform:uppercase;letter-spacing:.08em}
+  .price{margin:18px 0 16px;font-family:"Instrument Serif",serif;font-size:76px;line-height:.9}
+  .price small{font-family:Archivo,sans-serif;font-size:16px;font-weight:900}
+  .price-panel ul{list-style:none;display:grid;gap:11px;margin-top:22px}
+  .price-panel li{display:flex;gap:10px;font-weight:700}
+  .price-panel li::before{content:"";width:9px;height:9px;margin-top:8px;background:var(--lava);flex:0 0 auto}
+  .included{
+    display:grid;
+    gap:12px;
+    padding:24px;
+    background:var(--ink);
+    color:var(--paper);
+    border:2px solid var(--ink);
+  }
+  .included-row{display:grid;grid-template-columns:160px 1fr;gap:18px;padding-bottom:12px;border-bottom:1px solid var(--line-dark)}
+  .included-row:last-child{border-bottom:0}
+  .included-row b{text-transform:uppercase;font-size:12px;letter-spacing:.1em;color:var(--banana)}
+  .included-row span{color:#ddd5c4;font-weight:600}
 
-  /* Portfolio grid */
-  .work-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:28px}
-  @media(max-width:880px){.work-grid{grid-template-columns:1fr}}
-  .work-card{background:var(--soft);border:1px solid var(--border);border-radius:4px;overflow:hidden;
-             transition:transform .3s cubic-bezier(.2,.7,.3,1),box-shadow .3s ease,border-color .25s ease,
-                        background .35s ease;
-             cursor:pointer;display:flex;flex-direction:column}
-  .work-card:hover{transform:translateY(-6px);box-shadow:var(--shadow);border-color:var(--gold)}
-  .work-card:hover .work-frame-wrap::after{opacity:.18}
-  .work-frame-wrap::after{content:"VER DEMO";position:absolute;left:50%;top:50%;
-                          transform:translate(-50%,-50%);background:var(--accent);color:var(--paper);
-                          padding:8px 20px;font-size:11px;font-weight:600;letter-spacing:.2em;
-                          opacity:0;transition:opacity .25s ease;pointer-events:none;z-index:3;
-                          border-radius:2px}
-  .work-frame-wrap{position:relative;width:100%;padding-top:62%;background:var(--light);
-                   overflow:hidden;border-bottom:1px solid var(--border);
-                   transition:background .35s ease}
-  .work-frame{position:absolute;inset:0;border:0;width:200%;height:200%;transform:scale(0.5);
-              transform-origin:top left;pointer-events:none;
-              transition:transform .5s cubic-bezier(.2,.7,.3,1)}
-  .work-card:hover .work-frame{transform:scale(0.52) translate(-1%,-1%)}
-  .work-shade{position:absolute;inset:0;background:linear-gradient(180deg,transparent 60%,
-              rgba(15,15,15,0.04));pointer-events:none;z-index:2}
-  .work-info{padding:20px 22px 22px}
-  .work-sector{font-size:11px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;
-               color:var(--gold);margin-bottom:6px}
-  .work-info h3{font-family:'Fraunces',serif;font-size:21px;font-weight:600;color:var(--ink);
-                margin-bottom:6px}
-  .work-info p{color:var(--muted);font-size:14px;font-weight:300;line-height:1.6;margin-bottom:14px}
-  .work-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
-  .work-tag{font-size:10.5px;font-weight:500;letter-spacing:.04em;color:var(--muted);
-            background:var(--light);padding:4px 10px;border-radius:2px}
-  .work-link{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:500;
-             color:var(--accent)}
-  .work-link::after{content:'→';transition:transform .2s ease}
-  .work-card:hover .work-link::after{transform:translateX(4px)}
+  .cta{
+    display:grid;
+    grid-template-columns:minmax(0,1fr) auto;
+    gap:26px;
+    align-items:center;
+    background:var(--lava);
+    color:var(--chalk);
+  }
+  .cta h2{max-width:980px}
+  .cta p{max-width:720px;margin-top:18px;font-size:20px;font-weight:700}
+  .cta .btn-secondary{align-self:center}
+  .footer{
+    display:flex;
+    justify-content:space-between;
+    gap:20px;
+    flex-wrap:wrap;
+    padding:28px clamp(16px,4vw,42px);
+    background:var(--ink);
+    color:var(--paper);
+    font-size:13px;
+    font-weight:700;
+  }
+  .footer a{color:var(--banana)}
 
-  /* Process */
-  .process-bg{background:var(--soft);border-top:1px solid var(--border);
-              border-bottom:1px solid var(--border)}
-  .process-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px}
-  @media(max-width:880px){.process-grid{grid-template-columns:repeat(2,1fr)}}
-  @media(max-width:520px){.process-grid{grid-template-columns:1fr}}
-  .step-num{font-family:'Fraunces',serif;font-size:34px;color:var(--gold);font-weight:300;
-            line-height:1;margin-bottom:10px}
-  .step h4{font-family:'Fraunces',serif;font-size:18px;font-weight:600;color:var(--ink);
-           margin-bottom:8px}
-  .step p{font-size:14px;color:var(--muted);font-weight:300;line-height:1.6}
+  .lb{
+    position:fixed;
+    inset:0;
+    z-index:100;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:18px;
+    background:rgba(17,17,15,.88);
+    backdrop-filter:blur(8px);
+  }
+  .lb.show{display:flex}
+  .lb-frame{
+    position:relative;
+    width:min(1320px,96vw);
+    height:min(88vh,900px);
+    border:2px solid var(--paper);
+    background:var(--chalk);
+    box-shadow:0 30px 90px rgba(0,0,0,.55);
+    display:flex;
+    flex-direction:column;
+    transition:width .25s ease,height .25s ease;
+  }
+  html[data-device="tablet"] .lb-frame{
+    width:min(820px,92vw);
+  }
+  html[data-device="mobile"] .lb-frame{
+    width:min(430px,92vw);
+  }
+  .lb-close{
+    width:42px;
+    height:42px;
+    border:2px solid var(--paper);
+    background:var(--lava);
+    color:var(--paper);
+    cursor:pointer;
+    font-size:26px;
+    font-weight:900;
+  }
+  .lb-topbar{
+    min-height:62px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:14px;
+    padding:10px;
+    background:var(--ink);
+    border-bottom:2px solid var(--paper);
+  }
+  .lb-topbar .device-toolbar{padding:0;border:0;margin:0;background:transparent}
+  .lb-frame iframe{width:100%;height:100%;border:0;display:block;flex:1;min-height:0}
 
-  /* Pricing */
-  .planes{display:grid;grid-template-columns:repeat(2,1fr);gap:24px;max-width:880px;margin:0 auto}
-  @media(max-width:760px){.planes{grid-template-columns:1fr}}
-  .plan{background:var(--soft);border:1px solid var(--border);padding:36px 32px;border-radius:4px;
-        position:relative;transition:transform .25s ease,box-shadow .25s ease,
-                                    border-color .25s ease, background .35s ease}
-  .plan:hover{transform:translateY(-4px);box-shadow:var(--shadow);border-color:var(--gold)}
-  .plan.destacado{border:1px solid var(--gold);background:linear-gradient(180deg,var(--soft),var(--light))}
-  .plan.destacado:hover{transform:translateY(-6px) scale(1.01)}
-  .plan-badge{position:absolute;top:-11px;left:50%;transform:translateX(-50%);
-              background:var(--gold);color:var(--ink);font-size:10px;font-weight:600;
-              letter-spacing:.18em;text-transform:uppercase;padding:5px 14px;border-radius:2px}
-  .plan-name{font-family:'Fraunces',serif;font-size:22px;font-weight:600;color:var(--accent);
-             margin-bottom:6px}
-  .plan-price{font-family:'Fraunces',serif;font-size:48px;font-weight:600;color:var(--ink);
-              line-height:1.1}
-  .plan-price sup{font-size:22px;font-weight:400;color:var(--muted);margin-right:2px}
-  .plan-monthly{font-size:13px;color:var(--muted);font-weight:300;margin-top:6px}
-  .plan-monthly strong{color:var(--accent);font-weight:600}
-  .plan-divider{width:42px;height:1px;background:var(--gold);margin:22px 0}
-  .plan-features{list-style:none}
-  .plan-features li{padding:7px 0;font-size:14px;color:var(--ink);font-weight:300;
-                    display:flex;gap:10px;align-items:flex-start}
-  .plan-features li::before{content:'—';color:var(--gold);flex-shrink:0;margin-top:2px}
-
-  .addon{max-width:880px;margin:18px auto 0;border:1px solid var(--border);
-         border-left:3px solid var(--gold);padding:18px 22px;display:flex;
-         justify-content:space-between;align-items:center;gap:18px;background:var(--soft);
-         transition:background .35s ease,transform .2s ease}
-  .addon:hover{transform:translateX(4px)}
-  .addon strong{display:block;font-size:13px;font-weight:600;margin-bottom:2px}
-  .addon span{font-size:12px;color:var(--muted);font-weight:300}
-  .addon-price{font-family:'Fraunces',serif;font-size:20px;font-weight:600;color:var(--accent);
-               white-space:nowrap}
-  .addon-price small{font-family:'DM Sans',sans-serif;font-size:11px;font-weight:300;color:var(--muted)}
-
-  /* Quote */
-  .quote-section{background:var(--accent);color:var(--paper);padding:80px 32px;text-align:center;
-                 transition:background .35s ease}
-  .quote-section .quote-mark{font-family:'Fraunces',serif;font-size:80px;color:var(--gold);
-                             opacity:.4;line-height:.6;margin-bottom:8px;
-                             animation:float 5s ease-in-out infinite}
-  .quote-section blockquote{font-family:'Fraunces',serif;font-size:clamp(22px,3vw,30px);
-                            font-style:italic;font-weight:300;color:rgba(255,255,255,0.95);
-                            max-width:780px;margin:0 auto 22px;line-height:1.5}
-  .quote-author{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold)}
-
-  /* CTA */
-  .cta-final{padding:90px 32px;text-align:center;max-width:780px;margin:0 auto}
-  .cta-final h2{margin:0 auto 18px}
-  .cta-final p{font-size:17px;color:var(--muted);font-weight:300;margin-bottom:36px}
-  .cta-final .btn-primary{padding:18px 36px;font-size:15px}
-
-  /* Footer */
-  .footer{border-top:1px solid var(--border);padding:32px;background:var(--soft);
-          transition:background .35s ease}
-  .footer-inner{max-width:1180px;margin:0 auto;display:flex;justify-content:space-between;
-                gap:24px;flex-wrap:wrap;font-size:13px;color:var(--muted);font-weight:300}
-  .footer-brand{font-family:'Fraunces',serif;font-size:16px;font-weight:600;color:var(--accent)}
-  .footer-cols{display:flex;gap:36px;flex-wrap:wrap}
-  .footer-cols a{color:var(--muted)}
-  .footer-cols a:hover{color:var(--accent)}
-
-  /* Lightbox modal para previews */
-  .lb{position:fixed;inset:0;background:rgba(15,15,15,0.85);display:none;align-items:center;
-      justify-content:center;z-index:100;padding:24px;
-      backdrop-filter:blur(4px);opacity:0;transition:opacity .25s ease}
-  .lb.show{display:flex;opacity:1}
-  .lb-frame{width:min(1180px,95vw);height:min(86vh,820px);background:var(--soft);border-radius:4px;
-            overflow:hidden;position:relative;box-shadow:0 24px 60px rgba(0,0,0,0.4);
-            transform:scale(.94);transition:transform .25s ease}
-  .lb.show .lb-frame{transform:scale(1)}
-  .lb-close{position:absolute;top:12px;right:12px;background:rgba(15,15,15,0.85);color:#fff;
-            width:34px;height:34px;border-radius:50%;display:flex;align-items:center;
-            justify-content:center;cursor:pointer;font-size:18px;border:none;z-index:5;
-            transition:transform .2s ease, background .2s ease}
-  .lb-close:hover{transform:rotate(90deg) scale(1.1);background:#000}
-  .lb-frame iframe{width:100%;height:100%;border:0;display:block}
+  .reveal{opacity:0;transform:translateY(24px);transition:opacity .65s ease,transform .65s ease}
+  .reveal.in{opacity:1;transform:none}
+  .delay-1{transition-delay:.08s}
+  .delay-2{transition-delay:.16s}
+  .delay-3{transition-delay:.24s}
+  @media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation:none!important;transition:none!important}
+    .reveal{opacity:1;transform:none}
+  }
+  @media(max-width:980px){
+    .hero,.section-head,.demo,.demo:nth-child(even),.pricing-wrap,.cta,.trust-grid,.stats-grid{grid-template-columns:1fr}
+    .hero{min-height:auto}
+    .hero-showcase{min-height:520px}
+    .showcase-footer{align-items:flex-start}
+    .demo:nth-child(even) .demo-preview{order:0}
+    .demo-preview,.demo:nth-child(even) .demo-preview{min-height:430px;border-left:0;border-right:0;border-bottom:2px solid var(--ink)}
+    .system-grid{grid-template-columns:1fr}
+    .client-control{grid-template-columns:repeat(2,1fr)}
+    .stat-cards{grid-template-columns:1fr}
+    .strip{grid-template-columns:repeat(2,1fr)}
+    .metric:nth-child(2){border-right:0}
+    .metric:nth-child(1),.metric:nth-child(2){border-bottom:1px solid var(--line)}
+  }
+  @media(max-width:620px){
+    .hero{padding-top:34px}
+    h1{font-size:clamp(50px,18vw,88px)}
+    .hero-showcase{min-height:auto;padding:22px}
+    .work-collage{min-height:420px}
+    .photo-main{width:86%;height:190px}
+    .photo-side{right:0;top:136px;width:48%;height:150px}
+    .site-preview{left:10px;right:auto;bottom:34px;width:86%;min-height:155px}
+    .site-preview-body{grid-template-columns:1fr 82px}
+    .phone-proof{right:4px;bottom:0;width:82px;height:156px;border-radius:18px}
+    .phone-proof img{height:74px}
+    .phone-proof div{font-size:8px}
+    .showcase-footer{flex-direction:column}
+    .showcase-message h2{font-size:44px}
+    .strip{grid-template-columns:1fr}
+    .metric{border-right:0;border-bottom:1px solid var(--line)}
+    .metric:last-child{border-bottom:0}
+    .client-control{grid-template-columns:1fr}
+    .trust-proof{grid-template-columns:1fr;gap:6px}
+    .stat-stage{padding:18px;box-shadow:7px 7px 0 var(--lava)}
+    .search-card{padding:14px}
+    .search-result{grid-template-columns:1fr}
+    .search-result strong{font-size:24px}
+    .decision-strip{grid-template-columns:1fr;gap:10px;min-height:116px}
+    .decision-strip::before{top:0;bottom:0;left:50%;right:auto;width:4px;height:auto;transform:translateX(-50%);background:linear-gradient(180deg,rgba(245,239,226,.28),var(--lava),var(--banana),var(--reef))}
+    .decision-strip::after{left:50%;top:0;animation:decisionMoveMobile 3s ease-in-out infinite}
+    .decision-note,.decision-note:last-child{text-align:center}
+    .outcome-grid{grid-template-columns:1fr}
+    .outcome-card{min-height:210px}
+    .ai-proof{grid-template-columns:1fr}
+    .ai-signals{grid-template-columns:repeat(3,1fr);min-width:0}
+    .ai-signals span{font-size:9px;padding:7px 6px}
+    .stat-card strong{font-size:54px}
+    .proofs{grid-template-columns:1fr}
+    .demo-preview{min-height:330px}
+    .demo-frame{width:190%;height:190%;transform:scale(.526)}
+    html[data-device="tablet"] .demo-frame{transform:translateX(-50%) scale(.29)}
+    html[data-device="mobile"] .demo-frame{transform:translateX(-50%) scale(.34)}
+    .included-row{grid-template-columns:1fr}
+  }
 </style>
 </head>
 <body>
-
-<!-- NAV -->
-<nav class="nav">
-  <a class="brand" href="#top">Servicios&nbsp;Web&nbsp;Tenerife<span class="dot">.</span></a>
-  <div class="nav-links">
-    <a href="#trabajos">Trabajos</a>
-    <a href="#proceso">Proceso</a>
-    <a href="#planes">Planes</a>
-    <a href="#contacto">Contacto</a>
-  </div>
-  <div class="nav-right">
-    <button class="theme-btn" onclick="toggleTheme()" aria-label="Cambiar tema" title="Cambiar tema">
-      <span class="moon">🌙</span><span class="sun">☀️</span>
-    </button>
-    <a class="nav-cta" href="https://wa.me/34600000000?text=Hola%2C%20quiero%20una%20web%20para%20mi%20negocio">Hablemos</a>
-  </div>
-</nav>
-
-<!-- HERO -->
-<section class="hero" id="top">
-  <div class="hero-tag">Webs para negocios locales · Tenerife</div>
-  <h1>Tu negocio merece una web <em>tan buena como tu trabajo</em>.<br><span class="gold">No genérica</span>. Hecha para ti.</h1>
-  <p class="hero-sub">
-    Diseñamos webs rápidas, claras y bonitas para barberías, restaurantes, clínicas y talleres de la isla. Llegamos contigo con un prototipo ya construido — no te vendemos una idea, te enseñamos el resultado.
-  </p>
-  <div class="hero-actions">
-    <a class="btn-primary" href="#trabajos">Ver trabajos</a>
-    <a class="btn-ghost" href="#planes">Ver planes desde 299&nbsp;€</a>
-  </div>
-  <div class="hero-meta">
-    <span>Hosting + dominio + SSL incluidos</span>
-    <span>Publicada en 7-10 días</span>
-    <span>Soporte real por WhatsApp</span>
-  </div>
-</section>
-
-<!-- TRUST -->
-<section class="trust">
-  <div class="trust-grid">
-    <div class="trust-item reveal"><div class="num">7-10</div><div class="lbl">Días para publicar</div></div>
-    <div class="trust-item reveal delay-1"><div class="num">299&nbsp;€</div><div class="lbl">Desde, sin sorpresas</div></div>
-    <div class="trust-item reveal delay-2"><div class="num">100%</div><div class="lbl">Mobile-first</div></div>
-    <div class="trust-item reveal delay-3"><div class="num">Tenerife</div><div class="lbl">Local, sin call centers</div></div>
-  </div>
-</section>
-
-<!-- PORTFOLIO -->
-<section class="section" id="trabajos">
-  <div class="section-tag">Trabajos · Demos</div>
-  <h2>Cuatro webs <em>de verdad</em> para sectores reales.</h2>
-  <p class="section-intro">
-    Estos son ejemplos del estilo que entregamos según el sector. Cada web está pensada
-    para el cliente que entra desde Google y necesita decidir en 10 segundos.
-  </p>
-
-  <div class="work-grid">
-
-    <article class="work-card reveal" onclick="openDemo('/portfolio/demo-barberia.html')">
-      <div class="work-frame-wrap">
-        <iframe class="work-frame" src="/portfolio/demo-barberia.html" loading="lazy" tabindex="-1" aria-hidden="true"></iframe>
-        <div class="work-shade"></div>
-      </div>
-      <div class="work-info">
-        <div class="work-sector">Barbería</div>
-        <h3>El Rincón Barber Co.</h3>
-        <p>Estética industrial cálida, galería de cortes, reserva directa por WhatsApp y mapa.</p>
-        <div class="work-tags">
-          <span class="work-tag">Hero potente</span>
-          <span class="work-tag">Galería</span>
-          <span class="work-tag">Reserva WA</span>
-        </div>
-        <span class="work-link">Ver demo en grande</span>
-      </div>
-    </article>
-
-    <article class="work-card reveal delay-1" onclick="openDemo('/portfolio/demo-restaurante.html')">
-      <div class="work-frame-wrap">
-        <iframe class="work-frame" src="/portfolio/demo-restaurante.html" loading="lazy" tabindex="-1" aria-hidden="true"></iframe>
-        <div class="work-shade"></div>
-      </div>
-      <div class="work-info">
-        <div class="work-sector">Restaurante</div>
-        <h3>Casa Marea</h3>
-        <p>Mediterráneo, cálido, con carta visible, reseñas reales y enlace directo a TheFork.</p>
-        <div class="work-tags">
-          <span class="work-tag">Carta</span>
-          <span class="work-tag">Reservas</span>
-          <span class="work-tag">Reseñas Google</span>
-        </div>
-        <span class="work-link">Ver demo en grande</span>
-      </div>
-    </article>
-
-    <article class="work-card reveal delay-2" onclick="openDemo('/portfolio/demo-clinica.html')">
-      <div class="work-frame-wrap">
-        <iframe class="work-frame" src="/portfolio/demo-clinica.html" loading="lazy" tabindex="-1" aria-hidden="true"></iframe>
-        <div class="work-shade"></div>
-      </div>
-      <div class="work-info">
-        <div class="work-sector">Clínica dental</div>
-        <h3>Clínica Mar Azul</h3>
-        <p>Confianza profesional, equipo, tratamientos con precio orientativo y cita online.</p>
-        <div class="work-tags">
-          <span class="work-tag">Equipo</span>
-          <span class="work-tag">Tratamientos</span>
-          <span class="work-tag">Pedir cita</span>
-        </div>
-        <span class="work-link">Ver demo en grande</span>
-      </div>
-    </article>
-
-    <article class="work-card reveal delay-3" onclick="openDemo('/portfolio/demo-taller.html')">
-      <div class="work-frame-wrap">
-        <iframe class="work-frame" src="/portfolio/demo-taller.html" loading="lazy" tabindex="-1" aria-hidden="true"></iframe>
-        <div class="work-shade"></div>
-      </div>
-      <div class="work-info">
-        <div class="work-sector">Taller mecánico</div>
-        <h3>Talleres Anaga</h3>
-        <p>Industrial y directo. Servicios con precio, formulario de presupuesto y mapa.</p>
-        <div class="work-tags">
-          <span class="work-tag">Servicios</span>
-          <span class="work-tag">Presupuesto</span>
-          <span class="work-tag">ITV</span>
-        </div>
-        <span class="work-link">Ver demo en grande</span>
-      </div>
-    </article>
-
-  </div>
-</section>
-
-<!-- PROCESO -->
-<section class="process-bg">
-  <div class="section" id="proceso">
-    <div class="section-tag">Cómo trabajamos</div>
-    <h2>De primera reunión a web publicada en <em>menos de dos semanas</em>.</h2>
-    <p class="section-intro">
-      Trabajamos con un proceso simple, sin reuniones eternas ni formularios infinitos.
-      Tú nos cuentas tu negocio una vez. Nosotros nos encargamos del resto.
-    </p>
-    <div class="process-grid">
-      <div class="step reveal">
-        <div class="step-num">01</div>
-        <h4>Llamada inicial</h4>
-        <p>20 minutos por teléfono o WhatsApp. Nos cuentas qué haces y a quién quieres llegar. Te enseñamos un prototipo ya hecho.</p>
-      </div>
-      <div class="step reveal delay-1">
-        <div class="step-num">02</div>
-        <h4>Recogida de datos</h4>
-        <p>Un formulario corto: textos, fotos, redes, horario. Si te falta algo, te ayudamos a resolverlo.</p>
-      </div>
-      <div class="step reveal delay-2">
-        <div class="step-num">03</div>
-        <h4>Diseño y ajustes</h4>
-        <p>Te mandamos la web montada en 5-7 días. Hacemos dos rondas de cambios sin coste — color, fotos, copy, lo que haga falta.</p>
-      </div>
-      <div class="step reveal delay-3">
-        <div class="step-num">04</div>
-        <h4>Publicación + soporte</h4>
-        <p>Subimos la web, conectamos tu dominio, configuramos email y te explicamos cómo gestionarla. A partir de ahí, soporte real por WhatsApp.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- PRICING -->
-<section class="section" id="planes">
-  <div class="section-tag">Planes claros</div>
-  <h2>Sin sorpresas. <em>Pagas una vez</em> y un mantenimiento mensual fijo.</h2>
-  <p class="section-intro">
-    El precio incluye diseño, hosting, certificado SSL, copias de seguridad y soporte.
-    Tu único gasto extra es el dominio (~12 €/año). Nada más.
-  </p>
-
-  <div class="planes">
-    <div class="plan reveal">
-      <div class="plan-name">Básico</div>
-      <div class="plan-price"><sup>€</sup>299</div>
-      <div class="plan-monthly">+ <strong>60 €</strong> / mes mantenimiento</div>
-      <div class="plan-divider"></div>
-      <ul class="plan-features">
-        <li>5 secciones (hero, servicios, sobre ti, contacto, mapa)</li>
-        <li>Formulario de contacto</li>
-        <li>100% adaptada a móvil</li>
-        <li>Hosting + SSL + dominio (1 año)</li>
-        <li>Publicación en 7 días</li>
-      </ul>
-    </div>
-    <div class="plan destacado reveal delay-1">
-      <div class="plan-badge">Recomendado</div>
-      <div class="plan-name">Completo</div>
-      <div class="plan-price"><sup>€</sup>399</div>
-      <div class="plan-monthly">+ <strong>85 €</strong> / mes mantenimiento</div>
-      <div class="plan-divider"></div>
-      <ul class="plan-features">
-        <li>Todo lo del Básico</li>
-        <li>Galería de fotos profesional</li>
-        <li>Reseñas de Google integradas</li>
-        <li>Botón de reserva por WhatsApp</li>
-        <li>Versión en inglés (turistas)</li>
-        <li>SEO local básico (Google Maps)</li>
-      </ul>
-    </div>
-  </div>
-
-  <div class="addon">
-    <div>
-      <strong>+ Gestión Google Maps</strong>
-      <span>Fotos mensuales, respuesta a reseñas, publicaciones — tu perfil siempre activo.</span>
-    </div>
-    <div class="addon-price">40&nbsp;€ <small>/mes</small></div>
-  </div>
-</section>
-
-<!-- QUOTE -->
-<section class="quote-section">
-  <div class="quote-mark">"</div>
-  <blockquote>
-    Mientras la competencia llega con un catálogo genérico, nosotros llegamos con tu
-    web ya construida. No te vendemos una idea — te mostramos el resultado.
-  </blockquote>
-  <div class="quote-author">— Servicios Web Tenerife</div>
-</section>
-
-<!-- CTA FINAL -->
-<section class="cta-final" id="contacto">
-  <div class="section-tag">Empezar</div>
-  <h2>¿Hablamos esta semana?</h2>
-  <p>Cuéntanos tu negocio en 20 minutos y te enseñamos un prototipo de tu web — antes de pagar nada.</p>
-  <a class="btn-primary" href="https://wa.me/34600000000?text=Hola%2C%20quiero%20una%20web%20para%20mi%20negocio">Escribir por WhatsApp →</a>
-  <p style="margin-top:18px;font-size:13px">o por correo: <a href="mailto:francuban1278@gmail.com" style="color:var(--accent);font-weight:500">francuban1278@gmail.com</a></p>
-</section>
-
-<!-- FOOTER -->
-<footer class="footer">
-  <div class="footer-inner">
-    <div>
-      <div class="footer-brand">Servicios Web Tenerife<span style="color:var(--gold)">.</span></div>
-      <div style="margin-top:6px">Webs para negocios locales · Santa Cruz de Tenerife</div>
-    </div>
-    <div class="footer-cols">
-      <a href="#trabajos">Trabajos</a>
-      <a href="#proceso">Proceso</a>
+<div class="page">
+  <nav class="nav">
+    <a class="brand" href="#top"><span class="brand-mark">FW</span><span>Fran Web Lab Tenerife</span></a>
+    <div class="nav-links">
+      <a href="#confianza">Confianza</a>
+      <a href="#demos">Trabajos</a>
+      <a href="#sistema">Sistema</a>
       <a href="#planes">Planes</a>
-      <a href="mailto:francuban1278@gmail.com">Email</a>
-      <a href="https://wa.me/34600000000">WhatsApp</a>
+      <a href="#contacto">Contacto</a>
     </div>
-  </div>
-</footer>
+    <a class="nav-cta" href="https://wa.me/34600000000?text=Hola%2C%20quiero%20una%20web%20para%20mi%20negocio">Hablar por WhatsApp</a>
+  </nav>
 
-<!-- Lightbox -->
+  <header class="hero" id="top">
+    <div class="hero-copy">
+      <div class="kicker">Paginas web profesionales para negocios locales - Tenerife</div>
+      <h1>Una web seria para que tu negocio de confianza <span>desde el primer vistazo</span></h1>
+      <p class="hero-sub">Creamos paginas web para restaurantes, barberias, clinicas, talleres y tiendas que quieren verse mejor, explicar bien lo que ofrecen y convertir visitas en llamadas, reservas o mensajes por WhatsApp.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#confianza">Por que confiar</a>
+        <a class="btn btn-secondary" href="#demos">Ver trabajos</a>
+        <a class="btn btn-secondary" href="#contacto">Pedir una web a medida</a>
+      </div>
+      <p class="hero-assurance"><strong>Demo inicial sin coste:</strong> primero te preparo una propuesta navegable para tu negocio. Si te encaja, la convertimos contigo en la version oficial: cambias estilo, textos, secciones, fotos y detalles antes de publicar.</p>
+    </div>
+    <div class="hero-showcase">
+      <div class="showcase-brand">
+        <div class="showcase-logo"><span class="showcase-logo-mark">FW</span><span>Fran Web Lab</span></div>
+        <div class="showcase-pill">A medida</div>
+      </div>
+      <div class="showcase-message">
+        <h2>Tu negocio, <span>en web</span>, como tu lo imaginas.</h2>
+        <p>Traes referencias, colores, fotos o una idea. Te enseno una demo gratuita y la usamos como base para construir la web final contigo.</p>
+        <div class="custom-note">Tu participas: estilo, secciones, idioma, fotos, reservas y textos</div>
+      </div>
+      <div class="work-collage" aria-label="Ejemplo visual de web a medida con fotos de local">
+        <figure class="photo-card photo-main" data-label="Fotos reales del local">
+          <img src="assets/hero-barberia.jpg" alt="Interior cuidado de una barberia con sillas y espejos">
+        </figure>
+        <figure class="photo-card photo-side" data-label="Ambiente y producto">
+          <img src="assets/hero-cafeteria.jpg" alt="Fachada acogedora de una cafeteria local">
+        </figure>
+        <div class="site-preview" aria-hidden="true">
+          <div class="site-preview-body">
+            <div class="site-copy">
+              <b>Web con tu estilo, no plantilla</b>
+              <span></span><span></span><span></span>
+              <em>Reservar por WhatsApp</em>
+            </div>
+            <div class="site-photo"></div>
+          </div>
+        </div>
+        <div class="phone-proof" aria-hidden="true">
+          <img src="assets/hero-cafe-movil.jpg" alt="">
+          <div>Vista movil lista para llamar o reservar<span>Abierto hoy</span></div>
+        </div>
+      </div>
+      <div class="showcase-footer">
+        <div class="showcase-point"><b>01</b><span>Dinos como quieres verte</span></div>
+        <div class="showcase-point"><b>02</b><span>Recibes una demo sin coste</span></div>
+        <div class="showcase-point"><b>03</b><span>La hacemos oficial contigo</span></div>
+      </div>
+    </div>
+  </header>
+
+  <section class="strip" aria-label="Datos principales">
+    <div class="metric reveal"><strong>4</strong><span>Trabajos de ejemplo navegables</span></div>
+    <div class="metric reveal delay-1"><strong>2</strong><span>Rondas de ajustes incluidas</span></div>
+    <div class="metric reveal delay-2"><strong>7-10</strong><span>Dias para publicar tras aprobar</span></div>
+    <div class="metric reveal delay-3"><strong>Local</strong><span>Hecho pensando en Tenerife</span></div>
+  </section>
+
+  <section class="section trust-section" id="confianza">
+    <div class="section-head">
+      <div>
+        <div class="section-label">Confianza antes que demos</div>
+        <h2>No necesitas una web bonita. Necesitas una web que te haga quedar bien.</h2>
+      </div>
+      <p class="section-copy">Los trabajos sirven para ensenar calidad, pero la decision real es otra: saber si puedes confiar en que entendemos tu negocio, te dejamos decidir el diseno y no te cobramos por mirar una primera demo.</p>
+    </div>
+    <div class="trust-grid">
+      <div class="trust-main">
+        <h3>Una web no es un dibujo: es la primera impresion de tu negocio.</h3>
+        <p>Por eso no entregamos una plantilla rapida y desaparecemos. Primero entendemos que vendes, que imagen quieres dar y que necesita hacer el cliente cuando entra. Con eso preparo una demo navegable sin coste y, si te convence, la convertimos en la version oficial contigo.</p>
+        <div class="trust-proof-list">
+          <div class="trust-proof"><b>Co-diseno</b><span>Tu eres una pieza clave: decides el estilo, referencias, colores, tono, secciones y cambios importantes antes de cerrar el diseno.</span></div>
+          <div class="trust-proof"><b>Sin coste</b><span>La primera demo navegable se prepara gratis para que puedas valorar la idea con calma antes de comprometerte.</span></div>
+          <div class="trust-proof"><b>Oficial</b><span>Si la demo encaja, la pulimos con tus fotos finales, textos, dominio, reservas, WhatsApp, mapa, horarios y version movil.</span></div>
+        </div>
+      </div>
+      <div class="trust-side">
+        <div class="trust-card"><strong>01</strong><span>Miramos tu negocio antes de disenar</span></div>
+        <div class="trust-card"><strong>02</strong><span>Te hacemos una demo inicial sin coste</span></div>
+        <div class="trust-card"><strong>03</strong><span>La version oficial sale de tus ajustes</span></div>
+      </div>
+    </div>
+    <div class="client-control">
+      <div class="control-chip">Puedes pedir colores</div>
+      <div class="control-chip">Puedes traer referencias</div>
+      <div class="control-chip">Puedes cambiar secciones</div>
+      <div class="control-chip">Puedes decidir antes de pagar</div>
+    </div>
+  </section>
+
+  <section class="section why-web" id="por-que-web">
+    <div class="section-head">
+      <div>
+        <div class="section-label">Por que importa tener web</div>
+        <h2>Cuando alguien busca tu negocio, ya esta decidiendo si confiar o pasar al siguiente.</h2>
+      </div>
+      <p class="section-copy">Una web no sustituye a Google Maps ni a Instagram. Los ordena. Le da al cliente un sitio claro donde ver que haces, cuanto cuesta, como reservar y por que elegirte.</p>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-stage" aria-label="Visualizacion del recorrido del cliente">
+        <div class="search-card">
+          <div class="search-bar"><span class="search-dot"></span><span>restaurante cerca de mi - abierto hoy</span></div>
+          <div class="search-result">
+            <div><b>Cliente en el movil</b><span>Compara fotos, horario, resenas, carta y boton de reserva antes de moverse.</span></div>
+            <strong>0:08</strong>
+          </div>
+        </div>
+        <div class="decision-strip" aria-hidden="true">
+          <span class="decision-note">Duda</span>
+          <span class="decision-label">8 segundos para confiar</span>
+          <span class="decision-note">Reserva</span>
+        </div>
+        <div class="outcome-grid">
+          <div class="outcome-card without">
+            <b>Sin web</b>
+            <span class="outcome-tag">Dudas abiertas</span>
+            <p>El cliente salta entre Maps, redes y dudas. Si no entiende rapido, se va.</p>
+          </div>
+          <div class="outcome-card with">
+            <b>Con web</b>
+            <span class="outcome-tag">WhatsApp + reserva</span>
+            <p>Ve tu oferta, confia, toca WhatsApp y reserva desde el movil.</p>
+          </div>
+        </div>
+      </div>
+      <div class="stat-cards">
+        <div class="stat-card reveal">
+          <div>
+            <strong>96.4%</strong>
+            <h3>Espana ya es mercado digital</h3>
+          </div>
+          <div class="chart-donut" data-value="46.1M"></div>
+          <div>
+            <div class="micro-note">Usuarios de internet en Espana a finales de 2025.</div>
+            <div class="stat-source">Fuente: <a href="https://datareportal.com/reports/digital-2026-spain" target="_blank" rel="noopener">DataReportal Digital 2026 Spain</a></div>
+          </div>
+        </div>
+        <div class="stat-card reveal delay-1">
+          <div>
+            <strong>76%</strong>
+            <h3>busqueda local = intencion inmediata</h3>
+          </div>
+          <div class="visit-clock"></div>
+          <div>
+            <div class="micro-note">Busquedas locales en smartphone que terminan en una visita durante el dia siguiente.</div>
+            <div class="stat-source">Fuente: <a href="https://www.thinkwithgoogle.com/_qs/documents/37/mobile-redefined-consumer-decision-shopper-journey-b.pdf" target="_blank" rel="noopener">Think with Google</a></div>
+          </div>
+        </div>
+        <div class="stat-card wide reveal delay-2">
+          <div>
+            <strong>84.5%</strong>
+            <h3>tener web ya es senal de empresa seria</h3>
+          </div>
+          <div class="company-chart" aria-hidden="true">
+            <span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span>
+            <span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span>
+            <span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span>
+            <span class="on"></span><span class="on"></span><span></span><span></span><span></span>
+            <span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span>
+            <span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span>
+            <span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span></span>
+            <span></span><span></span><span></span><span></span><span></span>
+          </div>
+          <div>
+            <div class="micro-note">Empresas espanolas con conexion a internet que disponen de sitio web.</div>
+            <div class="stat-source">Fuente: <a href="https://www.ine.es/dyngs/Prensa/en/ETICCE20241T2025.htm" target="_blank" rel="noopener">INE ETICCE 2024-2025</a></div>
+          </div>
+        </div>
+        <div class="stat-card wide reveal delay-3">
+          <div>
+            <strong>45%</strong>
+            <h3>clientes ya piden recomendaciones locales a la IA</h3>
+          </div>
+          <div class="ai-proof" aria-hidden="true">
+            <div class="ai-query">
+              <b>Pregunta real</b>
+              <span>Donde cenar cerca de mi con buenas resenas y reserva facil?</span>
+            </div>
+            <div class="ai-signals">
+              <span>Horario</span>
+              <span>Carta</span>
+              <span>Resenas</span>
+            </div>
+            <div class="ai-answer">
+              <b>Con web clara</b>
+              <p>La IA y Google tienen informacion ordenada para entender y recomendar tu negocio.</p>
+              <em>Mas facil de elegir</em>
+            </div>
+          </div>
+          <div>
+            <div class="micro-note">Consumidores que ya usan IA para recomendaciones o investigacion de negocios locales. Una web clara ayuda a que tu informacion sea entendible y verificable.</div>
+            <div class="stat-source">Fuente: <a href="https://www.brightlocal.com/research/lcrs-ai-trust/" target="_blank" rel="noopener">BrightLocal LCRS AI Trust 2025</a></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="demos">
+    <div class="section-head">
+      <div>
+        <div class="section-label">Trabajos y demos</div>
+        <h2>Estos ejemplos son para que valores el nivel, no para encajarte en una plantilla.</h2>
+      </div>
+      <div>
+        <p class="section-copy">Cada trabajo se puede abrir y revisar en portatil, tablet o movil desde su propio visor. La web final puede seguir otra direccion si quieres algo mas clasico, mas atrevido o mas parecido a tu marca.</p>
+      </div>
+    </div>
+
+    <div class="demo-list">
+      <article class="demo reveal">
+        <div class="demo-preview">
+          <div class="device-toolbar demo-controls" aria-label="Cambiar formato de preview">
+            <button class="device-toggle" data-device="desktop" onclick="setDemoDevice('desktop')">Portatil</button>
+            <button class="device-toggle" data-device="tablet" onclick="setDemoDevice('tablet')">Tablet</button>
+            <button class="device-toggle" data-device="mobile" onclick="setDemoDevice('mobile')">Movil</button>
+          </div>
+          <iframe class="demo-frame" src="/portfolio/demo-barberia.html" loading="lazy" tabindex="-1" aria-hidden="true"></iframe>
+        </div>
+        <div class="demo-info">
+          <div>
+            <div class="demo-code">Barberia / reservas por WhatsApp</div>
+            <h3>El Rincon Barber Co.</h3>
+            <p>Una web oscura, fisica y directa para vender cortes, barba y citas sin que el cliente tenga que buscar precios entre publicaciones de Instagram.</p>
+            <div class="proofs">
+              <div class="proof"><b>3 clics</b><span>hasta reservar</span></div>
+              <div class="proof"><b>Galeria</b><span>trabajos visibles</span></div>
+            </div>
+          </div>
+          <div class="demo-actions">
+            <button class="btn demo-link" onclick="openDemo('/portfolio/demo-barberia.html')">Abrir demo</button>
+            <a class="btn demo-brief" href="#contacto">Quiero algo asi</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="demo reveal delay-1">
+        <div class="demo-preview">
+          <div class="device-toolbar demo-controls" aria-label="Cambiar formato de preview">
+            <button class="device-toggle" data-device="desktop" onclick="setDemoDevice('desktop')">Portatil</button>
+            <button class="device-toggle" data-device="tablet" onclick="setDemoDevice('tablet')">Tablet</button>
+            <button class="device-toggle" data-device="mobile" onclick="setDemoDevice('mobile')">Movil</button>
+          </div>
+          <iframe class="demo-frame" src="/portfolio/demo-restaurante.html" loading="lazy" tabindex="-1" aria-hidden="true"></iframe>
+        </div>
+        <div class="demo-info">
+          <div>
+            <div class="demo-code">Restaurante / carta y reservas</div>
+            <h3>Casa Marea</h3>
+            <p>Carta clara, historia con sabor local, resenas y reserva inmediata. Pensada para gente que llega desde Google buscando donde comer hoy.</p>
+            <div class="proofs">
+              <div class="proof"><b>Carta</b><span>sin PDF perdido</span></div>
+              <div class="proof"><b>Reservas</b><span>WhatsApp + TheFork</span></div>
+            </div>
+          </div>
+          <div class="demo-actions">
+            <button class="btn demo-link" onclick="openDemo('/portfolio/demo-restaurante.html')">Abrir demo</button>
+            <a class="btn demo-brief" href="#contacto">Quiero algo asi</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="demo reveal delay-2">
+        <div class="demo-preview">
+          <div class="device-toolbar demo-controls" aria-label="Cambiar formato de preview">
+            <button class="device-toggle" data-device="desktop" onclick="setDemoDevice('desktop')">Portatil</button>
+            <button class="device-toggle" data-device="tablet" onclick="setDemoDevice('tablet')">Tablet</button>
+            <button class="device-toggle" data-device="mobile" onclick="setDemoDevice('mobile')">Movil</button>
+          </div>
+          <iframe class="demo-frame" src="/portfolio/demo-clinica.html" loading="lazy" tabindex="-1" aria-hidden="true"></iframe>
+        </div>
+        <div class="demo-info">
+          <div>
+            <div class="demo-code">Clinica / confianza antes de llamar</div>
+            <h3>Clinica Mar Azul</h3>
+            <p>Orden, claridad y autoridad. Tratamientos, equipo, precios orientativos y cita online sin parecer una web medica de banco de imagenes.</p>
+            <div class="proofs">
+              <div class="proof"><b>AA</b><span>contraste legible</span></div>
+              <div class="proof"><b>Cita</b><span>formulario claro</span></div>
+            </div>
+          </div>
+          <div class="demo-actions">
+            <button class="btn demo-link" onclick="openDemo('/portfolio/demo-clinica.html')">Abrir demo</button>
+            <a class="btn demo-brief" href="#contacto">Quiero algo asi</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="demo reveal delay-3">
+        <div class="demo-preview">
+          <div class="device-toolbar demo-controls" aria-label="Cambiar formato de preview">
+            <button class="device-toggle" data-device="desktop" onclick="setDemoDevice('desktop')">Portatil</button>
+            <button class="device-toggle" data-device="tablet" onclick="setDemoDevice('tablet')">Tablet</button>
+            <button class="device-toggle" data-device="mobile" onclick="setDemoDevice('mobile')">Movil</button>
+          </div>
+          <iframe class="demo-frame" src="/portfolio/demo-taller.html" loading="lazy" tabindex="-1" aria-hidden="true"></iframe>
+        </div>
+        <div class="demo-info">
+          <div>
+            <div class="demo-code">Taller / presupuesto rapido</div>
+            <h3>Talleres Anaga</h3>
+            <p>Industrial, seco y muy facil de usar. Servicios, averias comunes, presupuesto por WhatsApp y mapa sin adornos que distraigan.</p>
+            <div class="proofs">
+              <div class="proof"><b>Servicios</b><span>escaneables</span></div>
+              <div class="proof"><b>Urgente</b><span>telefono visible</span></div>
+            </div>
+          </div>
+          <div class="demo-actions">
+            <button class="btn demo-link" onclick="openDemo('/portfolio/demo-taller.html')">Abrir demo</button>
+            <a class="btn demo-brief" href="#contacto">Quiero algo asi</a>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="section" id="sistema">
+    <div class="section-head">
+      <div>
+        <div class="section-label">Metodo de trabajo</div>
+        <h2>La demo gratuita no es el producto final. Es el punto de partida.</h2>
+      </div>
+      <p class="section-copy">Uso un sistema propio para revisar fotos, resenas, actividad, redes y posicionamiento. Luego convierto esa informacion en una primera demo sin coste, y desde ahi construimos la web oficial con tus cambios.</p>
+    </div>
+    <div class="system-grid">
+      <div class="system-item reveal">
+        <div class="num">01</div>
+        <div><h3>Lectura del local</h3><p>Google Maps, resenas, fotos, horario, tono de cliente y senales de confianza.</p></div>
+      </div>
+      <div class="system-item reveal delay-1">
+        <div class="num">02</div>
+        <div><h3>Direccion visual</h3><p>No uso la misma estetica para un taller, una clinica o un restaurante de costa.</p></div>
+      </div>
+      <div class="system-item reveal delay-2">
+        <div class="num">03</div>
+        <div><h3>Web vendible</h3><p>CTA visible, movil cuidado, mapa, reservas, galeria, copy especifico y SEO local basico.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="planes">
+    <div class="section-head">
+      <div>
+        <div class="section-label">Planes</div>
+        <h2>Precio claro para negocios que quieren moverse rapido.</h2>
+      </div>
+      <p class="section-copy">La demo inicial sirve para decidir con los ojos sin pagar por adelantado. Si encaja, se pule contigo con fotos finales, dominio, textos, reservas y ajustes de diseno.</p>
+    </div>
+    <div class="pricing-wrap">
+      <div class="price-panel">
+        <h3>Basico</h3>
+        <div class="price">299 <small>EUR</small></div>
+        <p>Para negocios que necesitan presencia clara, movil y contacto directo.</p>
+        <ul>
+          <li>5 secciones esenciales</li>
+          <li>Formulario o WhatsApp</li>
+          <li>Mapa, horario y SEO local</li>
+          <li>Hosting, SSL y soporte</li>
+        </ul>
+      </div>
+      <div class="price-panel featured">
+        <h3>Completo</h3>
+        <div class="price">399 <small>EUR</small></div>
+        <p>Para negocios donde la web tiene que convencer: galeria, resenas, reservas y version preparada para crecer.</p>
+        <ul>
+          <li>Hasta 8 secciones con direccion visual propia</li>
+          <li>Galeria, resenas y CTA por seccion</li>
+          <li>Version en ingles si el sector lo necesita</li>
+          <li>Mantenimiento desde 85 EUR/mes</li>
+        </ul>
+      </div>
+      <div class="included">
+        <div class="included-row"><b>Entrega</b><span>Web publicada normalmente en 7-10 dias desde que tengo fotos y datos finales.</span></div>
+        <div class="included-row"><b>Ajustes</b><span>Dos rondas incluidas para cambiar copy, fotos, colores, secciones y CTAs.</span></div>
+        <div class="included-row"><b>Soporte</b><span>WhatsApp directo, mantenimiento tecnico, copias, SSL y pequenos cambios.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section cta" id="contacto">
+    <div>
+      <div class="section-label" style="color:var(--banana)">Contacto</div>
+      <h2>Te preparo una demo gratis con la cara de tu negocio.</h2>
+      <p>Mandame el nombre del local o el enlace de Google Maps. Te devuelvo una propuesta visual sin coste; si te gusta, la convertimos juntos en tu web oficial.</p>
+    </div>
+    <a class="btn btn-secondary" href="https://wa.me/34600000000?text=Hola%2C%20quiero%20una%20demo%20para%20mi%20negocio">Escribir por WhatsApp</a>
+  </section>
+
+  <footer class="footer">
+    <span>Fran Web Lab Tenerife - demos comerciales para negocios locales</span>
+    <span><a href="mailto:francuban1278@gmail.com">francuban1278@gmail.com</a></span>
+  </footer>
+</div>
+
 <div class="lb" id="lb" onclick="if(event.target.id==='lb')closeDemo()">
   <div class="lb-frame">
-    <button class="lb-close" onclick="closeDemo()" aria-label="Cerrar">×</button>
+    <div class="lb-topbar">
+      <div class="device-toolbar" aria-label="Cambiar formato de demo abierta">
+        <button class="device-toggle" data-device="desktop" onclick="setDemoDevice('desktop')">Portatil</button>
+        <button class="device-toggle" data-device="tablet" onclick="setDemoDevice('tablet')">Tablet</button>
+        <button class="device-toggle" data-device="mobile" onclick="setDemoDevice('mobile')">Movil</button>
+      </div>
+      <button class="lb-close" onclick="closeDemo()" aria-label="Cerrar">x</button>
+    </div>
     <iframe id="lb-iframe" src="" title="Demo"></iframe>
   </div>
 </div>
 
 <script>
-  /* ═══ THEME ═══ */
-  (function initTheme() {
-    const stored = localStorage.getItem('theme-portfolio');
-    const prefersDark = window.matchMedia &&
-      window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const theme = stored || (prefersDark ? 'dark' : 'light');
-    document.documentElement.setAttribute('data-theme', theme);
-  })();
-  function toggleTheme() {
-    const cur = document.documentElement.getAttribute('data-theme') || 'light';
-    const next = cur === 'dark' ? 'light' : 'dark';
-    document.documentElement.setAttribute('data-theme', next);
-    localStorage.setItem('theme-portfolio', next);
+  document.documentElement.setAttribute('data-device', 'desktop');
+  function setDemoDevice(device) {
+    document.documentElement.setAttribute('data-device', device);
   }
-
-  /* ═══ SCROLL REVEAL ═══ */
+  function openDemo(file) {
+    const lb = document.getElementById('lb');
+    const frame = document.getElementById('lb-iframe');
+    frame.src = file;
+    lb.classList.add('show');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeDemo() {
+    document.getElementById('lb-iframe').src = '';
+    document.getElementById('lb').classList.remove('show');
+    document.body.style.overflow = '';
+  }
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeDemo();
+  });
   (function initReveal() {
     const els = document.querySelectorAll('.reveal');
     if (!('IntersectionObserver' in window)) {
       els.forEach(el => el.classList.add('in'));
       return;
     }
-    const io = new IntersectionObserver((entries) => {
-      entries.forEach(e => {
-        if (e.isIntersecting) {
-          e.target.classList.add('in');
-          io.unobserve(e.target);
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in');
+          io.unobserve(entry.target);
         }
       });
-    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+    }, {threshold:.12, rootMargin:'0px 0px -40px 0px'});
     els.forEach(el => io.observe(el));
   })();
-
-  /* ═══ DEMO LIGHTBOX ═══ */
-  function openDemo(file) {
-    const lb = document.getElementById('lb');
-    const ifr = document.getElementById('lb-iframe');
-    ifr.src = file;
-    lb.classList.add('show');
-    document.body.style.overflow = 'hidden';
-  }
-  function closeDemo() {
-    const lb = document.getElementById('lb');
-    document.getElementById('lb-iframe').src = '';
-    lb.classList.remove('show');
-    document.body.style.overflow = '';
-  }
-  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDemo(); });
 </script>
-
 </body>
 </html>

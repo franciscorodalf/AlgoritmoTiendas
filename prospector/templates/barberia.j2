@@ -1,8 +1,10 @@
-{% from '_base.j2' import identity_block, business_block, insights_block, tech_block with context %}
+{% from '_base.j2' import identity_block, creative_direction_block, business_block, insights_block, tech_block with context %}
 Crea una web con carácter para "{{ business.name }}", una barbería en
 {{ business.address }}. Estética masculina, cuidada, con peso visual.
 
 {{ identity_block() }}
+
+{{ creative_direction_block() }}
 
 {{ business_block() }}
 

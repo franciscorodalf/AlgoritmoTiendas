@@ -12,6 +12,18 @@ IDENTIDAD VISUAL:
   - Estética general: {{ profile.visual_vibe }}
 {%- endmacro -%}
 
+{%- macro creative_direction_block() -%}
+DIRECCIÓN CREATIVA OBLIGATORIA:
+  - La web debe parecer diseñada para este negocio concreto, no para "un {{ profile.sector }} genérico".
+  - Antes de proponer secciones, define un concepto visual memorable en una frase: metáfora, atmósfera o idea rectora.
+  - Usa los datos reales del negocio (nombre, zona, reseñas, fotos, horario, rating y palabras repetidas por clientes) como material de diseño y copy.
+  - Evita el patrón genérico de hero centrado + tarjetas iguales + iconos planos + gradiente decorativo.
+  - Diseña al menos una sección distintiva que no aparezca en una plantilla común del sector.
+  - Indica composición responsive: cómo se ve el primer pantallazo en móvil y qué CTA queda fijo.
+  - Si faltan fotos reales, propón placeholders de fotografía específicos del local, no stock genérico.
+  - El resultado debe sentirse vendible para un cliente local de Tenerife que lo abre en el móvil.
+{%- endmacro -%}
+
 {%- macro business_block() -%}
 DATOS DEL NEGOCIO:
   - Nombre: {{ business.name }}
