@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>El Rincón Barber Co. — Santa Cruz de Tenerife</title>
+<meta name="description" content="Demo de barberia para Santa Cruz con estilo urbano, servicios claros y contacto rapido para pedir hora.">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   :root{--ink:#161310;--bg:#1c1814;--surface:#2a221c;--gold:#c8a96e;--cream:#f4ece0;
@@ -97,7 +98,12 @@
   .g-tile::after{content:attr(data-tag);position:absolute;bottom:10px;left:10px;font-family:'Bebas Neue',sans-serif;
                  letter-spacing:.18em;font-size:11px;color:var(--gold);z-index:2}
   .g-tile.t1{background-image:url("../assets/demo/barber-cut.webp");background-position:center 38%}
-  .g-tile.t2{background-image:url("../assets/demo/barber-hero.webp");background-position:center 42%}
+  .g-tile.t2{
+    background-image:
+      linear-gradient(180deg,transparent,rgba(22,19,16,.7)),
+      url("../assets/demo/barber-classic-chair.webp");
+    background-position:center 44%;
+  }
   .g-tile.t3{background-image:url("../assets/demo/barber-chair.webp");background-position:center 35%}
   .g-tile.t4{background-image:url("../assets/demo/barber-work.webp");background-position:70% center}
   .g-tile.t5{background-image:url("../assets/demo/barber-detail.webp");background-position:center 36%}
@@ -155,7 +161,7 @@
     <div class="nav-links">
       <a href="#servicios">Servicios</a>
       <a href="#galeria">Galería</a>
-      <a href="#resenas">Reseñas</a>
+      <a href="#opiniones">Opiniones</a>
       <a href="#contacto">Contacto</a>
     </div>
     <a class="book" href="#contacto">Reservar</a>
@@ -169,12 +175,12 @@
       <h1>Cortes que <span>te hacen verte</span><br>como te sientes.</h1>
       <p>Barbería clásica con alma urbana. Corte, afeitado clásico con navaja y arreglo de barba en pleno centro de Santa Cruz.</p>
       <div class="hero-actions">
-        <a class="btn btn-gold" href="https://wa.me/34600000000?text=Quiero%20reservar">Reservar por WhatsApp</a>
+        <a class="btn btn-gold" href="https://wa.me/34600000000?text=Quiero%20reservar">Pedir hora</a>
         <a class="btn btn-ghost" href="#servicios">Ver carta</a>
       </div>
       <div class="hero-rating">
         <span class="stars">★★★★★</span>
-        <span>4.8 / 5 — 127 reseñas en Google</span>
+        <span>4.8 / 5 — 127 opiniones en Google</span>
       </div>
     </div>
     <div class="hero-photo" aria-label="Interior real de barberia"></div>
@@ -183,8 +189,8 @@
 
 <div class="trust-strip" aria-label="Senales de confianza">
   <div class="container">
-    <div class="trust-pill"><b>127</b><span>resenas en Google</span></div>
-    <div class="trust-pill"><b>3 clics</b><span>hasta reservar</span></div>
+    <div class="trust-pill"><b>127</b><span>clientes satisfechos</span></div>
+    <div class="trust-pill"><b>3 clics</b><span>hasta pedir hora</span></div>
     <div class="trust-pill"><b>Centro</b><span>Santa Cruz</span></div>
   </div>
 </div>
@@ -255,10 +261,10 @@
   </div>
 </section>
 
-<section id="resenas">
+<section id="opiniones">
   <div class="container">
     <div class="stitle">Lo que dicen</div>
-    <h2>Reseñas</h2>
+    <h2>Opiniones</h2>
     <div class="reviews">
       <div class="review">
         <div class="stars">★★★★★</div>
@@ -282,8 +288,8 @@
 <section class="reservar" id="contacto">
   <div class="stitle">Reservar</div>
   <h2>Pasa cuando<br>quieras.</h2>
-  <p>Reservamos por WhatsApp para que no te toque esperar. Siempre tenemos hueco a primera hora y al cierre.</p>
-  <a class="btn btn-gold" href="https://wa.me/34600000000?text=Hola%2C%20quiero%20reservar%20un%20corte">💬 Reservar por WhatsApp</a>
+  <p>Pide hora antes de pasar. Te confirmamos el hueco y evitas esperar en la puerta.</p>
+  <a class="btn btn-gold" href="https://wa.me/34600000000?text=Hola%2C%20quiero%20reservar%20un%20corte">Pedir hora</a>
 
   <div class="info-grid">
     <div class="info-item">
@@ -305,7 +311,7 @@
   <div class="container">© El Rincón Barber Co. · Santa Cruz de Tenerife · Web demo</div>
 </footer>
 
-<a class="mobile-book" href="https://wa.me/34600000000?text=Hola%2C%20quiero%20reservar%20un%20corte">Reservar por WhatsApp</a>
+<a class="mobile-book" href="https://wa.me/34600000000?text=Hola%2C%20quiero%20reservar%20un%20corte">Pedir hora</a>
 
 </body>
 </html>

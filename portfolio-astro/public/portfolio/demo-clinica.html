@@ -4,10 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Clínica Mar Azul — Salud dental · La Laguna</title>
+<meta name="description" content="Demo de clinica dental en La Laguna con equipo visible, tratamientos claros y cita online sin friccion.">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{--ink:#0d1f30;--bg:#f7f9fc;--surface:#ffffff;--accent:#2e6cb8;--accent-2:#4dabe9;
-        --muted:#6a7a8c;--border:#e1e8ef;--soft:#eaf2fa;--ok:#0fa67d}
+        --muted:#526477;--border:#d8e1ec;--soft:#eaf2fa;--ok:#0b8465}
   *{margin:0;padding:0;box-sizing:border-box}
   body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink);line-height:1.65;font-size:16px}
   a{color:inherit;text-decoration:none}
@@ -112,8 +113,9 @@
         transition:transform .2s ease,box-shadow .2s ease}
   .serv:hover{transform:translateY(-4px);box-shadow:0 14px 30px rgba(46,108,184,0.08);
               border-color:var(--accent-2)}
-  .serv-icon{width:42px;height:42px;background:var(--soft);color:var(--accent);border-radius:10px;
-             display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;margin-bottom:18px}
+  .serv-icon{display:inline-flex;align-items:center;min-height:30px;padding:7px 11px;background:var(--soft);
+             color:var(--accent);border-radius:999px;font-size:11px;font-weight:700;letter-spacing:.08em;
+             text-transform:uppercase;margin-bottom:18px}
   .serv h3{font-size:18px;font-weight:600;color:var(--ink);margin-bottom:8px}
   .serv p{font-size:14px;color:var(--muted);line-height:1.6;margin-bottom:14px}
   .serv-price{font-size:13px;color:var(--accent);font-weight:600}
@@ -136,7 +138,7 @@
   }
   .doc:nth-child(2) .doc-img{background-image:url("../assets/demo/clinic-doctor-male.webp");background-position:center 36%}
   .doc:nth-child(3) .doc-img{background-image:url("../assets/demo/clinic-doctor-female-2.webp");background-position:center 30%}
-  .doc h4{font-size:18px;font-weight:600;color:var(--ink);margin-bottom:4px}
+  .doc h3{font-size:18px;font-weight:600;color:var(--ink);margin-bottom:4px}
   .doc-rol{font-size:13px;color:var(--accent);font-weight:600;margin-bottom:10px;letter-spacing:.04em}
   .doc-bio{font-size:14px;color:var(--muted);line-height:1.6}
 
@@ -211,17 +213,17 @@
         <p>Clínica dental familiar en La Laguna desde 2011. Equipo propio, sin franquicia, primera consulta sin coste y planes a medida sin sorpresas.</p>
         <div class="actions">
           <a class="btn btn-primary" href="#cita">📅 Pedir cita online</a>
-          <a class="btn btn-ghost" href="https://wa.me/34600000002?text=Quiero%20pedir%20cita">💬 WhatsApp</a>
+          <a class="btn btn-ghost" href="https://wa.me/34600000002?text=Quiero%20pedir%20cita">Mensaje directo</a>
         </div>
         <div class="hero-trust">
           <div><strong>14&nbsp;años</strong>en La Laguna</div>
-          <div><strong>4.9 ★</strong>en Google · 211 reseñas</div>
+          <div><strong>4.9 ★</strong>en Google · 211 opiniones</div>
           <div><strong>1.ª consulta</strong>gratis</div>
         </div>
         <div class="hero-proof" aria-label="Confianza de la clinica">
           <div><b>Sin franquicia</b><span>mismo equipo durante el tratamiento</span></div>
           <div><b>Presupuesto claro</b><span>antes de empezar</span></div>
-          <div><b>WhatsApp</b><span>confirmacion rapida</span></div>
+          <div><b>Respuesta</b><span>confirmacion rapida</span></div>
         </div>
       </div>
       <div class="hero-img"></div>
@@ -247,37 +249,37 @@
     <p class="lead">Precios orientativos siempre visibles. La primera consulta y el presupuesto detallado son sin coste.</p>
     <div class="servs">
       <div class="serv">
-        <div class="serv-icon">★</div>
+        <div class="serv-icon">45 min</div>
         <h3>Revisión y limpieza</h3>
         <p>Diagnóstico completo, limpieza profesional con ultrasonido y plan personalizado.</p>
         <div class="serv-price">Desde 45 € <small>· 1.ª revisión gratis</small></div>
       </div>
       <div class="serv">
-        <div class="serv-icon">◇</div>
+        <div class="serv-icon">0%</div>
         <h3>Ortodoncia invisible</h3>
         <p>Invisalign y alineadores transparentes. Tratamientos desde 9 a 18 meses.</p>
         <div class="serv-price">Desde 1.890 € <small>· financiación 0%</small></div>
       </div>
       <div class="serv">
-        <div class="serv-icon">◯</div>
+        <div class="serv-icon">Garantia</div>
         <h3>Implantes dentales</h3>
         <p>Implantes de titanio con corona de zirconio. Garantía clínica de por vida.</p>
         <div class="serv-price">Desde 850 € <small>· por implante</small></div>
       </div>
       <div class="serv">
-        <div class="serv-icon">▲</div>
+        <div class="serv-icon">Natural</div>
         <h3>Estética dental</h3>
         <p>Blanqueamiento, carillas de composite y porcelana. Resultados naturales.</p>
         <div class="serv-price">Desde 220 € <small>· blanqueamiento</small></div>
       </div>
       <div class="serv">
-        <div class="serv-icon">●</div>
+        <div class="serv-icon">Microscopio</div>
         <h3>Endodoncia</h3>
         <p>Tratamientos de conducto con microscopio y rotación continua.</p>
         <div class="serv-price">Desde 180 € <small>· por canal</small></div>
       </div>
       <div class="serv">
-        <div class="serv-icon">♥</div>
+        <div class="serv-icon">Infantil</div>
         <h3>Odontopediatría</h3>
         <p>Especialistas en niños desde los 3 años. Sin miedo, sin dramas.</p>
         <div class="serv-price">Desde 35 € <small>· revisión infantil</small></div>
@@ -294,19 +296,19 @@
     <div class="equipo">
       <div class="doc">
         <div class="doc-img"></div>
-        <h4>Dra. Elena Pérez</h4>
+        <h3>Dra. Elena Pérez</h3>
         <div class="doc-rol">Directora · Odontología general</div>
         <p class="doc-bio">Licenciada por la Universidad Complutense, máster en endodoncia. 18 años de práctica clínica.</p>
       </div>
       <div class="doc">
         <div class="doc-img"></div>
-        <h4>Dr. Roberto Cano</h4>
+        <h3>Dr. Roberto Cano</h3>
         <div class="doc-rol">Implantología · Cirugía oral</div>
         <p class="doc-bio">Especialista en implantología avanzada y elevaciones de seno. Más de 1.500 implantes colocados.</p>
       </div>
       <div class="doc">
         <div class="doc-img"></div>
-        <h4>Dra. Laura Méndez</h4>
+        <h3>Dra. Laura Méndez</h3>
         <div class="doc-rol">Ortodoncia · Estética</div>
         <p class="doc-bio">Especialista en ortodoncia invisible certificada por Invisalign. Trato cercano con adultos y adolescentes.</p>
       </div>
@@ -318,7 +320,7 @@
   <div class="container">
     <div class="stitle">Pacientes</div>
     <h2>Lo que cuentan en Google.</h2>
-    <p class="lead">Más de 210 reseñas verificadas. Estas son tres recientes — el resto las puedes leer directamente en Google.</p>
+    <p class="lead">Mas de 210 opiniones verificadas. Estas tres resumen lo que mas valora el paciente.</p>
     <div class="reviews">
       <div class="review">
         <div class="stars">★★★★★</div>
@@ -342,7 +344,7 @@
 <section class="cita" id="cita">
   <div class="container">
     <h2>Reserva tu primera consulta — es gratis.</h2>
-    <p>Reserva online o por WhatsApp. Te confirmamos la cita en menos de 2 horas (en horario de clínica).</p>
+    <p>Pide tu cita online. Te confirmamos el hueco en menos de 2 horas durante el horario de clinica.</p>
     <a class="btn btn-primary" href="https://wa.me/34600000002?text=Quiero%20pedir%20cita%20online">📅 Pedir cita ahora</a>
     <div class="cita-info">
       <div><div class="lbl">Dirección</div><div class="val">C/ Heraclio Sánchez, 31<br>San Cristóbal de La Laguna</div></div>
@@ -359,7 +361,7 @@
   </div>
 </footer>
 
-<a class="mobile-cita" href="https://wa.me/34600000002?text=Quiero%20pedir%20cita%20online">Pedir cita por WhatsApp</a>
+<a class="mobile-cita" href="https://wa.me/34600000002?text=Quiero%20pedir%20cita%20online">Pedir cita</a>
 
 </body>
 </html>

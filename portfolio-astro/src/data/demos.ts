@@ -1,39 +1,39 @@
 export const demos = [
   {
     title: "El Rincon Barber Co.",
-    sector: "Barberia / reservas por WhatsApp",
-    summary: "Oscura, directa y pensada para reservar corte o barba sin buscar precios en Instagram.",
-    image: "assets/demo/barber-chair.webp",
-    visual: "Identidad urbana, servicios visibles y reserva por WhatsApp.",
+    sector: "Barberia / cita rapida",
+    summary: "Oscura, directa y con precios claros. Pensada para pedir hora sin perderse en redes.",
+    image: "assets/covers/cover-barber.webp",
+    visual: "Una estetica de barberia con caracter propio.",
     href: "portfolio/demo-barberia.html",
-    tags: ["3 clics", "Galeria"]
+    tags: ["Urbana", "Directa"]
   },
   {
     title: "Casa Marea",
-    sector: "Restaurante / carta y reservas",
-    summary: "Foto grande, carta clara y reserva visible para quien busca donde comer hoy.",
-    image: "assets/demo/restaurant-room.webp",
-    visual: "Comedor real, producto local y reserva sin perder al cliente.",
+    sector: "Restaurante / carta viva",
+    summary: "Ambiente, producto y horarios bien ordenados para quien decide donde comer hoy.",
+    image: "assets/covers/cover-restaurant.webp",
+    visual: "Producto local y sensacion de sitio real.",
     href: "portfolio/demo-restaurante.html",
-    tags: ["Carta", "Reservas"]
+    tags: ["Carta", "Ambiente"]
   },
   {
     title: "Clinica Mar Azul",
-    sector: "Clinica / confianza antes de llamar",
-    summary: "Equipo, tratamientos y cita online con una imagen limpia y profesional.",
-    image: "assets/demo/clinic-hero.webp",
-    visual: "Claridad medica, equipo visible y cita online desde movil.",
+    sector: "Clinica / trato profesional",
+    summary: "Equipo visible, tratamientos ordenados y una imagen tranquila para decidir sin presion.",
+    image: "assets/covers/cover-clinic.webp",
+    visual: "Salud, calma y autoridad sin parecer un banco de imagenes.",
     href: "portfolio/demo-clinica.html",
-    tags: ["Equipo", "Cita"]
+    tags: ["Equipo", "Claridad"]
   },
   {
     title: "Talleres Anaga",
     sector: "Taller / presupuesto rapido",
-    summary: "Servicios claros, telefono visible y presupuesto por WhatsApp sin adornos innecesarios.",
-    image: "assets/demo/workshop-tools.webp",
+    summary: "Servicios, precios orientativos y contacto visible. Sin adornos que distraigan.",
+    image: "assets/covers/cover-workshop.webp",
     visual: "Industrial, directo y enfocado a urgencias reales.",
     href: "portfolio/demo-taller.html",
-    tags: ["Servicios", "Urgente"]
+    tags: ["Industrial", "Claro"]
   }
 ];
 

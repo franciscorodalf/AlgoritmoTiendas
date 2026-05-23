@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Casa Marea - Restaurante en Puerto de la Cruz</title>
-<meta name="description" content="Demo de restaurante con carta, reservas, resenas y storytelling local para Casa Marea en Puerto de la Cruz.">
+<meta name="description" content="Demo de restaurante con carta clara, ambiente local y contacto directo para Casa Marea en Puerto de la Cruz.">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,500..800,50,1&family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root{
@@ -242,7 +242,12 @@
     min-height:250px;
     background:center/cover;
   }
-  .tile-food{background-image:linear-gradient(180deg,transparent,rgba(16,16,13,.42)),url("../assets/demo/restaurant-kitchen.webp")}
+  .tile-food{
+    background-image:
+      linear-gradient(180deg,transparent,rgba(16,16,13,.32)),
+      url("../assets/demo/restaurant-table.webp");
+    background-position:center 58%;
+  }
   .tile-note{background:var(--sea);color:var(--paper);padding:28px;display:flex;flex-direction:column;justify-content:space-between}
   .tile-note b{
     display:block;
@@ -379,7 +384,7 @@
     grid-template-columns:minmax(0,1fr) minmax(320px,.6fr);
     background:
       linear-gradient(90deg,rgba(16,16,13,.92),rgba(16,16,13,.62)),
-      url("../assets/demo/restaurant-room.webp") center/cover;
+      linear-gradient(135deg,rgba(13,51,45,.92),rgba(16,16,13,.88));
     color:var(--paper);
   }
   .reserve-copy{
@@ -511,8 +516,8 @@
   <div class="nav-links">
     <a href="#carta">Carta</a>
     <a href="#casa">La casa</a>
-    <a href="#resenas">Resenas</a>
-    <a class="nav-cta" href="#reservas">Reservar</a>
+    <a href="#opiniones">Opiniones</a>
+    <a class="nav-cta" href="#mesa">Pedir mesa</a>
   </div>
 </nav>
 
@@ -532,7 +537,7 @@
       </div>
       <div class="booking-item">
         <small>Google</small>
-        <strong>4.7 - 342 resenas</strong>
+        <strong>4.7 - 342 opiniones</strong>
       </div>
       <a class="booking-action" href="https://wa.me/34600000001?text=Quiero%20reservar%20mesa%20en%20Casa%20Marea">Pedir mesa</a>
     </div>
@@ -559,14 +564,14 @@
         <div class="photo-tile tile-food" aria-label="Cocina de Casa Marea"></div>
         <div class="photo-tile tile-note">
           <b>Reserva antes de llegar.</b>
-          <span>El cliente ve horario, carta, resenas y WhatsApp en el mismo recorrido. Menos dudas, mas mesas llenas.</span>
+          <span>El cliente ve horario, carta y forma de contacto en el mismo recorrido. Decide antes y llega con menos dudas.</span>
         </div>
       </div>
     </div>
     <div class="proof">
-      <div class="proof-item"><strong>4.7</strong><span>La reputacion de Google se convierte en confianza dentro de la web.</span></div>
-      <div class="proof-item"><strong>2</strong><span>Botones utiles: carta y reserva. Nada de ruido para quien viene con hambre.</span></div>
-      <div class="proof-item"><strong>30s</strong><span>Tiempo suficiente para entender el local, elegir y escribir por WhatsApp.</span></div>
+      <div class="proof-item"><strong>4.7</strong><span>La reputacion de Google aparece donde ayuda a decidir.</span></div>
+      <div class="proof-item"><strong>2</strong><span>Acciones utiles: ver carta y pedir mesa. Nada de ruido.</span></div>
+      <div class="proof-item"><strong>30s</strong><span>Tiempo suficiente para entender el local y contactar.</span></div>
     </div>
   </section>
 
@@ -617,13 +622,13 @@
     </div>
   </section>
 
-  <section class="section" id="resenas">
+  <section class="section" id="opiniones">
     <div class="section-head">
       <div>
-        <div class="label">Resenas que venden</div>
+        <div class="label">Opiniones que ayudan</div>
         <h2>La confianza no se esconde al final.</h2>
       </div>
-      <p class="section-copy">Si un negocio ya tiene buenas resenas, la web debe usarlas como prueba en el momento donde el cliente duda entre llamar o seguir buscando.</p>
+      <p class="section-copy">Si un negocio ya tiene buena reputacion, la web debe mostrarla justo cuando el cliente compara opciones.</p>
     </div>
     <div class="reviews">
       <article class="review">
@@ -637,21 +642,21 @@
     </div>
   </section>
 
-  <section class="section" id="reservas">
+  <section class="section" id="mesa">
     <div class="reserve-panel">
       <div class="reserve-copy">
-        <div class="label">Reservas</div>
+        <div class="label">Contacto</div>
         <h2>Todo lo que el cliente necesita antes de moverse.</h2>
-        <p>Una demo asi no solo ensena una web bonita. Ensena como se reducen dudas: donde esta, cuando abre, que se come, que opinan otros y como reservar.</p>
+        <p>Una demo asi no solo enseña una web bonita. Tambien ordena ubicacion, horario, carta y prueba social en una experiencia facil de seguir.</p>
       </div>
       <aside class="reserve-box" aria-label="Datos de reserva de Casa Marea">
         <ul>
           <li><b>Direccion</b><span>Avda. Marques de Villanueva, 14<br>Puerto de la Cruz</span></li>
           <li><b>Horario</b><span>Mar-Sab 13-16 h y 20-23 h</span></li>
-          <li><b>Contacto</b><span>+34 600 000 001<br>reservas@casamarea.es</span></li>
+          <li><b>Contacto</b><span>+34 600 000 001<br>hola@casamarea.es</span></li>
         </ul>
         <div class="actions">
-          <a class="btn btn-primary" href="https://wa.me/34600000001?text=Quiero%20reservar%20mesa%20en%20Casa%20Marea">Reservar por WhatsApp</a>
+          <a class="btn btn-primary" href="https://wa.me/34600000001?text=Quiero%20reservar%20mesa%20en%20Casa%20Marea">Pedir mesa</a>
           <a class="btn btn-secondary" href="https://www.thefork.es">Reservar en TheFork</a>
         </div>
       </aside>
@@ -664,6 +669,6 @@
   <span>Demo web restaurante - Tenerife</span>
 </footer>
 
-<a class="mobile-reserve" href="https://wa.me/34600000001?text=Quiero%20reservar%20mesa%20en%20Casa%20Marea">Reservar por WhatsApp</a>
+<a class="mobile-reserve" href="https://wa.me/34600000001?text=Quiero%20reservar%20mesa%20en%20Casa%20Marea">Pedir mesa</a>
 </body>
 </html>
