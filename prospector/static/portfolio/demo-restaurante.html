@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Casa Marea - Restaurante en Puerto de la Cruz</title>
+<meta name="description" content="Demo de restaurante con carta, reservas, resenas y storytelling local para Casa Marea en Puerto de la Cruz.">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#17120d;
+    --paper:#f7eddc;
+    --salt:#fffaf1;
+    --clay:#b94727;
+    --wine:#4a1614;
+    --olive:#596533;
+    --sea:#0f6c73;
+    --gold:#d79c42;
+    --muted:#776c5e;
+    --line:rgba(23,18,13,.18);
+    --shadow:0 26px 70px rgba(23,18,13,.18);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:Archivo,sans-serif;
+    line-height:1.5;
+  }
+  a{color:inherit;text-decoration:none}
+  img{max-width:100%;display:block}
+  .nav{
+    position:sticky;
+    top:0;
+    z-index:40;
+    min-height:68px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:22px;
+    padding:12px clamp(18px,4vw,52px);
+    background:rgba(247,237,220,.9);
+    border-bottom:1px solid var(--line);
+    backdrop-filter:blur(14px);
+  }
+  .logo{
+    font-family:"Instrument Serif",serif;
+    font-size:31px;
+    line-height:1;
+    color:var(--wine);
+  }
+  .nav-links{display:flex;gap:24px;color:var(--muted);font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.06em}
+  .nav-links a:hover{color:var(--clay)}
+  .nav-cta{
+    display:inline-flex;
+    align-items:center;
+    min-height:42px;
+    padding:10px 16px;
+    background:var(--wine);
+    color:var(--salt);
+    font-size:13px;
+    font-weight:900;
+    text-transform:uppercase;
+    letter-spacing:.06em;
+  }
+  @media(max-width:760px){.nav-links{display:none}.logo{font-size:27px}}
+
+  .hero{
+    min-height:calc(100vh - 68px);
+    display:grid;
+    grid-template-columns:minmax(0,1fr) minmax(330px,.8fr);
+    border-bottom:1px solid var(--line);
+  }
+  .hero-copy{
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    padding:clamp(34px,6vw,82px) clamp(18px,5vw,72px);
+  }
+  .eyebrow{
+    color:var(--clay);
+    font-size:12px;
+    font-weight:900;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+  }
+  h1{
+    max-width:760px;
+    margin-top:34px;
+    font-family:"Instrument Serif",serif;
+    font-size:clamp(58px,10vw,132px);
+    font-weight:400;
+    line-height:.86;
+    letter-spacing:0;
+  }
+  h1 em{color:var(--clay);font-style:italic}
+  .hero-text{
+    max-width:650px;
+    margin-top:28px;
+    color:#40382f;
+    font-size:clamp(18px,2vw,23px);
+    font-weight:600;
+  }
+  .actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:34px}
+  .btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    min-height:48px;
+    padding:13px 18px;
+    border:2px solid var(--ink);
+    font-size:13px;
+    font-weight:900;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    transition:transform .18s ease,box-shadow .18s ease,background .18s ease;
+  }
+  .btn-primary{background:var(--clay);color:var(--salt);box-shadow:5px 5px 0 var(--ink)}
+  .btn-ghost{background:var(--salt);color:var(--ink);box-shadow:5px 5px 0 var(--gold)}
+  .btn:hover{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--ink)}
+  .hero-meta{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:12px;
+    max-width:760px;
+    margin-top:46px;
+  }
+  .meta-item{padding:16px;border:1px solid var(--line);background:rgba(255,250,241,.7)}
+  .meta-item b{display:block;color:var(--wine);font-family:"Instrument Serif",serif;font-size:31px;font-weight:400;line-height:1}
+  .meta-item span{display:block;margin-top:7px;color:var(--muted);font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:.06em}
+  .hero-visual{
+    position:relative;
+    min-height:620px;
+    overflow:hidden;
+    background:#22140e;
+  }
+  .hero-visual::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:
+      linear-gradient(180deg,rgba(23,18,13,.06),rgba(23,18,13,.62)),
+      url("https://images.unsplash.com/photo-1551218808-94e220e084d2?auto=format&fit=crop&w=1200&q=80") center/cover;
+  }
+  .reservation-card{
+    position:absolute;
+    left:24px;
+    right:24px;
+    bottom:24px;
+    padding:22px;
+    background:var(--salt);
+    border:2px solid var(--ink);
+    box-shadow:8px 8px 0 var(--ink);
+  }
+  .reservation-card h2{font-family:"Instrument Serif",serif;font-size:42px;font-weight:400;line-height:1;margin-bottom:8px;color:var(--wine)}
+  .reservation-card p{color:#4e453a;font-weight:700}
+  .reservation-card .btn{width:100%;margin-top:18px}
+
+  .section{padding:clamp(64px,8vw,112px) clamp(18px,5vw,72px);border-bottom:1px solid var(--line)}
+  .section-head{display:grid;grid-template-columns:minmax(0,.9fr) minmax(280px,.56fr);gap:34px;align-items:end;margin-bottom:46px}
+  .label{color:var(--clay);font-size:12px;font-weight:900;letter-spacing:.16em;text-transform:uppercase;margin-bottom:12px}
+  h2{
+    font-family:"Instrument Serif",serif;
+    font-size:clamp(44px,7vw,94px);
+    font-weight:400;
+    line-height:.92;
+  }
+  .section-copy{color:#473d33;font-size:18px;font-weight:650}
+
+  .menu-board{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:0;
+    border:2px solid var(--ink);
+    background:var(--salt);
+    box-shadow:var(--shadow);
+  }
+  .menu-col{padding:clamp(22px,4vw,38px);border-right:1px solid var(--line)}
+  .menu-col:last-child{border-right:0}
+  .menu-col h3{font-size:13px;font-weight:900;letter-spacing:.16em;text-transform:uppercase;color:var(--sea);margin-bottom:22px}
+  .dish{display:grid;grid-template-columns:1fr auto;gap:16px;padding:18px 0;border-bottom:1px solid var(--line)}
+  .dish:last-child{border-bottom:0}
+  .dish-name{font-family:"Instrument Serif",serif;font-size:28px;line-height:1;color:var(--wine)}
+  .dish-desc{grid-column:1/-1;color:var(--muted);font-size:14px;font-weight:650}
+  .dish-price{font-weight:900;color:var(--clay);white-space:nowrap}
+
+  .story{
+    display:grid;
+    grid-template-columns:minmax(320px,.8fr) minmax(0,1fr);
+    gap:clamp(28px,6vw,74px);
+    align-items:center;
+  }
+  .story-img{
+    min-height:560px;
+    border:2px solid var(--ink);
+    box-shadow:10px 10px 0 var(--clay);
+    background:
+      linear-gradient(180deg,rgba(23,18,13,.05),rgba(23,18,13,.18)),
+      url("https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=1000&q=80") center/cover;
+  }
+  .story-copy p{margin-top:18px;color:#40372e;font-size:19px;font-weight:650}
+  .signature{margin-top:28px;font-family:"Instrument Serif",serif;font-size:34px;color:var(--clay)}
+
+  .review-band{background:var(--wine);color:var(--salt)}
+  .review-band .label{color:var(--gold)}
+  .review-band .section-copy{color:#e9d8be}
+  .reviews{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  .review{min-height:260px;padding:24px;background:rgba(255,250,241,.08);border:1px solid rgba(255,250,241,.22);display:flex;flex-direction:column;justify-content:space-between}
+  .stars{color:var(--gold);letter-spacing:3px;font-size:13px}
+  .review p{margin-top:18px;font-family:"Instrument Serif",serif;font-size:29px;line-height:1.08}
+  .review b{display:block;margin-top:22px;color:var(--gold);font-size:12px;letter-spacing:.14em;text-transform:uppercase}
+
+  .contact-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+  .contact-item{padding:24px;background:var(--salt);border:1px solid var(--line)}
+  .contact-item b{display:block;color:var(--clay);font-size:12px;letter-spacing:.15em;text-transform:uppercase;margin-bottom:10px}
+  .contact-item span{font-family:"Instrument Serif",serif;font-size:30px;line-height:1.08;color:var(--wine)}
+  .reserve-bottom{margin-top:30px;display:flex;gap:12px;flex-wrap:wrap}
+  footer{padding:30px clamp(18px,5vw,72px);background:var(--ink);color:var(--paper);display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;font-size:13px;font-weight:800}
+
+  .mobile-reserve{
+    position:fixed;
+    left:12px;
+    right:12px;
+    bottom:12px;
+    z-index:30;
+    display:none;
+    min-height:52px;
+    align-items:center;
+    justify-content:center;
+    background:var(--clay);
+    color:var(--salt);
+    border:2px solid var(--ink);
+    box-shadow:4px 4px 0 var(--ink);
+    font-size:13px;
+    font-weight:900;
+    text-transform:uppercase;
+    letter-spacing:.08em;
+  }
+  @media(max-width:900px){
+    .hero,.section-head,.story{grid-template-columns:1fr}
+    .hero-visual{min-height:500px}
+    .menu-board{grid-template-columns:1fr}
+    .menu-col{border-right:0;border-bottom:1px solid var(--line)}
+    .menu-col:last-child{border-bottom:0}
+    .reviews,.contact-grid{grid-template-columns:1fr}
+  }
+  @media(max-width:620px){
+    .hero-copy{padding-bottom:28px}
+    h1{font-size:clamp(54px,18vw,86px)}
+    .hero-meta{grid-template-columns:1fr}
+    .hero-visual{min-height:390px}
+    .reservation-card{display:none}
+    .story-img{min-height:360px}
+    .reserve-bottom{padding-bottom:60px}
+    .mobile-reserve{display:flex}
+  }
+</style>
+</head>
+<body>
+<nav class="nav">
+  <a class="logo" href="#top">Casa Marea</a>
+  <div class="nav-links">
+    <a href="#carta">Carta</a>
+    <a href="#casa">La casa</a>
+    <a href="#resenas">Resenas</a>
+    <a href="#reservas">Reservas</a>
+  </div>
+  <a class="nav-cta" href="#reservas">Reservar</a>
+</nav>
+
+<header class="hero" id="top">
+  <div class="hero-copy">
+    <div>
+      <div class="eyebrow">Puerto de la Cruz - cocina atlantica</div>
+      <h1>Pescado de lonja, brasa y <em>mesa llena</em>.</h1>
+      <p class="hero-text">Casa Marea es el restaurante al que vuelves por el bocinegro, por el vino canario bien elegido y porque Marisa te guarda la mesa si llamas a tiempo.</p>
+      <div class="actions">
+        <a class="btn btn-primary" href="https://wa.me/34600000001?text=Quiero%20reservar%20mesa%20en%20Casa%20Marea">Reservar por WhatsApp</a>
+        <a class="btn btn-ghost" href="#carta">Ver carta de hoy</a>
+      </div>
+    </div>
+    <div class="hero-meta">
+      <div class="meta-item"><b>4.7</b><span>342 resenas</span></div>
+      <div class="meta-item"><b>15</b><span>anos frente al mar</span></div>
+      <div class="meta-item"><b>13:00</b><span>abre cocina</span></div>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="reservation-card">
+      <h2>Hoy hay mesa a las 20:30</h2>
+      <p>Servicio de cena de martes a sabado. Viernes y sabado conviene reservar antes del mediodia.</p>
+      <a class="btn btn-primary" href="https://wa.me/34600000001?text=Quiero%20reservar%20mesa%20para%20hoy">Pedir mesa</a>
+    </div>
+  </div>
+</header>
+
+<section class="section" id="carta">
+  <div class="section-head">
+    <div>
+      <div class="label">Carta corta, producto serio</div>
+      <h2>Lo que entra fresco, sale a la mesa.</h2>
+    </div>
+    <p class="section-copy">La carta cambia con la pesca y el mercado. Estos son los platos que los clientes piden una y otra vez.</p>
+  </div>
+  <div class="menu-board">
+    <div class="menu-col">
+      <h3>Para empezar</h3>
+      <div class="dish"><div><div class="dish-name">Pulpo a la brasa</div></div><div class="dish-price">16 EUR</div><div class="dish-desc">Papas arrugadas, mojo verde y aceite de pimenton.</div></div>
+      <div class="dish"><div><div class="dish-name">Croquetas de carne mechada</div></div><div class="dish-price">8 EUR</div><div class="dish-desc">Seis unidades, hechas en casa, sin trampa.</div></div>
+      <div class="dish"><div><div class="dish-name">Tartar de atun rojo</div></div><div class="dish-price">18 EUR</div><div class="dish-desc">Aguacate, lima, sesamo tostado y pan crujiente.</div></div>
+      <div class="dish"><div><div class="dish-name">Queso asado</div></div><div class="dish-price">9 EUR</div><div class="dish-desc">Mojo palmero y mermelada de tomate.</div></div>
+    </div>
+    <div class="menu-col">
+      <h3>Brasa y mar</h3>
+      <div class="dish"><div><div class="dish-name">Bocinegro al horno</div></div><div class="dish-price">22 EUR</div><div class="dish-desc">Pieza entera, verduras y papas del norte.</div></div>
+      <div class="dish"><div><div class="dish-name">Lomo alto 30 dias</div></div><div class="dish-price">26 EUR</div><div class="dish-desc">Carbon, sal en escama y guarnicion de temporada.</div></div>
+      <div class="dish"><div><div class="dish-name">Arroz caldoso</div></div><div class="dish-price">28 EUR</div><div class="dish-desc">Bogavante, minimo dos personas, 35 minutos.</div></div>
+      <div class="dish"><div><div class="dish-name">Cabra guisada</div></div><div class="dish-price">17 EUR</div><div class="dish-desc">Receta tradicional, salsa profunda y pan obligatorio.</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="casa">
+  <div class="story">
+    <div class="story-img" aria-hidden="true"></div>
+    <div class="story-copy">
+      <div class="label">La casa</div>
+      <h2>Un restaurante pequeno no necesita parecer pequeno.</h2>
+      <p>Abrimos en 2009 con una idea simple: tratar bien el producto y a quien viene a comerlo. El pescado llega del muelle, las verduras de La Orotava y el vino lo probamos antes de ponerlo en carta.</p>
+      <p>La web tiene que contar eso rapido: que aqui no hay una carta eterna, hay criterio. Que conviene reservar. Que si vienes de turismo no caes en una trampa, caes en una mesa de verdad.</p>
+      <div class="signature">Marisa & Toni</div>
+    </div>
+  </div>
+</section>
+
+<section class="section review-band" id="resenas">
+  <div class="section-head">
+    <div>
+      <div class="label">Lo que dicen en Google</div>
+      <h2>Las resenas tambien son contenido de venta.</h2>
+    </div>
+    <p class="section-copy">No se esconden al final: se usan para reforzar confianza justo antes de reservar.</p>
+  </div>
+  <div class="reviews">
+    <div class="review"><div><div class="stars">5/5</div><p>"El bocinegro al horno es de las mejores cosas que he comido en Tenerife."</p></div><b>Lucia F.</b></div>
+    <div class="review"><div><div class="stars">5/5</div><p>"Vamos siempre que volvemos a la isla. Lleno asegurado, hay que reservar."</p></div><b>Miguel y Ana</b></div>
+    <div class="review"><div><div class="stars">5/5</div><p>"Producto fresco, vinos canarios bien escogidos y precio justo."</p></div><b>Javier T.</b></div>
+  </div>
+</section>
+
+<section class="section" id="reservas">
+  <div class="section-head">
+    <div>
+      <div class="label">Reservas</div>
+      <h2>El cliente decide en el movil. La mesa se pide ahi.</h2>
+    </div>
+    <p class="section-copy">Direccion, horario, telefono y reserva directa quedan juntos. Sin buscar en Maps, Instagram o publicaciones antiguas.</p>
+  </div>
+  <div class="contact-grid">
+    <div class="contact-item"><b>Donde</b><span>Avda. Marques de Villanueva, 14<br>Puerto de la Cruz</span></div>
+    <div class="contact-item"><b>Horario</b><span>Mar-Sab 13-16 h<br>y 20-23 h</span></div>
+    <div class="contact-item"><b>Telefono</b><span>+34 600 000 001<br>reservas@casamarea.es</span></div>
+  </div>
+  <div class="reserve-bottom">
+    <a class="btn btn-primary" href="https://wa.me/34600000001?text=Quiero%20reservar%20mesa%20en%20Casa%20Marea">Reservar por WhatsApp</a>
+    <a class="btn btn-ghost" href="https://www.thefork.es">Reservar en TheFork</a>
+  </div>
+</section>
+
+<footer>
+  <span>Casa Marea - Puerto de la Cruz</span>
+  <span>Demo web restaurante - Tenerife</span>
+</footer>
+
+<a class="mobile-reserve" href="https://wa.me/34600000001?text=Quiero%20reservar%20mesa%20en%20Casa%20Marea">Reservar por WhatsApp</a>
+</body>
+</html>
