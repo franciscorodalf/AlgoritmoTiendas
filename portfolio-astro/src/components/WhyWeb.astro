@@ -1,0 +1,28 @@
+---
+import { facts } from "../data/demos";
+---
+<section class="section dark" id="por-que">
+  <div class="section-head split reveal">
+    <div>
+      <p class="label">Por que importa</p>
+      <h2>Una web reduce dudas antes de que el cliente llame.</h2>
+    </div>
+    <p>Maps, Instagram y resenas ayudan. La web junta todo en un recorrido claro: ver, confiar y contactar.</p>
+  </div>
+  <div class="why-layout">
+    <div class="decision reveal">
+      <div><b>Sin web</b><span>Redes, Maps y dudas abiertas.</span></div>
+      <i></i>
+      <div class="good"><b>Con web</b><span>Entiende, confia y contacta.</span></div>
+    </div>
+    <div class="facts">
+      {facts.map((fact) => (
+        <article class="reveal">
+          <strong>{fact.value}</strong>
+          <b>{fact.title}</b>
+          <span>{fact.text} Fuente: <a href={fact.href}>{fact.source}</a>.</span>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>

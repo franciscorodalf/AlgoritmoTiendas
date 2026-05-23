@@ -93,23 +93,14 @@ python webapp.py
 ```
 Una vez iniciado, abre tu navegador en: **`http://127.0.0.1:8080`** (configurado en el puerto `8080` de manera predeterminada para evitar conflictos con servicios nativos de macOS como *AirPlay*).
 
-### 2. Desarrollo del Portfolio (React)
-El portfolio público de demostración comercial está construido con React, Vite y Framer Motion en la raíz del proyecto.
+### 2. Portfolio publico
+El portfolio publico de demostracion comercial es una web estatica servida por Flask desde:
 
-- **Instalar dependencias**:
-  ```bash
-  npm install
-  ```
-- **Iniciar servidor de desarrollo**:
-  ```bash
-  npm run dev
-  ```
-  Esto levantará el entorno de desarrollo en `http://127.0.0.1:5173`.
-- **Compilar para producción**:
-  ```bash
-  npm run build
-  ```
-  La compilación de Vite está automatizada mediante `vite.config.ts` para transferir directamente el bundle de producción al directorio de archivos estáticos de Flask (`prospector/static/portfolio/`), de manera que el servidor de Python sirva siempre la versión del portfolio más actualizada.
+```bash
+prospector/static/portfolio/
+```
+
+La pagina principal es `prospector/static/portfolio/index.html` y las demos navegables estan en `prospector/static/portfolio/demo-*.html`.
 
 ---
 

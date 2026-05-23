@@ -99,13 +99,21 @@ def portfolio_redirect():
 
 @app.route("/portfolio/")
 def portfolio_index():
-    return send_from_directory(str(STATIC / "portfolio"), "index.html")
+    response = send_from_directory(str(STATIC / "portfolio"), "index.html")
+    response.cache_control.no_cache = True
+    return response
 
 
 @app.route("/portfolio/<path:name>")
 def portfolio_static(name: str):
     # Sirve los HTML de demos y assets dentro de /portfolio/
-    return send_from_directory(str(STATIC / "portfolio"), name)
+    response = send_from_directory(str(STATIC / "portfolio"), name)
+    if Path(name).suffix.lower() in {".webp", ".jpg", ".jpeg", ".png", ".svg", ".woff2"}:
+        response.cache_control.public = True
+        response.cache_control.max_age = 60 * 60 * 24 * 30
+    else:
+        response.cache_control.no_cache = True
+    return response
 
 
 # ---------------------------------------------------------------------------

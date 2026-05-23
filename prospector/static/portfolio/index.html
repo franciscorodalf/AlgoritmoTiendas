@@ -356,7 +356,7 @@
   }
   .site-photo{
     min-height:120px;
-    background:url("assets/hero-restaurante.jpg") center/cover;
+    background:url("assets/hero-restaurante.webp") center/cover;
   }
   .phone-proof{
     position:absolute;
@@ -510,6 +510,94 @@
   .why-web .section-label{color:var(--banana)}
   .why-web h2{color:var(--paper)}
   .why-web .section-copy{color:#dfd4c1}
+  .why-grid{
+    display:grid;
+    grid-template-columns:1.08fr .92fr;
+    gap:24px;
+    align-items:stretch;
+  }
+  .why-main{
+    min-height:410px;
+    padding:clamp(24px,4vw,42px);
+    border:2px solid var(--paper);
+    background:
+      linear-gradient(135deg,rgba(255,212,71,.12),transparent 42%),
+      linear-gradient(90deg,rgba(245,239,226,.08) 1px,transparent 1px),
+      linear-gradient(rgba(245,239,226,.08) 1px,transparent 1px),
+      #152131;
+    background-size:100% 100%,38px 38px,38px 38px;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+  }
+  .why-flow{
+    display:grid;
+    grid-template-columns:1fr auto 1fr;
+    gap:16px;
+    align-items:center;
+  }
+  .why-node{
+    min-height:160px;
+    padding:22px;
+    background:rgba(245,239,226,.08);
+    border:1px solid var(--line-dark);
+  }
+  .why-node.good{background:var(--banana);color:var(--ink);border-color:var(--banana)}
+  .why-node b{display:block;font-family:"Instrument Serif",serif;font-size:clamp(44px,5vw,70px);font-weight:400;line-height:.9}
+  .why-node span{display:block;margin-top:18px;font-weight:900;text-transform:uppercase;line-height:1.15}
+  .why-arrow{
+    width:74px;
+    height:2px;
+    background:linear-gradient(90deg,var(--lava),var(--banana),var(--reef));
+    position:relative;
+  }
+  .why-arrow::after{
+    content:"";
+    position:absolute;
+    right:-1px;
+    top:50%;
+    width:0;
+    height:0;
+    border-top:8px solid transparent;
+    border-bottom:8px solid transparent;
+    border-left:13px solid var(--reef);
+    transform:translateY(-50%);
+  }
+  .why-caption{
+    max-width:720px;
+    color:#dfd4c1;
+    font-size:20px;
+    font-weight:700;
+  }
+  .fact-list{display:grid;gap:14px}
+  .fact-card{
+    padding:22px;
+    background:rgba(245,239,226,.08);
+    border:1px solid var(--line-dark);
+  }
+  .fact-card strong{
+    display:block;
+    color:var(--banana);
+    font-family:"Instrument Serif",serif;
+    font-size:clamp(42px,5vw,70px);
+    font-weight:400;
+    line-height:.9;
+  }
+  .fact-card b{
+    display:block;
+    margin-top:10px;
+    font-size:15px;
+    text-transform:uppercase;
+    line-height:1.05;
+  }
+  .fact-card span{
+    display:block;
+    margin-top:9px;
+    color:#d8cbb8;
+    font-size:13px;
+    font-weight:700;
+  }
+  .fact-card a{color:var(--banana);text-decoration:underline;text-underline-offset:3px}
   .stats-grid{
     display:grid;
     grid-template-columns:1.05fr .95fr;
@@ -889,22 +977,49 @@
   .demo:nth-child(even){grid-template-columns:minmax(300px,.72fr) minmax(0,1.08fr)}
   .demo:nth-child(even) .demo-preview{order:2}
   .demo-preview{position:relative;background:#151515;border-right:2px solid var(--ink);overflow:hidden}
-  .demo-preview::before{
-    content:"Vista portatil";
+  .demo:nth-child(even) .demo-preview{border-right:0;border-left:2px solid var(--ink)}
+  .preview-shot{
     position:absolute;
-    left:14px;
-    top:14px;
-    z-index:3;
-    background:var(--banana);
-    color:var(--ink);
-    border:2px solid var(--ink);
-    padding:7px 10px;
-    font-size:11px;
+    inset:0;
+    display:flex;
+    align-items:flex-end;
+    padding:22px;
+    background:
+      linear-gradient(180deg,rgba(17,17,15,.08),rgba(17,17,15,.84)),
+      var(--preview) center/cover;
+  }
+  .preview-shot::after{
+    content:"";
+    position:absolute;
+    inset:18px;
+    border:1px solid rgba(245,239,226,.45);
+    pointer-events:none;
+  }
+  .preview-copy{
+    position:relative;
+    z-index:1;
+    max-width:360px;
+    color:var(--paper);
+  }
+  .preview-copy b{
+    display:block;
+    color:var(--banana);
+    font-size:12px;
     font-weight:900;
-    letter-spacing:.09em;
+    letter-spacing:.14em;
     text-transform:uppercase;
   }
-  .demo:nth-child(even) .demo-preview{border-right:0;border-left:2px solid var(--ink)}
+  .preview-copy span{
+    display:block;
+    margin-top:10px;
+    font-family:"Instrument Serif",serif;
+    font-size:clamp(38px,5vw,64px);
+    line-height:.88;
+  }
+  .preview-barber{--preview:url("assets/demo/barber-cut.webp")}
+  .preview-restaurante{--preview:url("assets/demo/restaurant-kitchen.webp")}
+  .preview-clinica{--preview:url("assets/demo/clinic-doctor-female-1.webp")}
+  .preview-taller{--preview:url("assets/demo/workshop-hero.webp")}
   .demo-frame{
     position:absolute;
     inset:0;
@@ -916,8 +1031,6 @@
     pointer-events:none;
     background:#fff;
   }
-  html[data-device="tablet"] .demo-preview::before{content:"Vista tablet"}
-  html[data-device="mobile"] .demo-preview::before{content:"Vista movil"}
   html[data-device="tablet"] .demo-frame{
     width:820px;
     height:1120px;
@@ -997,6 +1110,27 @@
   .included-row:last-child{border-bottom:0}
   .included-row b{text-transform:uppercase;font-size:12px;letter-spacing:.1em;color:var(--banana)}
   .included-row span{color:#ddd5c4;font-weight:600}
+
+  .faq-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:14px;
+  }
+  .faq-item{
+    padding:22px;
+    background:var(--chalk);
+    border:1px solid var(--line);
+  }
+  .faq-item b{
+    display:block;
+    font-size:18px;
+    line-height:1.15;
+  }
+  .faq-item p{
+    margin-top:10px;
+    color:#4b463e;
+    font-weight:650;
+  }
 
   .cta{
     display:grid;
@@ -1084,12 +1218,15 @@
     .reveal{opacity:1;transform:none}
   }
   @media(max-width:980px){
-    .hero,.section-head,.demo,.demo:nth-child(even),.pricing-wrap,.cta,.trust-grid,.stats-grid{grid-template-columns:1fr}
+    .hero,.section-head,.demo,.demo:nth-child(even),.pricing-wrap,.cta,.trust-grid,.stats-grid,.why-grid,.faq-grid{grid-template-columns:1fr}
     .hero{min-height:auto}
     .hero-showcase{min-height:520px}
     .showcase-footer{align-items:flex-start}
     .demo:nth-child(even) .demo-preview{order:0}
     .demo-preview,.demo:nth-child(even) .demo-preview{min-height:430px;border-left:0;border-right:0;border-bottom:2px solid var(--ink)}
+    .why-flow{grid-template-columns:1fr;gap:12px}
+    .why-arrow{width:2px;height:58px;justify-self:center;background:linear-gradient(180deg,var(--lava),var(--banana),var(--reef))}
+    .why-arrow::after{right:auto;left:50%;top:auto;bottom:-1px;border-left:8px solid transparent;border-right:8px solid transparent;border-top:13px solid var(--reef);border-bottom:0;transform:translateX(-50%)}
     .system-grid{grid-template-columns:1fr}
     .client-control{grid-template-columns:repeat(2,1fr)}
     .stat-cards{grid-template-columns:1fr}
@@ -1132,9 +1269,6 @@
     .stat-card strong{font-size:54px}
     .proofs{grid-template-columns:1fr}
     .demo-preview{min-height:330px}
-    .demo-frame{width:190%;height:190%;transform:scale(.526)}
-    html[data-device="tablet"] .demo-frame{transform:translateX(-50%) scale(.29)}
-    html[data-device="mobile"] .demo-frame{transform:translateX(-50%) scale(.34)}
     .included-row{grid-template-columns:1fr}
   }
 </style>
@@ -1144,9 +1278,9 @@
   <nav class="nav">
     <a class="brand" href="#top"><span class="brand-mark">FW</span><span>Fran Web Lab Tenerife</span></a>
     <div class="nav-links">
-      <a href="#confianza">Confianza</a>
+      <a href="#confianza">Proceso</a>
+      <a href="#por-que-web">Por que</a>
       <a href="#demos">Trabajos</a>
-      <a href="#sistema">Sistema</a>
       <a href="#planes">Planes</a>
       <a href="#contacto">Contacto</a>
     </div>
@@ -1155,15 +1289,14 @@
 
   <header class="hero" id="top">
     <div class="hero-copy">
-      <div class="kicker">Paginas web profesionales para negocios locales - Tenerife</div>
-      <h1>Una web seria para que tu negocio de confianza <span>desde el primer vistazo</span></h1>
-      <p class="hero-sub">Creamos paginas web para restaurantes, barberias, clinicas, talleres y tiendas que quieren verse mejor, explicar bien lo que ofrecen y convertir visitas en llamadas, reservas o mensajes por WhatsApp.</p>
+      <div class="kicker">Paginas web para negocios locales - Tenerife</div>
+      <h1>Tu negocio tiene que parecer tan serio online como lo es en persona.</h1>
+      <p class="hero-sub">Diseno webs para restaurantes, barberias, clinicas, talleres y tiendas que necesitan verse bien, explicar rapido lo que ofrecen y convertir visitas en llamadas, reservas o WhatsApp.</p>
       <div class="hero-actions">
-        <a class="btn btn-primary" href="#confianza">Por que confiar</a>
-        <a class="btn btn-secondary" href="#demos">Ver trabajos</a>
-        <a class="btn btn-secondary" href="#contacto">Pedir una web a medida</a>
+        <a class="btn btn-primary" href="#demos">Ver trabajos</a>
+        <a class="btn btn-secondary" href="#contacto">Pedir demo gratis</a>
       </div>
-      <p class="hero-assurance"><strong>Demo inicial sin coste:</strong> primero te preparo una propuesta navegable para tu negocio. Si te encaja, la convertimos contigo en la version oficial: cambias estilo, textos, secciones, fotos y detalles antes de publicar.</p>
+      <p class="hero-assurance"><strong>Primero ves una demo sin coste.</strong> Si encaja, la convertimos contigo en la web oficial: estilo, textos, fotos, secciones y reservas se ajustan antes de publicar.</p>
     </div>
     <div class="hero-showcase">
       <div class="showcase-brand">
@@ -1171,16 +1304,16 @@
         <div class="showcase-pill">A medida</div>
       </div>
       <div class="showcase-message">
-        <h2>Tu negocio, <span>en web</span>, como tu lo imaginas.</h2>
-        <p>Traes referencias, colores, fotos o una idea. Te enseno una demo gratuita y la usamos como base para construir la web final contigo.</p>
-        <div class="custom-note">Tu participas: estilo, secciones, idioma, fotos, reservas y textos</div>
+        <h2>Una demo real antes de decidir.</h2>
+        <p>Traes una idea o solo el nombre del local. Yo preparo una primera version navegable y la afinamos contigo.</p>
+        <div class="custom-note">Tu decides: estilo, fotos, secciones, idioma y reservas</div>
       </div>
       <div class="work-collage" aria-label="Ejemplo visual de web a medida con fotos de local">
         <figure class="photo-card photo-main" data-label="Fotos reales del local">
-          <img src="assets/hero-barberia.jpg" alt="Interior cuidado de una barberia con sillas y espejos">
+          <img src="assets/hero-barberia.webp" alt="Interior cuidado de una barberia con sillas y espejos" loading="lazy" decoding="async">
         </figure>
         <figure class="photo-card photo-side" data-label="Ambiente y producto">
-          <img src="assets/hero-cafeteria.jpg" alt="Fachada acogedora de una cafeteria local">
+          <img src="assets/hero-cafeteria.webp" alt="Fachada acogedora de una cafeteria local" loading="lazy" decoding="async">
         </figure>
         <div class="site-preview" aria-hidden="true">
           <div class="site-preview-body">
@@ -1193,161 +1326,47 @@
           </div>
         </div>
         <div class="phone-proof" aria-hidden="true">
-          <img src="assets/hero-cafe-movil.jpg" alt="">
+          <img src="assets/hero-cafe-movil.webp" alt="" loading="lazy" decoding="async">
           <div>Vista movil lista para llamar o reservar<span>Abierto hoy</span></div>
         </div>
       </div>
       <div class="showcase-footer">
-        <div class="showcase-point"><b>01</b><span>Dinos como quieres verte</span></div>
-        <div class="showcase-point"><b>02</b><span>Recibes una demo sin coste</span></div>
-        <div class="showcase-point"><b>03</b><span>La hacemos oficial contigo</span></div>
+        <div class="showcase-point"><b>01</b><span>Leo tu negocio</span></div>
+        <div class="showcase-point"><b>02</b><span>Ves una demo</span></div>
+        <div class="showcase-point"><b>03</b><span>Publicamos contigo</span></div>
       </div>
     </div>
   </header>
 
   <section class="strip" aria-label="Datos principales">
-    <div class="metric reveal"><strong>4</strong><span>Trabajos de ejemplo navegables</span></div>
-    <div class="metric reveal delay-1"><strong>2</strong><span>Rondas de ajustes incluidas</span></div>
-    <div class="metric reveal delay-2"><strong>7-10</strong><span>Dias para publicar tras aprobar</span></div>
-    <div class="metric reveal delay-3"><strong>Local</strong><span>Hecho pensando en Tenerife</span></div>
+    <div class="metric reveal"><strong>Demo</strong><span>Antes de pagar</span></div>
+    <div class="metric reveal delay-1"><strong>Movil</strong><span>Prioridad real</span></div>
+    <div class="metric reveal delay-2"><strong>7-10</strong><span>Dias tras aprobar</span></div>
+    <div class="metric reveal delay-3"><strong>Local</strong><span>Tenerife</span></div>
   </section>
 
   <section class="section trust-section" id="confianza">
     <div class="section-head">
       <div>
-        <div class="section-label">Confianza antes que demos</div>
-        <h2>No necesitas una web bonita. Necesitas una web que te haga quedar bien.</h2>
+        <div class="section-label">Proceso</div>
+        <h2>Primero claridad. Luego diseno. Despues publicacion.</h2>
       </div>
-      <p class="section-copy">Los trabajos sirven para ensenar calidad, pero la decision real es otra: saber si puedes confiar en que entendemos tu negocio, te dejamos decidir el diseno y no te cobramos por mirar una primera demo.</p>
+      <p class="section-copy">La idea es simple: no te vendo una plantilla a ciegas. Ves una propuesta, decides cambios y solo avanzamos si tiene sentido para tu negocio.</p>
     </div>
     <div class="trust-grid">
       <div class="trust-main">
-        <h3>Una web no es un dibujo: es la primera impresion de tu negocio.</h3>
-        <p>Por eso no entregamos una plantilla rapida y desaparecemos. Primero entendemos que vendes, que imagen quieres dar y que necesita hacer el cliente cuando entra. Con eso preparo una demo navegable sin coste y, si te convence, la convertimos en la version oficial contigo.</p>
+        <h3>Tu web se construye contigo, no sobre ti.</h3>
+        <p>Uso la demo para que veas una direccion real: estructura, tono, fotos, reservas y version movil. A partir de ahi se pule con tus preferencias antes de publicar.</p>
         <div class="trust-proof-list">
-          <div class="trust-proof"><b>Co-diseno</b><span>Tu eres una pieza clave: decides el estilo, referencias, colores, tono, secciones y cambios importantes antes de cerrar el diseno.</span></div>
-          <div class="trust-proof"><b>Sin coste</b><span>La primera demo navegable se prepara gratis para que puedas valorar la idea con calma antes de comprometerte.</span></div>
-          <div class="trust-proof"><b>Oficial</b><span>Si la demo encaja, la pulimos con tus fotos finales, textos, dominio, reservas, WhatsApp, mapa, horarios y version movil.</span></div>
+          <div class="trust-proof"><b>01</b><span>Reviso tu negocio, fotos, resenas y lo que necesita entender el cliente.</span></div>
+          <div class="trust-proof"><b>02</b><span>Te preparo una demo navegable sin coste.</span></div>
+          <div class="trust-proof"><b>03</b><span>La version oficial sale de tus cambios, no de una plantilla cerrada.</span></div>
         </div>
       </div>
       <div class="trust-side">
-        <div class="trust-card"><strong>01</strong><span>Miramos tu negocio antes de disenar</span></div>
-        <div class="trust-card"><strong>02</strong><span>Te hacemos una demo inicial sin coste</span></div>
-        <div class="trust-card"><strong>03</strong><span>La version oficial sale de tus ajustes</span></div>
-      </div>
-    </div>
-    <div class="client-control">
-      <div class="control-chip">Puedes pedir colores</div>
-      <div class="control-chip">Puedes traer referencias</div>
-      <div class="control-chip">Puedes cambiar secciones</div>
-      <div class="control-chip">Puedes decidir antes de pagar</div>
-    </div>
-  </section>
-
-  <section class="section why-web" id="por-que-web">
-    <div class="section-head">
-      <div>
-        <div class="section-label">Por que importa tener web</div>
-        <h2>Cuando alguien busca tu negocio, ya esta decidiendo si confiar o pasar al siguiente.</h2>
-      </div>
-      <p class="section-copy">Una web no sustituye a Google Maps ni a Instagram. Los ordena. Le da al cliente un sitio claro donde ver que haces, cuanto cuesta, como reservar y por que elegirte.</p>
-    </div>
-    <div class="stats-grid">
-      <div class="stat-stage" aria-label="Visualizacion del recorrido del cliente">
-        <div class="search-card">
-          <div class="search-bar"><span class="search-dot"></span><span>restaurante cerca de mi - abierto hoy</span></div>
-          <div class="search-result">
-            <div><b>Cliente en el movil</b><span>Compara fotos, horario, resenas, carta y boton de reserva antes de moverse.</span></div>
-            <strong>0:08</strong>
-          </div>
-        </div>
-        <div class="decision-strip" aria-hidden="true">
-          <span class="decision-note">Duda</span>
-          <span class="decision-label">8 segundos para confiar</span>
-          <span class="decision-note">Reserva</span>
-        </div>
-        <div class="outcome-grid">
-          <div class="outcome-card without">
-            <b>Sin web</b>
-            <span class="outcome-tag">Dudas abiertas</span>
-            <p>El cliente salta entre Maps, redes y dudas. Si no entiende rapido, se va.</p>
-          </div>
-          <div class="outcome-card with">
-            <b>Con web</b>
-            <span class="outcome-tag">WhatsApp + reserva</span>
-            <p>Ve tu oferta, confia, toca WhatsApp y reserva desde el movil.</p>
-          </div>
-        </div>
-      </div>
-      <div class="stat-cards">
-        <div class="stat-card reveal">
-          <div>
-            <strong>96.4%</strong>
-            <h3>Espana ya es mercado digital</h3>
-          </div>
-          <div class="chart-donut" data-value="46.1M"></div>
-          <div>
-            <div class="micro-note">Usuarios de internet en Espana a finales de 2025.</div>
-            <div class="stat-source">Fuente: <a href="https://datareportal.com/reports/digital-2026-spain" target="_blank" rel="noopener">DataReportal Digital 2026 Spain</a></div>
-          </div>
-        </div>
-        <div class="stat-card reveal delay-1">
-          <div>
-            <strong>76%</strong>
-            <h3>busqueda local = intencion inmediata</h3>
-          </div>
-          <div class="visit-clock"></div>
-          <div>
-            <div class="micro-note">Busquedas locales en smartphone que terminan en una visita durante el dia siguiente.</div>
-            <div class="stat-source">Fuente: <a href="https://www.thinkwithgoogle.com/_qs/documents/37/mobile-redefined-consumer-decision-shopper-journey-b.pdf" target="_blank" rel="noopener">Think with Google</a></div>
-          </div>
-        </div>
-        <div class="stat-card wide reveal delay-2">
-          <div>
-            <strong>84.5%</strong>
-            <h3>tener web ya es senal de empresa seria</h3>
-          </div>
-          <div class="company-chart" aria-hidden="true">
-            <span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span>
-            <span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span>
-            <span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span>
-            <span class="on"></span><span class="on"></span><span></span><span></span><span></span>
-            <span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span>
-            <span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span>
-            <span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span></span>
-            <span></span><span></span><span></span><span></span><span></span>
-          </div>
-          <div>
-            <div class="micro-note">Empresas espanolas con conexion a internet que disponen de sitio web.</div>
-            <div class="stat-source">Fuente: <a href="https://www.ine.es/dyngs/Prensa/en/ETICCE20241T2025.htm" target="_blank" rel="noopener">INE ETICCE 2024-2025</a></div>
-          </div>
-        </div>
-        <div class="stat-card wide reveal delay-3">
-          <div>
-            <strong>45%</strong>
-            <h3>clientes ya piden recomendaciones locales a la IA</h3>
-          </div>
-          <div class="ai-proof" aria-hidden="true">
-            <div class="ai-query">
-              <b>Pregunta real</b>
-              <span>Donde cenar cerca de mi con buenas resenas y reserva facil?</span>
-            </div>
-            <div class="ai-signals">
-              <span>Horario</span>
-              <span>Carta</span>
-              <span>Resenas</span>
-            </div>
-            <div class="ai-answer">
-              <b>Con web clara</b>
-              <p>La IA y Google tienen informacion ordenada para entender y recomendar tu negocio.</p>
-              <em>Mas facil de elegir</em>
-            </div>
-          </div>
-          <div>
-            <div class="micro-note">Consumidores que ya usan IA para recomendaciones o investigacion de negocios locales. Una web clara ayuda a que tu informacion sea entendible y verificable.</div>
-            <div class="stat-source">Fuente: <a href="https://www.brightlocal.com/research/lcrs-ai-trust/" target="_blank" rel="noopener">BrightLocal LCRS AI Trust 2025</a></div>
-          </div>
-        </div>
+        <div class="trust-card"><strong>Sin coste</strong><span>para valorar la primera demo</span></div>
+        <div class="trust-card"><strong>A medida</strong><span>con tus fotos, estilo y cambios</span></div>
+        <div class="trust-card"><strong>Lista</strong><span>para movil, WhatsApp, mapa y reservas</span></div>
       </div>
     </div>
   </section>
@@ -1355,29 +1374,26 @@
   <section class="section" id="demos">
     <div class="section-head">
       <div>
-        <div class="section-label">Trabajos y demos</div>
-        <h2>Estos ejemplos son para que valores el nivel, no para encajarte en una plantilla.</h2>
+        <div class="section-label">Trabajos</div>
+        <h2>Cuatro direcciones visuales. Ninguna plantilla unica.</h2>
       </div>
       <div>
-        <p class="section-copy">Cada trabajo se puede abrir y revisar en portatil, tablet o movil desde su propio visor. La web final puede seguir otra direccion si quieres algo mas clasico, mas atrevido o mas parecido a tu marca.</p>
+        <p class="section-copy">Abre cada demo y cambia entre portatil, tablet y movil desde el visor. Sirven para ver nivel, no para limitar tu web final.</p>
       </div>
     </div>
 
     <div class="demo-list">
       <article class="demo reveal">
         <div class="demo-preview">
-          <div class="device-toolbar demo-controls" aria-label="Cambiar formato de preview">
-            <button class="device-toggle" data-device="desktop" onclick="setDemoDevice('desktop')">Portatil</button>
-            <button class="device-toggle" data-device="tablet" onclick="setDemoDevice('tablet')">Tablet</button>
-            <button class="device-toggle" data-device="mobile" onclick="setDemoDevice('mobile')">Movil</button>
+          <div class="preview-shot preview-barber">
+            <div class="preview-copy"><b>Barberia</b><span>Oscura, directa, con reserva clara.</span></div>
           </div>
-          <iframe class="demo-frame" src="/portfolio/demo-barberia.html" loading="lazy" tabindex="-1" aria-hidden="true"></iframe>
         </div>
         <div class="demo-info">
           <div>
             <div class="demo-code">Barberia / reservas por WhatsApp</div>
             <h3>El Rincon Barber Co.</h3>
-            <p>Una web oscura, fisica y directa para vender cortes, barba y citas sin que el cliente tenga que buscar precios entre publicaciones de Instagram.</p>
+            <p>Oscura, directa y pensada para reservar corte o barba sin buscar precios en Instagram.</p>
             <div class="proofs">
               <div class="proof"><b>3 clics</b><span>hasta reservar</span></div>
               <div class="proof"><b>Galeria</b><span>trabajos visibles</span></div>
@@ -1392,18 +1408,15 @@
 
       <article class="demo reveal delay-1">
         <div class="demo-preview">
-          <div class="device-toolbar demo-controls" aria-label="Cambiar formato de preview">
-            <button class="device-toggle" data-device="desktop" onclick="setDemoDevice('desktop')">Portatil</button>
-            <button class="device-toggle" data-device="tablet" onclick="setDemoDevice('tablet')">Tablet</button>
-            <button class="device-toggle" data-device="mobile" onclick="setDemoDevice('mobile')">Movil</button>
+          <div class="preview-shot preview-restaurante">
+            <div class="preview-copy"><b>Restaurante</b><span>Producto, carta y reserva en primer plano.</span></div>
           </div>
-          <iframe class="demo-frame" src="/portfolio/demo-restaurante.html" loading="lazy" tabindex="-1" aria-hidden="true"></iframe>
         </div>
         <div class="demo-info">
           <div>
             <div class="demo-code">Restaurante / carta y reservas</div>
             <h3>Casa Marea</h3>
-            <p>Carta clara, historia con sabor local, resenas y reserva inmediata. Pensada para gente que llega desde Google buscando donde comer hoy.</p>
+            <p>Foto grande, carta clara y reserva visible para quien busca donde comer hoy.</p>
             <div class="proofs">
               <div class="proof"><b>Carta</b><span>sin PDF perdido</span></div>
               <div class="proof"><b>Reservas</b><span>WhatsApp + TheFork</span></div>
@@ -1418,18 +1431,15 @@
 
       <article class="demo reveal delay-2">
         <div class="demo-preview">
-          <div class="device-toolbar demo-controls" aria-label="Cambiar formato de preview">
-            <button class="device-toggle" data-device="desktop" onclick="setDemoDevice('desktop')">Portatil</button>
-            <button class="device-toggle" data-device="tablet" onclick="setDemoDevice('tablet')">Tablet</button>
-            <button class="device-toggle" data-device="mobile" onclick="setDemoDevice('mobile')">Movil</button>
+          <div class="preview-shot preview-clinica">
+            <div class="preview-copy"><b>Clinica</b><span>Confianza medica sin parecer generica.</span></div>
           </div>
-          <iframe class="demo-frame" src="/portfolio/demo-clinica.html" loading="lazy" tabindex="-1" aria-hidden="true"></iframe>
         </div>
         <div class="demo-info">
           <div>
             <div class="demo-code">Clinica / confianza antes de llamar</div>
             <h3>Clinica Mar Azul</h3>
-            <p>Orden, claridad y autoridad. Tratamientos, equipo, precios orientativos y cita online sin parecer una web medica de banco de imagenes.</p>
+            <p>Equipo, tratamientos y cita online con una imagen limpia y profesional.</p>
             <div class="proofs">
               <div class="proof"><b>AA</b><span>contraste legible</span></div>
               <div class="proof"><b>Cita</b><span>formulario claro</span></div>
@@ -1444,18 +1454,15 @@
 
       <article class="demo reveal delay-3">
         <div class="demo-preview">
-          <div class="device-toolbar demo-controls" aria-label="Cambiar formato de preview">
-            <button class="device-toggle" data-device="desktop" onclick="setDemoDevice('desktop')">Portatil</button>
-            <button class="device-toggle" data-device="tablet" onclick="setDemoDevice('tablet')">Tablet</button>
-            <button class="device-toggle" data-device="mobile" onclick="setDemoDevice('mobile')">Movil</button>
+          <div class="preview-shot preview-taller">
+            <div class="preview-copy"><b>Taller</b><span>Servicios, urgencia y presupuesto rapido.</span></div>
           </div>
-          <iframe class="demo-frame" src="/portfolio/demo-taller.html" loading="lazy" tabindex="-1" aria-hidden="true"></iframe>
         </div>
         <div class="demo-info">
           <div>
             <div class="demo-code">Taller / presupuesto rapido</div>
             <h3>Talleres Anaga</h3>
-            <p>Industrial, seco y muy facil de usar. Servicios, averias comunes, presupuesto por WhatsApp y mapa sin adornos que distraigan.</p>
+            <p>Servicios claros, telefono visible y presupuesto por WhatsApp sin adornos innecesarios.</p>
             <div class="proofs">
               <div class="proof"><b>Servicios</b><span>escaneables</span></div>
               <div class="proof"><b>Urgente</b><span>telefono visible</span></div>
@@ -1470,26 +1477,45 @@
     </div>
   </section>
 
-  <section class="section" id="sistema">
+  <section class="section why-web" id="por-que-web">
     <div class="section-head">
       <div>
-        <div class="section-label">Metodo de trabajo</div>
-        <h2>La demo gratuita no es el producto final. Es el punto de partida.</h2>
+        <div class="section-label">Por que importa</div>
+        <h2>Una web reduce dudas antes de que el cliente llame.</h2>
       </div>
-      <p class="section-copy">Uso un sistema propio para revisar fotos, resenas, actividad, redes y posicionamiento. Luego convierto esa informacion en una primera demo sin coste, y desde ahi construimos la web oficial con tus cambios.</p>
+      <p class="section-copy">No sustituye a Maps ni a Instagram. Los ordena en un sitio donde se entiende que haces, cuando abres y como reservar.</p>
     </div>
-    <div class="system-grid">
-      <div class="system-item reveal">
-        <div class="num">01</div>
-        <div><h3>Lectura del local</h3><p>Google Maps, resenas, fotos, horario, tono de cliente y senales de confianza.</p></div>
+    <div class="why-grid">
+      <div class="why-main">
+        <div class="why-flow" aria-label="Comparacion entre no tener web y tener web">
+          <div class="why-node">
+            <b>Sin web</b>
+            <span>El cliente salta entre redes, Maps y dudas.</span>
+          </div>
+          <div class="why-arrow" aria-hidden="true"></div>
+          <div class="why-node good">
+            <b>Con web</b>
+            <span>Entiende, confia y contacta.</span>
+          </div>
+        </div>
+        <p class="why-caption">La funcion de la web no es decorar. Es cerrar el hueco entre “me interesa” y “voy a escribir”.</p>
       </div>
-      <div class="system-item reveal delay-1">
-        <div class="num">02</div>
-        <div><h3>Direccion visual</h3><p>No uso la misma estetica para un taller, una clinica o un restaurante de costa.</p></div>
-      </div>
-      <div class="system-item reveal delay-2">
-        <div class="num">03</div>
-        <div><h3>Web vendible</h3><p>CTA visible, movil cuidado, mapa, reservas, galeria, copy especifico y SEO local basico.</p></div>
+      <div class="fact-list">
+        <div class="fact-card">
+          <strong>96.4%</strong>
+          <b>Espana ya busca online</b>
+          <span>Usuarios de internet en Espana a finales de 2025. Fuente: <a href="https://datareportal.com/reports/digital-2026-spain" target="_blank" rel="noopener">DataReportal</a>.</span>
+        </div>
+        <div class="fact-card">
+          <strong>76%</strong>
+          <b>La busqueda local mueve visitas</b>
+          <span>Busquedas locales en smartphone que terminan en visita durante el dia siguiente. Fuente: <a href="https://www.thinkwithgoogle.com/_qs/documents/37/mobile-redefined-consumer-decision-shopper-journey-b.pdf" target="_blank" rel="noopener">Think with Google</a>.</span>
+        </div>
+        <div class="fact-card">
+          <strong>84.5%</strong>
+          <b>Tener web ya es senal de seriedad</b>
+          <span>Empresas espanolas con conexion a internet que disponen de sitio web. Fuente: <a href="https://www.ine.es/dyngs/Prensa/en/ETICCE20241T2025.htm" target="_blank" rel="noopener">INE</a>.</span>
+        </div>
       </div>
     </div>
   </section>
@@ -1498,15 +1524,15 @@
     <div class="section-head">
       <div>
         <div class="section-label">Planes</div>
-        <h2>Precio claro para negocios que quieren moverse rapido.</h2>
+        <h2>Precio claro. Sin venderte humo.</h2>
       </div>
-      <p class="section-copy">La demo inicial sirve para decidir con los ojos sin pagar por adelantado. Si encaja, se pule contigo con fotos finales, dominio, textos, reservas y ajustes de diseno.</p>
+      <p class="section-copy">La demo sirve para decidir con los ojos. Si encaja, cerramos alcance, ajustes y fecha de publicacion.</p>
     </div>
     <div class="pricing-wrap">
       <div class="price-panel">
         <h3>Basico</h3>
         <div class="price">299 <small>EUR</small></div>
-        <p>Para negocios que necesitan presencia clara, movil y contacto directo.</p>
+        <p>Presencia clara, movil y contacto directo.</p>
         <ul>
           <li>5 secciones esenciales</li>
           <li>Formulario o WhatsApp</li>
@@ -1517,7 +1543,7 @@
       <div class="price-panel featured">
         <h3>Completo</h3>
         <div class="price">399 <small>EUR</small></div>
-        <p>Para negocios donde la web tiene que convencer: galeria, resenas, reservas y version preparada para crecer.</p>
+        <p>Mas contenido, mas confianza y mas capacidad de convertir visitas.</p>
         <ul>
           <li>Hasta 8 secciones con direccion visual propia</li>
           <li>Galeria, resenas y CTA por seccion</li>
@@ -1526,9 +1552,37 @@
         </ul>
       </div>
       <div class="included">
-        <div class="included-row"><b>Entrega</b><span>Web publicada normalmente en 7-10 dias desde que tengo fotos y datos finales.</span></div>
-        <div class="included-row"><b>Ajustes</b><span>Dos rondas incluidas para cambiar copy, fotos, colores, secciones y CTAs.</span></div>
-        <div class="included-row"><b>Soporte</b><span>WhatsApp directo, mantenimiento tecnico, copias, SSL y pequenos cambios.</span></div>
+        <div class="included-row"><b>Entrega</b><span>Normalmente 7-10 dias desde fotos y datos finales.</span></div>
+        <div class="included-row"><b>Ajustes</b><span>Dos rondas incluidas.</span></div>
+        <div class="included-row"><b>Soporte</b><span>Hosting, SSL, copias y pequenos cambios.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="faq">
+    <div class="section-head">
+      <div>
+        <div class="section-label">Dudas normales</div>
+        <h2>Antes de pedir una demo, esto conviene tener claro.</h2>
+      </div>
+      <p class="section-copy">Respuestas cortas para evitar llamadas eternas y que el cliente entienda como se trabaja.</p>
+    </div>
+    <div class="faq-grid">
+      <div class="faq-item">
+        <b>Tengo que pagar antes de ver algo?</b>
+        <p>No. La primera demo sirve para valorar direccion visual y encaje antes de avanzar.</p>
+      </div>
+      <div class="faq-item">
+        <b>Puedo cambiar el diseno?</b>
+        <p>Si. La version oficial se ajusta contigo: estilo, secciones, fotos, textos y reservas.</p>
+      </div>
+      <div class="faq-item">
+        <b>Que necesito enviar?</b>
+        <p>Nombre del local o enlace de Google Maps. Si tienes fotos, colores o referencias, mejor.</p>
+      </div>
+      <div class="faq-item">
+        <b>Dominio, hosting y movil van incluidos?</b>
+        <p>Si. La web se entrega publicada, con SSL, responsive y contacto directo por WhatsApp o formulario.</p>
       </div>
     </div>
   </section>
@@ -1536,8 +1590,8 @@
   <section class="section cta" id="contacto">
     <div>
       <div class="section-label" style="color:var(--banana)">Contacto</div>
-      <h2>Te preparo una demo gratis con la cara de tu negocio.</h2>
-      <p>Mandame el nombre del local o el enlace de Google Maps. Te devuelvo una propuesta visual sin coste; si te gusta, la convertimos juntos en tu web oficial.</p>
+      <h2>Mandame tu local. Te preparo una primera demo.</h2>
+      <p>Con el nombre del negocio o el enlace de Google Maps es suficiente para empezar.</p>
     </div>
     <a class="btn btn-secondary" href="https://wa.me/34600000000?text=Hola%2C%20quiero%20una%20demo%20para%20mi%20negocio">Escribir por WhatsApp</a>
   </section>
