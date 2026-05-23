@@ -37,24 +37,24 @@ const examples: Array<{
   {
     id: "restaurante",
     label: "Restaurante",
-    title: "Reservas, carta y menu QR",
+    title: "Reservas, carta y menú QR",
     description: "Carta digital, platos destacados, reseñas, horario, mapa y reserva directa.",
     accent: "from-stone-950 via-[#97452a] to-[#e4a84e]",
-    tags: ["Reservas", "QR menu", "Resenas"],
+    tags: ["Reservas", "Menú QR", "Reseñas"],
   },
   {
     id: "cafeteria",
-    label: "Cafeteria / local",
+    label: "Cafetería / local",
     title: "Ambiente, desayunos y QR en mesa",
-    description: "Menu PDF, producto destacado, visitas al local y contacto por WhatsApp.",
+    description: "Menú PDF, producto destacado, visitas al local y contacto por WhatsApp.",
     accent: "from-[#fff0d4] via-[#bb7441] to-[#4b2b18]",
-    tags: ["Menu PDF", "Horario", "WhatsApp"],
+    tags: ["Menú PDF", "Horario", "WhatsApp"],
   },
   {
     id: "belleza",
     label: "Belleza",
     title: "Citas, tratamientos y confianza",
-    description: "Servicios por categoria, equipo, protocolos, trabajos reales y formulario de cita.",
+    description: "Servicios por categoría, equipo, protocolos, trabajos reales y formulario de cita.",
     accent: "from-[#fff6f8] via-[#d994aa] to-[#7f5267]",
     tags: ["Citas", "Equipo", "Protocolos"],
   },
@@ -62,7 +62,7 @@ const examples: Array<{
     id: "servicios",
     label: "Servicios",
     title: "Autoridad y solicitud guiada",
-    description: "Servicios claros, garantias, preguntas frecuentes y contacto rapido.",
+    description: "Servicios claros, garantías, preguntas frecuentes y contacto rápido.",
     accent: "from-[#071f24] via-brand-500 to-[#8bd2bf]",
     tags: ["Servicios", "FAQ", "Contacto"],
   },
@@ -221,12 +221,12 @@ function Hero() {
     <section className="relative overflow-hidden pb-14 pt-12 sm:pt-16 lg:min-h-[calc(100vh-64px)] lg:pb-12">
       <div className="mx-auto grid w-[min(1120px,calc(100%-28px))] items-center gap-10 lg:grid-cols-[1.04fr_.96fr] lg:gap-14">
         <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}>
-          <Eyebrow>Diseno web orientado a clientes</Eyebrow>
+          <Eyebrow>Diseño web orientado a clientes</Eyebrow>
           <h1 className="max-w-[760px] font-display text-[clamp(2.4rem,11vw,4.7rem)] font-black leading-[1.02] tracking-tight text-ink">
-            Tu negocio necesita una web que explique, convenza y haga facil contactar.
+            Tu negocio necesita una web que explique, convenza y haga fácil contactar.
           </h1>
           <p className="mt-6 max-w-2xl text-[17px] leading-8 text-muted sm:text-[19px]">
-            Creo paginas claras, rapidas y profesionales para negocios locales que quieren dejar de depender solo de redes sociales, directorios o recomendaciones de palabra.
+            Creo páginas claras, rápidas y profesionales para negocios locales que quieren dejar de depender solo de redes sociales, directorios o recomendaciones de palabra.
           </p>
           <div className="mt-8 grid gap-3 sm:flex">
             <Button href="#contacto" icon={<ArrowRight className="h-4 w-4 transition-transform duration-500 group-hover:translate-x-1" />}>Pedir una propuesta</Button>
@@ -234,9 +234,9 @@ function Hero() {
           </div>
           <div className="mt-10 grid gap-4 border-t border-ink/10 pt-5 sm:grid-cols-3">
             {[
-              ["Sin plantillas genericas", "Estructura adaptada al negocio y a lo que busca su cliente."],
-              ["Texto que vende", "Mensajes directos, beneficios claros y llamadas a la accion visibles."],
-              ["Lista para publicar", "Base tecnica ligera, responsive y pensada para cargar rapido."],
+              ["Sin plantillas genéricas", "Estructura adaptada al negocio y a lo que busca su cliente."],
+              ["Texto que vende", "Mensajes directos, beneficios claros y llamadas a la acción visibles."],
+              ["Lista para publicar", "Base técnica ligera, responsive y pensada para cargar rápido."],
             ].map(([title, text]) => (
               <div key={title} className="border-b border-ink/10 pb-4 sm:border-b-0">
                 <strong className="block text-xl leading-tight text-ink">{title}</strong>
@@ -290,7 +290,7 @@ function HeroMockup() {
               </div>
               <div className="mt-5 grid grid-cols-3 gap-4">
                 {[
-                  ["4.8", "Resenas"],
+                  ["4.8", "Reseñas"],
                   ["24h", "Respuesta"],
                   ["90+", "Lighthouse"],
                 ].map(([value, label]) => (
@@ -317,13 +317,13 @@ function HeroMockup() {
             <aside className="border-l border-ink/10 bg-white/70 p-5">
               <div className="h-3 w-20 rounded-full bg-ink/10" />
               <div className="mt-6 grid gap-3">
-                {["Hero", "Servicios", "Resenas", "Contacto"].map((item, index) => (
+                {["Hero", "Servicios", "Reseñas", "Contacto"].map((item, index) => (
                   <div key={item} className={cn("rounded-xl px-3 py-3 text-sm font-black", index === 0 ? "bg-brand-500 text-white" : "bg-ink/5 text-muted")}>{item}</div>
                 ))}
               </div>
               <div className="mt-8 rounded-2xl bg-gradient-to-br from-brand-50 to-white p-4">
                 <QrCode className="h-7 w-7 text-brand-700" />
-                <p className="mt-3 text-sm font-bold leading-5 text-ink">Menu QR y descargas integradas</p>
+                <p className="mt-3 text-sm font-bold leading-5 text-ink">Menú QR y descargas integradas</p>
               </div>
             </aside>
           </div>
@@ -364,13 +364,13 @@ function Service() {
       <div className="mx-auto w-[min(1120px,calc(100%-28px))]">
         <SectionHeading
           title="Una web pensada para convertir visitas en conversaciones."
-          text="No se trata solo de verse bien. La pagina tiene que responder dudas, transmitir seriedad y llevar al cliente al siguiente paso."
+          text="No se trata solo de verse bien. La página tiene que responder dudas, transmitir seriedad y llevar al cliente al siguiente paso."
         />
         <div className="grid gap-4 md:grid-cols-3">
           {[
-            [MessageCircle, "Mensaje comercial claro", "Ordeno servicios, beneficios y razones para elegirte en una estructura facil de leer."],
-            [ShieldCheck, "Confianza desde el primer vistazo", "Experiencia, proceso, preguntas frecuentes, ubicacion y contacto visible."],
-            [MousePointerClick, "Diseno util en movil", "La mayoria de clientes llega desde el telefono. Contactar debe ser inmediato."],
+            [MessageCircle, "Mensaje comercial claro", "Ordeno servicios, beneficios y razones para elegirte en una estructura fácil de leer."],
+            [ShieldCheck, "Confianza desde el primer vistazo", "Experiencia, proceso, preguntas frecuentes, ubicación y contacto visible."],
+            [MousePointerClick, "Diseño útil en móvil", "La mayoría de clientes llega desde el teléfono. Contactar debe ser inmediato."],
           ].map(([Icon, title, text]) => (
             <MotionCard key={String(title)}>
               <Icon className="mb-5 h-6 w-6 text-brand-500" />
@@ -420,7 +420,7 @@ function Templates() {
 }
 
 function Marquee() {
-  const words = ["Reservas", "Menu QR", "WhatsApp", "Resenas", "SEO local", "Galeria", "Formulario", "Mapa"];
+  const words = ["Reservas", "Menú QR", "WhatsApp", "Reseñas", "SEO local", "Galería", "Formulario", "Mapa"];
   return (
     <div className="overflow-hidden rounded-full border border-ink/10 bg-white/60 py-3 [mask-image:linear-gradient(90deg,transparent,#000_12%,#000_88%,transparent)]">
       <motion.div
@@ -496,14 +496,14 @@ function ExampleCard({ example }: { example: (typeof examples)[number] }) {
 
 function Process() {
   const steps = [
-    ["Diagnostico", "Reviso como se presenta el negocio hoy: ficha de Google, redes, competencia y puntos fuertes."],
-    ["Propuesta visual y contenido", "Defino estructura, tono, secciones clave y llamadas a la accion antes de construir."],
-    ["Web lista para publicar", "Entrego una pagina responsive, clara y preparada para WhatsApp, telefono, email o reservas."],
+    ["Diagnóstico", "Reviso cómo se presenta el negocio hoy: ficha de Google, redes, competencia y puntos fuertes."],
+    ["Propuesta visual y contenido", "Defino estructura, tono, secciones clave y llamadas a la acción antes de construir."],
+    ["Web lista para publicar", "Entrego una página responsive, clara y preparada para WhatsApp, teléfono, email o reservas."],
   ];
   return (
     <section id="proceso" className="border-t border-ink/10 bg-white/36 py-16 sm:py-24">
       <div className="mx-auto grid w-[min(1120px,calc(100%-28px))] gap-8 lg:grid-cols-[.85fr_1.15fr]">
-        <SectionHeading title="Proceso simple, sin marearte." text="Trabajo con informacion real del negocio para que la web no suene vacia ni parezca una plantilla cambiada de color." />
+        <SectionHeading title="Proceso simple, sin marearte." text="Trabajo con información real del negocio para que la web no suene vacía ni parezca una plantilla cambiada de color." />
         <div className="grid gap-4">
           {steps.map(([title, text], index) => (
             <MotionCard key={title} className="grid grid-cols-[44px_1fr] gap-4">
@@ -525,11 +525,11 @@ function Trust() {
     <section id="confianza" className="bg-gradient-to-br from-brand-700 to-brand-900 py-16 text-white sm:py-24">
       <div className="mx-auto grid w-[min(1120px,calc(100%-28px))] gap-9 lg:grid-cols-2 lg:items-center">
         <div>
-          <h2 className="text-[clamp(2rem,5vw,3.3rem)] font-black leading-[1.06] tracking-tight">Tu cliente tiene que entender en segundos por que deberia elegirte.</h2>
-          <p className="mt-5 text-lg leading-8 text-white/74">Una web profesional reduce dudas: quien eres, que haces, donde estas, como trabajas y como puede contactar contigo.</p>
+          <h2 className="text-[clamp(2rem,5vw,3.3rem)] font-black leading-[1.06] tracking-tight">Tu cliente tiene que entender en segundos por qué debería elegirte.</h2>
+          <p className="mt-5 text-lg leading-8 text-white/74">Una web profesional reduce dudas: quién eres, qué haces, dónde estás, cómo trabajas y cómo puede contactar contigo.</p>
         </div>
         <div className="grid gap-4">
-          {["Textos escritos para personas, no para rellenar espacio.", "Estructura preparada para servicios, comercios, salud, belleza, restauracion y profesionales locales.", "Propuesta a medida: primero se entiende el proyecto y despues se prepara un alcance adecuado.", "Diseno sobrio, rapido y facil de mantener."].map((item) => (
+          {["Textos escritos para personas, no para rellenar espacio.", "Estructura preparada para servicios, comercios, salud, belleza, restauración y profesionales locales.", "Propuesta a medida: primero se entiende el proyecto y después se prepara un alcance adecuado.", "Diseño sobrio, rápido y fácil de mantener."].map((item) => (
             <div key={item} className="grid grid-cols-[32px_1fr] gap-3 text-white/88">
               <span className="grid h-8 w-8 place-items-center rounded-full bg-white/14"><Check className="h-4 w-4" /></span>
               <span>{item}</span>
@@ -545,7 +545,7 @@ function Contact() {
   return (
     <section id="contacto" className="border-t border-ink/10 py-16 sm:py-24">
       <div className="mx-auto grid w-[min(1120px,calc(100%-28px))] gap-8 lg:grid-cols-[1fr_.8fr] lg:items-center">
-        <SectionHeading title="Hablemos de la web que necesita tu negocio." text="Cuentame que vendes, donde atiendes y que quieres conseguir. Te respondo con una propuesta clara y sin compromiso." />
+        <SectionHeading title="Hablemos de la web que necesita tu negocio." text="Cuéntame qué vendes, dónde atiendes y qué quieres conseguir. Te respondo con una propuesta clara y sin compromiso." />
         <MotionCard>
           <p className="mb-5 leading-7 text-muted">Cambia estos enlaces por tu WhatsApp y email reales cuando quieras publicar.</p>
           <div className="grid gap-3 sm:flex">
@@ -583,16 +583,16 @@ function DemoBack() {
 function RestaurantWebsite() {
   const menu = [
     ["Para compartir", "Pulpo braseado con mojo verde", "Papa negra, aceite de cilantro, sal marina y lima."],
-    ["Para compartir", "Croquetas de jamon iberico", "Bechamel cremosa, panko fino y alioli tostado."],
-    ["Brasa", "Cherne a la brasa", "Verduras de temporada, jugo de limon y hierbas frescas."],
-    ["Brasa", "Arroz meloso de costilla", "Fondo tostado, setas, azafran y alioli suave."],
+    ["Para compartir", "Croquetas de jamón ibérico", "Bechamel cremosa, panko fino y alioli tostado."],
+    ["Brasa", "Cherne a la brasa", "Verduras de temporada, jugo de limón y hierbas frescas."],
+    ["Brasa", "Arroz meloso de costilla", "Fondo tostado, setas, azafrán y alioli suave."],
     ["Postres", "Tarta cremosa de queso", "Mermelada de higos y crumble de almendra."],
-    ["Postres", "Chocolate, aceite y sal", "Bizcocho humedo, crema ligera y escamas de sal."],
+    ["Postres", "Chocolate, aceite y sal", "Bizcocho húmedo, crema ligera y escamas de sal."],
   ];
   const reviews = [
-    ["Laura M.", "La carta se entiende rapido y reservar por WhatsApp fue comodisimo."],
-    ["Carlos R.", "Buena presencia, fotos cuidadas y menu QR claro en mesa."],
-    ["Nerea S.", "Llegamos por Google y en dos clics teniamos mesa."],
+    ["Laura M.", "La carta se entiende rápido y reservar por WhatsApp fue comodísimo."],
+    ["Carlos R.", "Buena presencia, fotos cuidadas y menú QR claro en mesa."],
+    ["Nerea S.", "Llegamos por Google y en dos clics teníamos mesa."],
   ];
   return (
     <DemoShell>
@@ -600,9 +600,9 @@ function RestaurantWebsite() {
         <section className="mx-auto grid w-[min(1180px,calc(100%-28px))] gap-10 pb-16 pt-10 lg:min-h-[calc(100vh-64px)] lg:grid-cols-[1fr_.9fr] lg:items-center">
           <div>
             <DemoBack />
-            <p className="mt-10 text-sm font-black uppercase tracking-[.18em] text-[#9a4f2f]">Brasa Atlantica</p>
-            <h1 className="mt-4 text-[clamp(3rem,11vw,6.3rem)] font-black leading-[.94] tracking-tight">Cocina de brasa, producto local y reservas sin friccion.</h1>
-            <p className="mt-6 max-w-2xl text-lg leading-8 text-muted">Una web completa para restaurante: carta digital, menu QR, reservas, platos destacados, opiniones, ubicacion, horario y experiencia visual.</p>
+            <p className="mt-10 text-sm font-black uppercase tracking-[.18em] text-[#9a4f2f]">Brasa Atlántica</p>
+            <h1 className="mt-4 text-[clamp(3rem,11vw,6.3rem)] font-black leading-[.94] tracking-tight">Cocina de brasa, producto local y reservas sin fricción.</h1>
+            <p className="mt-6 max-w-2xl text-lg leading-8 text-muted">Una web completa para restaurante: carta digital, menú QR, reservas, platos destacados, opiniones, ubicación, horario y experiencia visual.</p>
             <div className="mt-8 grid gap-3 sm:flex">
               <Button href="#reserva">Reservar mesa</Button>
               <Button href="#carta" variant="secondary" icon={<QrCode className="h-4 w-4" />}>Ver carta QR</Button>
@@ -624,7 +624,7 @@ function RestaurantWebsite() {
 
         <section className="border-y border-ink/10 bg-white/58 py-14">
           <div className="mx-auto grid w-[min(1180px,calc(100%-28px))] gap-4 md:grid-cols-4">
-            {["Reserva por WhatsApp", "Menu PDF con QR", "Alergenos visibles", "Mapa y parking"].map((item) => <MotionCard key={item}><Check className="mb-3 h-5 w-5 text-[#9a4f2f]" /><strong>{item}</strong></MotionCard>)}
+            {["Reserva por WhatsApp", "Menú PDF con QR", "Alérgenos visibles", "Mapa y parking"].map((item) => <MotionCard key={item}><Check className="mb-3 h-5 w-5 text-[#9a4f2f]" /><strong>{item}</strong></MotionCard>)}
           </div>
         </section>
 
@@ -688,13 +688,13 @@ function RestaurantWebsite() {
             <Eyebrow>Reserva</Eyebrow>
             <h2 className="text-4xl font-black leading-tight">Formulario preparado para recibir mesas reales.</h2>
             <div className="mt-7 grid gap-3 sm:grid-cols-2">
-              {["Fecha preferida", "Hora", "Personas", "Telefono"].map((item) => <div key={item} className="rounded-2xl bg-white/10 p-4 font-black text-white/90">{item}</div>)}
+              {["Fecha preferida", "Hora", "Personas", "Teléfono"].map((item) => <div key={item} className="rounded-2xl bg-white/10 p-4 font-black text-white/90">{item}</div>)}
             </div>
             <Button href="#" className="mt-7 bg-white text-brand-800 hover:bg-white">Enviar solicitud</Button>
           </MotionCard>
         </section>
 
-        <DemoFinalCta title="Reserva una mesa en Brasa Atlantica" text="Formulario corto con fecha, hora, personas y contacto. La web tambien puede enlazar a WhatsApp Business o a un motor de reservas." cta="Reservar por WhatsApp" />
+        <DemoFinalCta title="Reserva una mesa en Brasa Atlántica" text="Formulario corto con fecha, hora, personas y contacto. La web también puede enlazar a WhatsApp Business o a un motor de reservas." cta="Reservar por WhatsApp" />
       </main>
     </DemoShell>
   );
@@ -715,26 +715,26 @@ function MenuQrSection() {
 
 function CafeWebsite() {
   const products = [
-    ["Flat white Colombia", "Cafe dulce, leche texturizada y notas de panela."],
-    ["Tostada Atlantica", "Aguacate, huevo, tomate asado y aceite de albahaca."],
+    ["Flat white Colombia", "Café dulce, leche texturizada y notas de panela."],
+    ["Tostada Atlántica", "Aguacate, huevo, tomate asado y aceite de albahaca."],
     ["Croissant de almendra", "Horneado diario, crema suave y almendra laminada."],
     ["Bowl de temporada", "Yogur, fruta fresca, granola y miel local."],
   ];
   return (
     <DemoShell>
       <main>
-        <DemoHero label="Cafeteria Nube" title="Cafe de especialidad, desayunos y un menu que cambia cada semana." text="Demo completa para cafeteria: carta QR, productos de temporada, galeria, horario, mapa y pedidos por WhatsApp." accent="from-[#fff0d4] via-[#b97944] to-[#4b2b18]" primary="Pedir por WhatsApp" secondary="Ver menu" />
-        <DemoFeatureGrid items={[["Cafe de especialidad", "Origenes rotativos, metodos filtrados y recomendaciones."], ["Desayunos", "Tostadas, dulces, bowls y opciones vegetales."], ["Menu QR", "Carta digital para mesa, barra y escaparate."], ["Eventos", "Brunch privado, talleres y degustaciones."]]} />
+        <DemoHero label="Cafetería Nube" title="Café de especialidad, desayunos y un menú que cambia cada semana." text="Demo completa para cafetería: carta QR, productos de temporada, galería, horario, mapa y pedidos por WhatsApp." accent="from-[#fff0d4] via-[#b97944] to-[#4b2b18]" primary="Pedir por WhatsApp" secondary="Ver menú" />
+        <DemoFeatureGrid items={[["Café de especialidad", "Orígenes rotativos, métodos filtrados y recomendaciones."], ["Desayunos", "Tostadas, dulces, bowls y opciones vegetales."], ["Menú QR", "Carta digital para mesa, barra y escaparate."], ["Eventos", "Brunch privado, talleres y degustaciones."]]} />
         <section id="carta" className="mx-auto grid w-[min(1180px,calc(100%-28px))] gap-8 py-20 lg:grid-cols-[1fr_360px]">
           <div>
             <Eyebrow>Producto de temporada</Eyebrow>
-            <h2 className="text-[clamp(2.3rem,6vw,4rem)] font-black leading-none">Una carta viva, facil de actualizar.</h2>
+            <h2 className="text-[clamp(2.3rem,6vw,4rem)] font-black leading-none">Una carta viva, fácil de actualizar.</h2>
             <div className="mt-8 grid gap-4 md:grid-cols-2">{products.map(([name, desc]) => <MotionCard key={name}><h3 className="text-xl font-black">{name}</h3><p className="mt-3 leading-7 text-muted">{desc}</p><span className="mt-5 inline-flex rounded-full bg-brand-50 px-3 py-1 text-xs font-black text-brand-700">Disponible hoy</span></MotionCard>)}</div>
           </div>
           <MenuQrSection />
         </section>
         <DemoShowcase title="Ambiente de local" items={["Mesa de trabajo con enchufes", "Mostrador de producto fresco", "Zona de terraza y pedidos para llevar"]} />
-        <DemoFinalCta title="Haz que el cliente sepa que esta abierto y quiera entrar." text="Horario, ubicacion, terraza, carta QR y WhatsApp siempre visibles." cta="Como llegar" />
+        <DemoFinalCta title="Haz que el cliente sepa que está abierto y quiera entrar." text="Horario, ubicación, terraza, carta QR y WhatsApp siempre visibles." cta="Cómo llegar" />
       </main>
     </DemoShell>
   );
@@ -744,15 +744,15 @@ function BeautyWebsite() {
   return (
     <DemoShell tone="rose">
       <main>
-        <DemoHero label="Aura Studio" title="Tratamientos, citas y confianza desde el primer vistazo." text="Demo completa para estetica o peluqueria: servicios, protocolos, equipo, reseñas, galeria y formulario de cita." accent="from-[#fff6f8] via-[#d994aa] to-[#7f5267]" primary="Pedir cita" secondary="Ver tratamientos" />
-        <DemoFeatureGrid items={[["Tratamientos faciales", "Higiene, hidratacion, luminosidad y antiedad."], ["Equipo profesional", "Especialidades, formacion y trato cercano."], ["Protocolos", "Higiene, tiempos, preparacion y cuidados posteriores."], ["Citas", "Formulario con servicio, fecha preferida y contacto."]]} />
+        <DemoHero label="Aura Studio" title="Tratamientos, citas y confianza desde el primer vistazo." text="Demo completa para estética o peluquería: servicios, protocolos, equipo, reseñas, galería y formulario de cita." accent="from-[#fff6f8] via-[#d994aa] to-[#7f5267]" primary="Pedir cita" secondary="Ver tratamientos" />
+        <DemoFeatureGrid items={[["Tratamientos faciales", "Higiene, hidratación, luminosidad y antiedad."], ["Equipo profesional", "Especialidades, formación y trato cercano."], ["Protocolos", "Higiene, tiempos, preparación y cuidados posteriores."], ["Citas", "Formulario con servicio, fecha preferida y contacto."]]} />
         <section className="mx-auto w-[min(1180px,calc(100%-28px))] py-20">
           <Eyebrow>Tratamientos</Eyebrow>
-          <h2 className="max-w-4xl text-[clamp(2.3rem,6vw,4rem)] font-black leading-none">Una web que transmite calma sin perder conversion.</h2>
-          <div className="mt-9 grid gap-4 md:grid-cols-3">{["Faciales", "Corporales", "Manicura premium"].map((item) => <MotionCard key={item}><h3 className="text-xl font-black">{item}</h3><p className="mt-3 leading-7 text-muted">Beneficios, duracion orientativa, para quien es y CTA de cita.</p></MotionCard>)}</div>
+          <h2 className="max-w-4xl text-[clamp(2.3rem,6vw,4rem)] font-black leading-none">Una web que transmite calma sin perder conversión.</h2>
+          <div className="mt-9 grid gap-4 md:grid-cols-3">{["Faciales", "Corporales", "Manicura premium"].map((item) => <MotionCard key={item}><h3 className="text-xl font-black">{item}</h3><p className="mt-3 leading-7 text-muted">Beneficios, duración orientativa, para quién es y CTA de cita.</p></MotionCard>)}</div>
         </section>
-        <DemoShowcase title="Prueba visual y confianza" items={["Galeria de trabajos reales", "Equipo y cabinas", "Cuidados antes y despues de la cita"]} tone="rose" />
-        <DemoFinalCta title="Convierte interes en citas reales." text="La pagina guia al cliente hacia WhatsApp o formulario sin parecer agresiva." cta="Solicitar cita" />
+        <DemoShowcase title="Prueba visual y confianza" items={["Galería de trabajos reales", "Equipo y cabinas", "Cuidados antes y después de la cita"]} tone="rose" />
+        <DemoFinalCta title="Convierte interés en citas reales." text="La página guía al cliente hacia WhatsApp o formulario sin parecer agresiva." cta="Solicitar cita" />
       </main>
     </DemoShell>
   );
@@ -762,15 +762,15 @@ function ServicesWebsite() {
   return (
     <DemoShell tone="green">
       <main>
-        <DemoHero label="Nexo Servicios" title="Servicios claros, autoridad local y solicitud guiada." text="Demo completa para talleres, clinicas, reformas, academias o profesionales: servicios, proceso, garantias, FAQs y presupuesto." accent="from-[#071f24] via-brand-500 to-[#8bd2bf]" primary="Solicitar presupuesto" secondary="Ver servicios" />
-        <DemoFeatureGrid items={[["Servicios", "Cada servicio explica problema, solucion y siguiente paso."], ["Proceso", "Diagnostico, presupuesto, ejecucion y seguimiento."], ["Confianza", "Reseñas, garantias, experiencia y preguntas frecuentes."], ["Formulario", "Campos utiles para recibir solicitudes de calidad."]]} />
+        <DemoHero label="Nexo Servicios" title="Servicios claros, autoridad local y solicitud guiada." text="Demo completa para talleres, clínicas, reformas, academias o profesionales: servicios, proceso, garantías, FAQs y presupuesto." accent="from-[#071f24] via-brand-500 to-[#8bd2bf]" primary="Solicitar presupuesto" secondary="Ver servicios" />
+        <DemoFeatureGrid items={[["Servicios", "Cada servicio explica problema, solución y siguiente paso."], ["Proceso", "Diagnóstico, presupuesto, ejecución y seguimiento."], ["Confianza", "Reseñas, garantías, experiencia y preguntas frecuentes."], ["Formulario", "Campos útiles para recibir solicitudes de calidad."]]} />
         <section className="mx-auto w-[min(1180px,calc(100%-28px))] py-20">
           <Eyebrow>Flujo comercial</Eyebrow>
           <h2 className="max-w-4xl text-[clamp(2.3rem,6vw,4rem)] font-black leading-none">No solo informa: filtra y prepara el contacto.</h2>
-          <div className="mt-9 grid gap-4 md:grid-cols-4">{["Problema", "Revision", "Presupuesto", "Servicio"].map((item, index) => <MotionCard key={item}><span className="text-sm font-black text-brand-500">0{index + 1}</span><h3 className="mt-2 text-xl font-black">{item}</h3></MotionCard>)}</div>
+          <div className="mt-9 grid gap-4 md:grid-cols-4">{["Problema", "Revisión", "Presupuesto", "Servicio"].map((item, index) => <MotionCard key={item}><span className="text-sm font-black text-brand-500">0{index + 1}</span><h3 className="mt-2 text-xl font-black">{item}</h3></MotionCard>)}</div>
         </section>
-        <DemoShowcase title="Autoridad local" items={["Garantias y cobertura", "Casos resueltos", "Preguntas frecuentes antes de llamar"]} tone="green" />
-        <DemoFinalCta title="Contacto rapido sin perder informacion importante." text="Formulario, llamada, WhatsApp y mapa segun el flujo real del negocio." cta="Solicitar presupuesto" />
+        <DemoShowcase title="Autoridad local" items={["Garantías y cobertura", "Casos resueltos", "Preguntas frecuentes antes de llamar"]} tone="green" />
+        <DemoFinalCta title="Contacto rápido sin perder información importante." text="Formulario, llamada, WhatsApp y mapa según el flujo real del negocio." cta="Solicitar presupuesto" />
       </main>
     </DemoShell>
   );

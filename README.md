@@ -79,6 +79,40 @@ python main.py "talleres Santa Cruz" --skip-ollama
 
 Los prompts generados se guardan en `prospector/output/<nombre_negocio>.txt`.
 
+---
+
+## Interfaz Web y CRM (Prospector Local)
+
+Además del script CLI, el proyecto cuenta con una interfaz web completa (CRM) para gestionar leads y visualizar las propuestas comerciales generadas de manera gráfica.
+
+### 1. Iniciar el Servidor CRM
+Para iniciar el servidor local de Prospector:
+```bash
+cd prospector
+python webapp.py
+```
+Una vez iniciado, abre tu navegador en: **`http://127.0.0.1:8080`** (configurado en el puerto `8080` de manera predeterminada para evitar conflictos con servicios nativos de macOS como *AirPlay*).
+
+### 2. Desarrollo del Portfolio (React)
+El portfolio público de demostración comercial está construido con React, Vite y Framer Motion en la raíz del proyecto.
+
+- **Instalar dependencias**:
+  ```bash
+  npm install
+  ```
+- **Iniciar servidor de desarrollo**:
+  ```bash
+  npm run dev
+  ```
+  Esto levantará el entorno de desarrollo en `http://127.0.0.1:5173`.
+- **Compilar para producción**:
+  ```bash
+  npm run build
+  ```
+  La compilación de Vite está automatizada mediante `vite.config.ts` para transferir directamente el bundle de producción al directorio de archivos estáticos de Flask (`prospector/static/portfolio/`), de manera que el servidor de Python sirva siempre la versión del portfolio más actualizada.
+
+---
+
 ## Qué hace exactamente el pipeline
 
 Para cada negocio:

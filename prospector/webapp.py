@@ -818,7 +818,7 @@ def job_status(job_id: str):
 
 def main() -> None:
     host = os.getenv("WEBAPP_HOST", "127.0.0.1")
-    port = int(os.getenv("WEBAPP_PORT", "5000"))
+    port = int(os.getenv("WEBAPP_PORT", "8080"))
     print(f"\n  Prospector UI → http://{host}:{port}\n")
     app.run(host=host, port=port, debug=False, use_reloader=False)
 
