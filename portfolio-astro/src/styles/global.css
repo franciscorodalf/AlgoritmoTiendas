@@ -32,6 +32,7 @@ img{display:block;max-width:100%}
 .stagger>.reveal:nth-child(2){--delay:110ms}
 .stagger>.reveal:nth-child(3){--delay:220ms}
 .stagger>.reveal:nth-child(4){--delay:330ms}
+.stagger>.reveal:nth-child(5){--delay:440ms}
 .nav{
   position:sticky;
   top:0;
@@ -146,21 +147,24 @@ h2{font-size:clamp(42px,7vw,88px)}
 .section-head{margin-bottom:38px}
 .section-head.split{display:grid;grid-template-columns:1fr minmax(280px,.5fr);gap:34px;align-items:end}
 .section-head p:not(.label){color:var(--muted);font-size:18px;font-weight:650}
-.steps,.pricing,.faq{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-.steps article,.pricing article,.faq article{
+.steps,.pricing,.faq,.offerings{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.steps{grid-template-columns:repeat(auto-fit,minmax(190px,1fr))}
+.offerings{grid-template-columns:repeat(4,1fr)}
+.steps article,.pricing article,.faq article,.offerings article{
   padding:24px;
   background:var(--chalk);
   border:1px solid var(--line);
   transition:transform .28s var(--ease),box-shadow .28s var(--ease),border-color .28s var(--ease);
 }
-.steps article:hover,.pricing article:hover,.faq article:hover{
+.steps article:hover,.pricing article:hover,.faq article:hover,.offerings article:hover{
   transform:translateY(-6px);
   box-shadow:0 18px 45px rgba(17,17,15,.12);
   border-color:rgba(17,17,15,.35);
 }
 .steps b{font-family:"Instrument Serif",serif;font-size:64px;color:var(--lava);font-weight:400}
-.steps h3,.pricing h3{margin-top:20px;font-size:22px;text-transform:uppercase;line-height:1}
-.steps p,.pricing p,.faq p{margin-top:12px;color:var(--muted);font-weight:650}
+.offerings span{display:inline-flex;margin-bottom:28px;color:var(--lava);font-family:"Instrument Serif",serif;font-size:48px;line-height:.9}
+.steps h3,.pricing h3,.offerings h3{margin-top:20px;font-size:22px;text-transform:uppercase;line-height:1}
+.steps p,.pricing p,.faq p,.offerings p{margin-top:12px;color:var(--muted);font-weight:650}
 .demo-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
 .demo-card{background:var(--chalk);border:2px solid var(--ink);overflow:hidden}
 .demo-card{transition:transform .35s var(--ease),box-shadow .35s var(--ease)}
@@ -305,7 +309,7 @@ h2{font-size:clamp(42px,7vw,88px)}
 @media(max-width:900px){
   .nav-links{display:none}
   .hero,.section-head.split,.why-layout,.cta{grid-template-columns:1fr}
-  .steps,.demo-grid,.pricing,.faq{grid-template-columns:1fr}
+  .steps,.demo-grid,.pricing,.faq,.offerings{grid-template-columns:1fr}
   .decision{grid-template-columns:1fr}
   .decision i{
     width:3px;
