@@ -12,16 +12,30 @@ IDENTIDAD VISUAL:
   - Estetica general: {{ profile.visual_vibe }}
 {%- endmacro -%}
 
+{%- macro concept_block() -%}
+CONCEPTO CREATIVO DE ESTA WEB (no negociable — ejecútalo, no lo sustituyas):
+  - Idea rectora: {{ concept.concept }}
+  - Hero: {{ concept.hero_idea }}
+  - Sección distintiva obligatoria: {{ concept.signature_section }}
+  - Dirección de fotografía: {{ concept.photo_direction }}
+{%- endmacro -%}
+
 {%- macro creative_direction_block() -%}
 DIRECCIÓN CREATIVA OBLIGATORIA:
   - La web debe parecer diseñada para este negocio concreto, no para "un {{ profile.sector }} genérico".
-  - Antes de proponer secciones, define un concepto visual memorable en una frase: metáfora, atmósfera o idea rectora.
+  - Ejecuta el CONCEPTO CREATIVO indicado arriba en todas las decisiones de diseño y copy. No lo reemplaces por un patrón estándar del sector.
   - Usa los datos reales del negocio (nombre, zona, reseñas, fotos, horario, rating y palabras repetidas por clientes) como material de diseño y copy.
   - Evita el patrón genérico de hero centrado + tarjetas iguales + iconos planos + gradiente decorativo.
-  - Diseña al menos una sección distintiva que no aparezca en una plantilla común del sector.
   - Indica composición responsive: cómo se ve el primer pantallazo en móvil y qué CTA queda fijo.
   - Si faltan fotos reales, propón placeholders de fotografía específicos del local, no stock genérico.
   - El resultado debe sentirse vendible para un cliente local de Tenerife que lo abre en el móvil.
+{%- endmacro -%}
+
+{%- macro structure_block() -%}
+ARQUITECTURA DE LA PÁGINA (hero + secciones en este orden):
+  1. {{ structure.hero }}
+{% for section in structure.sections %}  {{ loop.index + 1 }}. {{ section }}
+{% endfor %}  - Integra la sección distintiva del CONCEPTO CREATIVO donde mejor encaje del flujo, sin romper el cierre de contacto.
 {%- endmacro -%}
 
 {%- macro business_block() -%}
@@ -43,6 +57,10 @@ DATOS DEL NEGOCIO:
 {%- macro insights_block() -%}
 {% if insights.selling_points %}LO QUE MAS VALORAN SUS CLIENTES:
 {% for sp in insights.selling_points %}  - {{ sp }}
+{% endfor %}{% endif -%}
+{% if insights.quotes %}
+CITAS LITERALES DE CLIENTES (usa al menos una TAL CUAL en la web, entrecomillada y con peso visual):
+{% for q in insights.quotes %}  - "{{ q }}"
 {% endfor %}{% endif -%}
 {% if insights.keywords %}
 PALABRAS CLAVE QUE REPITEN LOS CLIENTES: {{ insights.keywords | join(', ') }}

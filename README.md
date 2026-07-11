@@ -110,11 +110,18 @@ Para cada negocio:
 
 1. **Google Places** — busca, filtra los que ya tienen web, extrae: nombre, categoría, dirección, teléfono, horario, puntuación, reseñas, fotos
 2. **ColorThief + K-means** — descarga la foto de perfil y extrae una paleta de 6 colores clasificada en primario / secundario / acento / neutro
-3. **Typography rules** — por el sector (`hair_care`, `restaurant`, etc.) elige la tipografía y vibe visual coherente
-4. **Ollama + llama3.1:8b** — lee las reseñas y extrae keywords, tono, selling points, vibe y público objetivo en JSON
-5. **Jinja2** — ensambla todo en un prompt con una plantilla específica del sector
+3. **Ollama + llama3.1:8b** — lee las reseñas y extrae keywords, tono, selling points, vibe y público objetivo en JSON; además selecciona **citas literales** de reseñas (sin LLM) para usarlas tal cual en la web
+4. **Arquetipos visuales** — cada sector tiene 3-4 arquetipos (no un perfil fijo); se elige según señales reales: keywords de las reseñas, rasgos de la paleta del logo (oscura/clara, viva/apagada, cálida/fría) y nivel de precio, con desempate determinista por `place_id`
+5. **Estructura variable** — patrón de hero elegido de un pool global + secciones obligatorias del sector + 2-3 opcionales, todo sembrado con el `place_id` (mismo negocio → misma web; negocios distintos → webs distintas)
+6. **Director creativo (Ollama, temperatura alta)** — genera el concepto visual único de ESA web: idea rectora, hero aterrizado, sección distintiva y dirección de fotografía. Con fallback determinista si Ollama no está
+7. **Jinja2** — ensambla todo en un prompt con una plantilla específica del sector
 
 Output final: un `.txt` con el prompt completo, listo para pegar en Bolt / v0 / Framer.
+
+> **Por qué los arquetipos:** con un perfil fijo por sector, 5 peluquerías generaban
+> 5 webs clon con textos distintos. Ahora el prompt varía en tipografía, estética,
+> hero, secciones y concepto creativo — la estructura del 90% del prompt ya no es
+> idéntica entre negocios del mismo sector.
 
 ## Estructura
 
@@ -124,8 +131,10 @@ prospector/
 ├── modules/
 │   ├── google_extractor.py      # Google Places API
 │   ├── image_analyzer.py        # paleta de colores
-│   ├── typography_rules.py      # sector → tipografía
-│   ├── review_analyzer.py       # Ollama local
+│   ├── typography_rules.py      # sector → arquetipos visuales + selección por señales
+│   ├── structure_rules.py       # hero + secciones variables por negocio
+│   ├── review_analyzer.py       # Ollama local + citas literales
+│   ├── creative_director.py     # concepto creativo único (Ollama temp. alta)
 │   └── prompt_builder.py        # ensamblaje Jinja2
 ├── templates/
 │   ├── _base.j2                 # bloques comunes

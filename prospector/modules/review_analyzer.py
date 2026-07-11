@@ -10,6 +10,8 @@ Devuelve insights estructurados en JSON:
     - vibe:            atmósfera/sensación global
     - target_audience: perfil aproximado de cliente
     - warnings:        quejas recurrentes (si las hay)
+    - quotes:          citas LITERALES de reseñas (sin pasar por el LLM —
+                       los resúmenes convergen, las frases reales son únicas)
 
 Uso: todo corre en local. No se envía nada a APIs de pago.
 """
@@ -19,7 +21,7 @@ from __future__ import annotations
 import json
 import os
 import re
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass, asdict, field
 
 import ollama
 from dotenv import load_dotenv
@@ -40,9 +42,45 @@ class ReviewInsights:
     vibe: str
     target_audience: str
     warnings: list[str]
+    quotes: list[str] = field(default_factory=list)
 
     def to_dict(self) -> dict:
         return asdict(self)
+
+
+# ---------------------------------------------------------------------------
+# Citas literales (sin LLM)
+# ---------------------------------------------------------------------------
+
+
+def extract_quotes(reviews: list[dict], max_quotes: int = 3) -> list[str]:
+    """
+    Selecciona frases literales de reseñas para usar tal cual en la web.
+
+    Criterio: reseñas de 4-5 estrellas con texto ni muy corto ni muy largo.
+    Es Python puro y determinista a propósito — un resumen del LLM convierte
+    "me arreglaron el color que me destrozaron en otro sitio" en "buen
+    servicio de color", y ahí se pierde justo lo que hace única la web.
+    """
+    candidates = []
+    for rv in reviews or []:
+        text = " ".join((rv.get("text") or "").split())
+        rating = rv.get("rating") or 0
+        if rating < 4 or not (25 <= len(text) <= 200):
+            continue
+        # Preferimos 5★ y longitud de cita "de portada" (~90 caracteres)
+        candidates.append((-(rating), abs(len(text) - 90), text))
+
+    candidates.sort()
+    quotes: list[str] = []
+    for _, _, text in candidates:
+        # Evita citas casi duplicadas (mismo arranque)
+        if any(text[:25].lower() == q[:25].lower() for q in quotes):
+            continue
+        quotes.append(text)
+        if len(quotes) >= max_quotes:
+            break
+    return quotes
 
 
 # ---------------------------------------------------------------------------
@@ -111,6 +149,9 @@ class ReviewAnalyzer:
                 return self._empty_fallback(category)
             raise ValueError("No hay reseñas que analizar.")
 
+        # Las citas literales no dependen del LLM: se extraen siempre.
+        # (Si el LLM falla más abajo, la excepción se propaga igual que antes.)
+
         reviews_block = self._format_reviews(reviews)
         user_prompt = _USER_TEMPLATE.format(
             name=name,
@@ -129,7 +170,9 @@ class ReviewAnalyzer:
 
         raw = response["message"]["content"]
         data = self._extract_json(raw)
-        return self._to_insights(data)
+        insights = self._to_insights(data)
+        insights.quotes = extract_quotes(reviews)
+        return insights
 
     def ping(self) -> bool:
         """Comprueba que Ollama está corriendo Y el modelo descargado."""
@@ -210,6 +253,7 @@ class ReviewAnalyzer:
             vibe=f"Negocio local de {category or 'servicios'} en Tenerife.",
             target_audience="Clientes locales de la zona.",
             warnings=[],
+            quotes=[],
         )
 
 
@@ -221,4 +265,4 @@ def _as_list(v) -> list[str]:
     return [str(v).strip()]
 
 
-__all__ = ["ReviewAnalyzer", "ReviewInsights"]
+__all__ = ["ReviewAnalyzer", "ReviewInsights", "extract_quotes"]

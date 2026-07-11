@@ -1,9 +1,11 @@
-{% from '_base.j2' import identity_block, creative_direction_block, business_block, insights_block, conversion_block, tech_block with context %}
+{% from '_base.j2' import identity_block, concept_block, creative_direction_block, business_block, insights_block, structure_block, conversion_block, tech_block with context %}
 Crea una web energica, clara y orientada a conversion para "{{ business.name }}",
 un centro deportivo en {{ business.address }}. Debe motivar sin parecer agresiva
 ni caotica.
 
 {{ identity_block() }}
+
+{{ concept_block() }}
 
 {{ creative_direction_block() }}
 
@@ -11,16 +13,7 @@ ni caotica.
 
 {{ insights_block() }}
 
-SECCIONES:
-  1. Hero potente con imagen/video deportivo, claim y CTA "Probar una clase".
-  2. Barra de confianza: valoracion, horario, ubicacion y contacto rapido.
-  3. Actividades/clases con beneficios, nivel recomendado y CTA por actividad.
-  4. Parrilla semanal visual si procede, sin saturar la vista movil.
-  5. Instalaciones: galeria de salas, material, vestuarios y ambiente.
-  6. Entrenadores: foto, especialidad y enfoque de acompanamiento.
-  7. Historias/testimonios de alumnos, cuidando privacidad y realismo.
-  8. Formulario de prueba: objetivo, disponibilidad, telefono y WhatsApp.
-  9. Ubicacion, horario, FAQ y CTA final.
+{{ structure_block() }}
 
 DETALLES:
   - Paleta potente con acentos vibrantes, pero UI limpia y legible.

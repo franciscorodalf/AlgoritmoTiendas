@@ -1,9 +1,11 @@
-{% from '_base.j2' import identity_block, creative_direction_block, business_block, insights_block, conversion_block, tech_block with context %}
+{% from '_base.j2' import identity_block, concept_block, creative_direction_block, business_block, insights_block, structure_block, conversion_block, tech_block with context %}
 Crea una web acogedora, artesanal y profesional para "{{ business.name }}", una
 cafeteria en {{ business.address }}. La web debe transmitir aroma, cercania y ganas
 de visitar el local.
 
 {{ identity_block() }}
+
+{{ concept_block() }}
 
 {{ creative_direction_block() }}
 
@@ -11,17 +13,7 @@ de visitar el local.
 
 {{ insights_block() }}
 
-SECCIONES:
-  1. Hero calido con cafe/producto/local, claim cercano y CTA "Como llegar" o "Reservar".
-  2. Banda de confianza con horario, valoracion, ubicacion y contacto rapido.
-  3. Especialidades: cafes, desayunos, brunch, dulces o producto artesanal con descripciones.
-  4. Ambiente del local: galeria generosa y bloque "ideal para..." si procede.
-  5. Productos de temporada o destacados sin importes visibles.
-  6. Menu digital con QR para mesa/barra/escaparate: abrir o descargar PDF de carta, con boton alternativo visible.
-  7. Resenas de clientes con foco en trato, calidad y ambiente.
-  8. Instagram/galeria social si aplica, presentada como modulo opcional.
-  9. Contacto: mapa, horario, telefono, WhatsApp y como llegar.
-  10. FAQ: reservas, pedidos, opciones sin gluten/vegetales y horarios especiales.
+{{ structure_block() }}
 
 DETALLES:
   - Fotografia natural, luz calida y texturas; evitar apariencia de stock frio.

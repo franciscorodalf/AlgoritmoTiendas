@@ -41,8 +41,10 @@ from rich.table import Table
 
 from modules.google_extractor import GoogleExtractor, Business
 from modules.image_analyzer import extract_palette, Palette
-from modules.typography_rules import get_profile
+from modules.typography_rules import get_profile, resolve_sector
 from modules.review_analyzer import ReviewAnalyzer
+from modules.creative_director import CreativeDirector, fallback_concept
+from modules.structure_rules import build_structure
 from modules.prompt_builder import PromptBuilder
 
 
@@ -62,6 +64,7 @@ def process_business(
     builder: PromptBuilder,
     *,
     return_insights: bool = False,
+    director: CreativeDirector | None = None,
 ):
     """Procesa un negocio completo y devuelve la ruta del prompt generado.
 
@@ -72,22 +75,53 @@ def process_business(
     # 1. Paleta a partir de la primera foto disponible
     palette = _get_palette(biz, extractor)
 
-    # 2. Perfil visual (tipografía + vibe) por sector.
-    profile = get_profile(biz.categories_all or biz.category, name=biz.name)
-
-    # 3. Insights de reseñas via Ollama (local)
+    # 2. Sector e insights de reseñas via Ollama (local)
+    sector = resolve_sector(biz.categories_all or biz.category, name=biz.name)
     insights = analyzer.analyze(
         name=biz.name,
-        category=profile.sector,
+        category=sector,
         reviews=biz.reviews,
     )
 
-    # 4. Ensamblaje final
+    # 3. Arquetipo visual según señales reales: qué dicen las reseñas,
+    #    cómo es la paleta del logo y el nivel de precio.
+    signal_text = " ".join(
+        insights.keywords
+        + insights.selling_points
+        + [insights.tone, insights.vibe]
+        + [(rv.get("text") or "") for rv in biz.reviews]
+    )
+    profile = get_profile(
+        biz.categories_all or biz.category,
+        name=biz.name,
+        palette=palette,
+        keywords=signal_text,
+        price_level=biz.price_level,
+        seed=biz.place_id,
+    )
+
+    # 4. Estructura de página variable (determinista por place_id)
+    structure = build_structure(profile.sector, seed=biz.place_id)
+
+    # 5. Concepto creativo único (Ollama a temperatura alta; fallback sin LLM)
+    director = director or CreativeDirector()
+    try:
+        concept = director.direct(
+            business=biz, profile=profile, palette=palette,
+            insights=insights, structure=structure,
+        )
+    except Exception as exc:
+        console.print(f"  [yellow]⚠ director creativo falló ({exc}) — usando fallback[/yellow]")
+        concept = fallback_concept(business=biz, profile=profile, structure=structure)
+
+    # 6. Ensamblaje final
     prompt = builder.build(
         business=biz,
         palette=palette,
         profile=profile,
         insights=insights,
+        structure=structure,
+        concept=concept,
     )
 
     out_path = OUTPUT_DIR / f"{_slugify(biz.name)}.txt"
@@ -184,6 +218,7 @@ def main() -> None:
         )
         sys.exit(1)
 
+    director = CreativeDirector()
     builder = PromptBuilder()
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -211,7 +246,7 @@ def main() -> None:
             if args.skip_ollama:
                 _write_skeleton(biz, builder)
             else:
-                path = process_business(biz, extractor, analyzer, builder)
+                path = process_business(biz, extractor, analyzer, builder, director=director)
                 console.print(f"  [green]✓ {path.name}[/green]")
             ok += 1
         except Exception as exc:

@@ -1,9 +1,11 @@
-{% from '_base.j2' import identity_block, creative_direction_block, business_block, insights_block, conversion_block, tech_block with context %}
+{% from '_base.j2' import identity_block, concept_block, creative_direction_block, business_block, insights_block, structure_block, conversion_block, tech_block with context %}
 Crea una web profesional, accesible y muy confiable para "{{ business.name }}",
 un centro de salud en {{ business.address }}. Debe sentirse limpio, humano y serio,
 priorizando claridad y tranquilidad.
 
 {{ identity_block() }}
+
+{{ concept_block() }}
 
 {{ creative_direction_block() }}
 
@@ -11,16 +13,7 @@ priorizando claridad y tranquilidad.
 
 {{ insights_block() }}
 
-SECCIONES:
-  1. Hero sobrio con claim claro, CTA "Pedir cita" y telefono visible.
-  2. Banda de confianza: valoracion, experiencia, ubicacion y respuesta rapida.
-  3. Especialidades/tratamientos en tarjetas claras con explicacion breve y beneficios.
-  4. Equipo profesional: foto, rol, titulacion/certificaciones si se conocen.
-  5. Instalaciones y tecnologia: modulo visual limpio, sin exagerar claims medicos.
-  6. Proceso de atencion: primera consulta, diagnostico, tratamiento y seguimiento.
-  7. Opiniones verificadas de pacientes con diseno discreto.
-  8. FAQ: cita, preparacion, documentacion, urgencias y metodos de contacto.
-  9. Pedir cita: formulario accesible, telefono, WhatsApp, horario y mapa.
+{{ structure_block() }}
 
 DETALLES:
   - Accesibilidad AA real, foco visible y tipografia legible.

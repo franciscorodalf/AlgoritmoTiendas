@@ -8,6 +8,8 @@ Reúne los outputs de los otros módulos:
     - Palette (image_analyzer)
     - VisualProfile (typography_rules)
     - ReviewInsights (review_analyzer)
+    - PageStructure (structure_rules)   — opcional, se autogenera si falta
+    - CreativeConcept (creative_director) — opcional, fallback si falta
 
 ...y los pasa por una plantilla Jinja2 específica del sector.
 Si el sector no tiene plantilla, cae en default.j2.
@@ -20,6 +22,9 @@ from dataclasses import asdict, is_dataclass
 from typing import Any
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
+
+from .structure_rules import build_structure
+from .creative_director import fallback_concept
 
 _TEMPLATES_DIR = Path(__file__).resolve().parent.parent / "templates"
 
@@ -41,14 +46,33 @@ class PromptBuilder:
         palette: Any,
         profile: Any,
         insights: Any,
+        structure: Any = None,
+        concept: Any = None,
     ) -> str:
-        """Devuelve el prompt final como string listo para pegar."""
+        """Devuelve el prompt final como string listo para pegar.
+
+        `structure` y `concept` son opcionales: si no llegan (llamadas
+        antiguas, --skip-ollama), se generan aquí de forma determinista
+        para que todo caller se beneficie de la variación.
+        """
         context = {
             "business": _to_dict(business),
             "palette": _to_dict(palette),
             "profile": _to_dict(profile),
             "insights": _to_dict(insights),
         }
+
+        if structure is None:
+            seed = context["business"].get("place_id") or context["business"].get("name", "")
+            structure = build_structure(context["profile"].get("sector", "default"), seed=seed)
+        if concept is None:
+            concept = fallback_concept(
+                business=context["business"],
+                profile=context["profile"],
+                structure=structure,
+            )
+        context["structure"] = _to_dict(structure)
+        context["concept"] = _to_dict(concept)
 
         template_name = context["profile"].get("template", "default.j2")
         if not (self.templates_dir / template_name).exists():

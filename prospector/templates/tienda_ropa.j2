@@ -1,9 +1,11 @@
-{% from '_base.j2' import identity_block, creative_direction_block, business_block, insights_block, conversion_block, tech_block with context %}
+{% from '_base.j2' import identity_block, concept_block, creative_direction_block, business_block, insights_block, structure_block, conversion_block, tech_block with context %}
 Crea una web fresca, editorial y comercial para "{{ business.name }}", una tienda
 de ropa en {{ business.address }}. Debe parecer una experiencia de marca, no un
 catalogo basico.
 
 {{ identity_block() }}
+
+{{ concept_block() }}
 
 {{ creative_direction_block() }}
 
@@ -11,16 +13,7 @@ catalogo basico.
 
 {{ insights_block() }}
 
-SECCIONES:
-  1. Hero editorial de nueva temporada con CTA "Ver coleccion" y "Escribir por WhatsApp".
-  2. Banda de confianza: ubicacion, horario, valoracion y atencion personalizada.
-  3. Colecciones destacadas: mujer/hombre/accesorios u otras categorias relevantes.
-  4. Lookbook del mes con composiciones visuales y sugerencias de uso.
-  5. Marcas que trabajan si procede, sin inventar.
-  6. Compra/contacto: catalogo, Instagram, WhatsApp o visita a tienda segun corresponda.
-  7. Resenas o prueba social sobre trato, asesoramiento y calidad.
-  8. Informacion practica: probadores, cambios/devoluciones si procede, horario y mapa.
-  9. Newsletter o avisos de novedades como modulo opcional.
+{{ structure_block() }}
 
 DETALLES:
   - Imagenes grandes, ritmo editorial y mucho cuidado en espaciado.

@@ -1,8 +1,10 @@
-{% from '_base.j2' import identity_block, creative_direction_block, business_block, insights_block, conversion_block, tech_block with context %}
+{% from '_base.j2' import identity_block, concept_block, creative_direction_block, business_block, insights_block, structure_block, conversion_block, tech_block with context %}
 Crea una web moderna, profesional y visualmente atractiva para "{{ business.name }}",
 un negocio local ubicado en {{ business.address }}.
 
 {{ identity_block() }}
+
+{{ concept_block() }}
 
 {{ creative_direction_block() }}
 
@@ -10,15 +12,7 @@ un negocio local ubicado en {{ business.address }}.
 
 {{ insights_block() }}
 
-SECCIONES (en este orden):
-  1. Hero premium con nombre, claim comercial, imagen fuerte, CTA principal y CTA secundario.
-  2. Banda de confianza con valoracion, resenas, ubicacion y respuesta rapida.
-  3. Servicios o productos principales en tarjetas completas con beneficios, no solo nombres.
-  4. Proceso de trabajo en 3 pasos para reducir dudas del cliente.
-  5. Galeria o bloque visual con imagenes reales/realistas y captions utiles.
-  6. Testimonios de clientes con formato cuidado y extractos creibles.
-  7. Preguntas frecuentes orientadas a objeciones habituales.
-  8. Contacto completo: direccion, telefono, horario, mapa, formulario y WhatsApp.
+{{ structure_block() }}
 
 {{ conversion_block() }}
 

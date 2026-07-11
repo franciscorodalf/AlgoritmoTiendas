@@ -1,9 +1,11 @@
-{% from '_base.j2' import identity_block, creative_direction_block, business_block, insights_block, conversion_block, tech_block with context %}
+{% from '_base.j2' import identity_block, concept_block, creative_direction_block, business_block, insights_block, structure_block, conversion_block, tech_block with context %}
 Crea una web elegante, luminosa y comercial para "{{ business.name }}", un salon
 de peluqueria en {{ business.address }}. Debe transmitir estilo, cuidado y confianza
 desde el primer vistazo.
 
 {{ identity_block() }}
+
+{{ concept_block() }}
 
 {{ creative_direction_block() }}
 
@@ -11,16 +13,7 @@ desde el primer vistazo.
 
 {{ insights_block() }}
 
-SECCIONES:
-  1. Hero editorial con look signature, claim aspiracional y CTA "Pedir cita".
-  2. Indicadores de confianza: valoracion, resenas, especialistas, ubicacion.
-  3. Servicios por categoria sin importes: corte, color, tratamientos, novias y asesoramiento.
-  4. Galeria de trabajos realizados tipo lookbook, con transiciones suaves y captions.
-  5. Equipo: estilistas, especialidad y enfoque personal.
-  6. Productos y marcas usadas si procede, sin inventar marcas si no hay informacion.
-  7. Resenas destacadas con foco en trato, resultado y confianza.
-  8. Reserva online/WhatsApp con seleccion de servicio y horario preferido.
-  9. Ubicacion, horario, mapa y FAQ de citas, cambios, duracion y cuidados posteriores.
+{{ structure_block() }}
 
 DETALLES:
   - Mucha luz, espacio en blanco, ritmo editorial y detalles de color de marca.

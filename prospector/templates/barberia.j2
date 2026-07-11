@@ -1,9 +1,11 @@
-{% from '_base.j2' import identity_block, creative_direction_block, business_block, insights_block, conversion_block, tech_block with context %}
+{% from '_base.j2' import identity_block, concept_block, creative_direction_block, business_block, insights_block, structure_block, conversion_block, tech_block with context %}
 Crea una web con caracter, confianza y acabado premium para "{{ business.name }}",
 una barberia en {{ business.address }}. Estetica masculina, cuidada y con peso visual,
 pero sin caer en cliches.
 
 {{ identity_block() }}
+
+{{ concept_block() }}
 
 {{ creative_direction_block() }}
 
@@ -11,16 +13,7 @@ pero sin caer en cliches.
 
 {{ insights_block() }}
 
-SECCIONES:
-  1. Hero oscuro/editorial con corte en accion, claim directo y CTA "Reservar cita".
-  2. Barra de confianza: valoracion, resenas, ubicacion y disponibilidad por WhatsApp.
-  3. Servicios principales sin importes visibles: corte, barba, afeitado, arreglo y packs con beneficios.
-  4. Galeria de trabajos tipo portfolio, con filtros simples y hover elegante.
-  5. Equipo/barberos: foto, especialidad, tono cercano y prueba de experiencia.
-  6. Metodo de trabajo: bienvenida, asesoramiento, servicio y acabado final.
-  7. Resenas destacadas y frases reales que refuercen puntualidad, trato y resultado.
-  8. Reserva: WhatsApp directo, telefono, horario y sistema de cita simple.
-  9. Ubicacion con mapa, referencias para llegar y CTA final.
+{{ structure_block() }}
 
 DETALLES:
   - Fotografia de alto contraste, negro bien usado y acentos de marca.

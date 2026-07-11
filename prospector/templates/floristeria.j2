@@ -1,9 +1,11 @@
-{% from '_base.j2' import identity_block, creative_direction_block, business_block, insights_block, conversion_block, tech_block with context %}
+{% from '_base.j2' import identity_block, concept_block, creative_direction_block, business_block, insights_block, structure_block, conversion_block, tech_block with context %}
 Crea una web delicada, botanica y comercial para "{{ business.name }}", una
 floristeria en {{ business.address }}. La flor debe ser protagonista y la compra
 o encargo debe sentirse facil.
 
 {{ identity_block() }}
+
+{{ concept_block() }}
 
 {{ creative_direction_block() }}
 
@@ -11,16 +13,7 @@ o encargo debe sentirse facil.
 
 {{ insights_block() }}
 
-SECCIONES:
-  1. Hero luminoso con ramo protagonista y CTA "Encargar por WhatsApp".
-  2. Banda practica: envios/recogida si procede, horario, ubicacion y valoracion.
-  3. Ramos y arreglos por ocasion: cumpleanos, bodas, condolencias, eventos y detalle.
-  4. Flor de temporada con historia breve y recomendacion de uso.
-  5. Servicios especiales: eventos, bodas, decoracion, suscripciones o encargos a medida.
-  6. Galeria de trabajos reales con rejilla elegante y transiciones suaves.
-  7. Resenas de clientes con foco en cuidado, puntualidad y belleza del resultado.
-  8. Formulario de encargo: ocasion, fecha, preferencias, entrega/recogida y contacto.
-  9. Ubicacion, horario, mapa y FAQ de encargos urgentes.
+{{ structure_block() }}
 
 DETALLES:
   - Luz natural, mucho aire, tonos verdes y acentos de marca.
